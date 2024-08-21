@@ -53,6 +53,7 @@
             <option value="Rafferty">Rafferty</option>
             <option value="Carl">Carl</option>
             <option value="Woody">Woody</option>
+            <option value="othermember">othermember</option>
         </select>
         <br><br>
         <button id="applyButton">Apply</button>
