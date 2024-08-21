@@ -7,12 +7,39 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        .header {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+        }
+        .header h1 {
+            margin: 0;
+        }
+        .nav-bar {
             display: flex;
             justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f0f0;
+            margin: 20px 0;
+        }
+        .nav-link {
+            background-color: #000;
+            color: #fff;
+            padding: 15px 25px;
+            margin: 0 10px;
+            text-align: center;
+            text-decoration: none;
+            font-size: 18px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+        .nav-link:hover {
+            background-color: #555;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
         }
         .container {
             text-align: center;
@@ -40,6 +67,13 @@
     </style>
 </head>
 <body>
+    <div class="header">
+        <h1>HTML to Java</h1>
+    </div>
+    <div class="nav-bar">
+        <a href="#" class="nav-link">Download JAR Version</a>
+        <a href="https://vugbigeriuerr3.github.io/github.io/" class="nav-link">Back to Main Website</a>
+    </div>
     <div class="container" id="mainMenu">
         <h1>Main Menu</h1>
         <label for="gameSelect">Select Game:</label>
