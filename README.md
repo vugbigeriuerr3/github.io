@@ -9,34 +9,40 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
+            background-color: #f4f4f4;
         }
         .header {
             background-color: #333;
             color: white;
             text-align: center;
-            padding: 10px 0;
+            padding: 15px 0;
         }
         .header h1 {
             margin: 0;
         }
-        .content {
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 80vh;
+        }
+        .box {
+            background-color: #000;
+            color: #fff;
             padding: 20px;
+            margin: 10px;
+            width: 200px;
             text-align: center;
-        }
-        .link-list {
-            list-style-type: none;
-            padding: 0;
-        }
-        .link-list li {
-            margin: 10px 0;
-        }
-        .link-list a {
             text-decoration: none;
-            color: #007BFF;
             font-size: 18px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s, box-shadow 0.3s;
         }
-        .link-list a:hover {
-            text-decoration: underline;
+        .box:hover {
+            background-color: #555;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
         }
     </style>
 </head>
@@ -44,11 +50,9 @@
     <div class="header">
         <h1>HTML to Java</h1>
     </div>
-    <div class="content">
-        <ul class="link-list">
-            <li><a href="https://vugbigeriuerr3.github.io/github.io/random%20number%20guesser.html">Number Guesser</a></li>
-            <!-- Add more links here if needed -->
-        </ul>
+    <div class="container">
+        <a href="https://vugbigeriuerr3.github.io/github.io/random%20number%20guesser.html" class="box">Number Guesser</a>
+        <!-- Add more boxes here if needed -->
     </div>
 </body>
 </html>
