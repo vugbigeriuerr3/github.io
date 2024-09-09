@@ -12,13 +12,25 @@
             overflow: hidden; /* Prevent scrollbars */
             background-color: #fff; /* White background */
         }
+        .header {
+            background-color: grey;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 60px; /* Adjust as needed */
+        }
+        .header h1 {
+            color: white;
+            margin: 0;
+        }
         .window {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             width: 644px; /* Width adjusted for image space */
-            height: 250px; /* Increase height for additional fields */
+            height: 200px; /* Adjust height as needed */
             border: 2px solid #000;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
             cursor: default; /* Remove move cursor */
@@ -77,17 +89,22 @@
             font-size: 12px;
             cursor: pointer;
         }
-        .header {
-            background-color: grey;
+        .range-controls {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #f1f1f1;
             padding: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 60px; /* Adjust as needed */
+            border: 2px solid #000;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
         }
-        .header h1 {
-            color: white;
-            margin: 0;
+        .range-controls label {
+            margin-right: 5px;
+        }
+        .range-controls input {
+            width: 60px;
+            margin-right: 10px;
         }
         .nav-bar {
             display: flex;
@@ -111,6 +128,12 @@
     <div class="header">
         <h1>Lotto Number Generator</h1>
     </div>
+    <div class="range-controls">
+        <label for="minRange">Min:</label>
+        <input type="number" id="minRange" value="1">
+        <label for="maxRange">Max:</label>
+        <input type="number" id="maxRange" value="48">
+    </div>
     <div class="window" id="appWindow">
         <div class="image-container">
             <img src="https://cdn.discordapp.com/attachments/1278733982657413174/1282626321599565879/image0.png?ex=66e00a59&is=66deb8d9&hm=da240d603592414f41edc5b2e77dc0299298207959d6534c2d80b0aad14e4599&" alt="Icon">
@@ -124,12 +147,6 @@
                 <span id="label4" class="number-label">...</span>
                 <span id="label5" class="number-label">...</span>
                 <span id="label6" class="number-label">...</span>
-            </div>
-            <div>
-                <label for="minRange">Min:</label>
-                <input type="number" id="minRange" value="1">
-                <label for="maxRange">Max:</label>
-                <input type="number" id="maxRange" value="48">
             </div>
             <div class="button-container">
                 <button id="getBtn" class="button">Get My Lucky Numbers</button>
