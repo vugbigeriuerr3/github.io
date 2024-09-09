@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lotto Number Picker</title>
+    <link rel="icon" href="https://cdn.discordapp.com/attachments/1278733982657413174/1282626321599565879/image0.png?ex=66e00a59&is=66deb8d9&hm=da240d603592414f41edc5b2e77dc0299298207959d6534c2d80b0aad14e4599&" type="image/png">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -18,7 +19,7 @@
             left: 50%;
             transform: translate(-50%, -50%);
             width: 644px; /* Width adjusted for image space */
-            height: 250px; /* Increased height to accommodate new section */
+            height: 200px; /* Original height */
             border: 2px solid #000;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
             cursor: default; /* Remove move cursor */
@@ -86,9 +87,10 @@
         }
         .range-selector {
             margin-top: 10px;
+            text-align: center; /* Center the range selector */
         }
         .range-selector label {
-            margin: 5px 0;
+            margin: 5px 10px;
         }
         .range-selector input {
             margin: 0 5px;
@@ -146,13 +148,13 @@
                 <button id="getBtn" class="button">Get My Lucky Numbers</button>
                 <button id="resetBtn" class="button">Reset</button>
             </div>
-            <div class="range-selector">
-                <label for="minNumber">Minimum Number:</label>
-                <input type="number" id="minNumber" value="1" min="1">
-                <label for="maxNumber">Maximum Number:</label>
-                <input type="number" id="maxNumber" value="48" min="1">
-            </div>
         </div>
+    </div>
+    <div class="range-selector">
+        <label for="minNumber">Minimum Number:</label>
+        <input type="number" id="minNumber" value="1" min="1">
+        <label for="maxNumber">Maximum Number:</label>
+        <input type="number" id="maxNumber" value="48" min="1">
     </div>
     <div class="header">
         <h1>Lotto Number Generator</h1>
