@@ -52,7 +52,7 @@
     </div>
     <div class="container">
         <a href="https://vugbigeriuerr3.github.io/github.io/random%20number%20guesser.html" class="box">Number Guesser</a>
-        <a href="https://vugbigeriuerr3.github.io/github.io/lotto.html" class="box">Lotto Number Generator</a>
+        <a href="https://vugbigeriuerr3.github.io/github.io/lotto .html" class="box">Lotto Number Generator</a>
     </div>
 </body>
 </html>
