@@ -12,51 +12,46 @@
             overflow: hidden; /* Prevent scrollbars */
             background-color: #fff; /* White background */
         }
-        .header {
-            background-color: grey;
-            padding: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 60px; /* Adjust as needed */
-        }
-        .header h1 {
-            color: white;
-            margin: 0;
-        }
         .window {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             width: 644px; /* Width adjusted for image space */
-            height: 200px; /* Adjust height as needed */
+            height: 250px; /* Increased height to accommodate new section */
             border: 2px solid #000;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
             cursor: default; /* Remove move cursor */
             display: flex;
             box-sizing: border-box;
             background-color: #f1f1f1; /* Gray background for content area */
-            flex-direction: column; /* Stack children vertically */
+            flex-direction: column; /* Stack elements vertically */
         }
         .image-container {
-            width: 100%;
+            width: 100%; /* Full width of the window */
             background: url('https://cdn.discordapp.com/attachments/1278733982657413174/1282626321599565879/image0.png?ex=66e00a59&is=66deb8d9&hm=da240d603592414f41edc5b2e77dc0299298207959d6534c2d80b0aad14e4599&') no-repeat center center;
             background-size: cover; /* Ensure image fits its container */
+            height: 100px; /* Height of the image space */
+            display: flex;
+            flex-direction: column;
+        }
+        .window-header {
             height: 30px; /* Height of the top bar */
+            background-color: #fff; /* White background */
+            border-bottom: 2px solid #000; /* Border at the bottom */
             display: flex;
             align-items: center;
             padding-left: 10px; /* Space between image and left edge */
             box-sizing: border-box;
             font-weight: normal; /* Remove bold */
         }
-        .image-container img {
+        .window-header img {
             height: 20px; /* Adjust height of the image */
             margin-right: 10px; /* Space between image and text */
         }
         .content {
             flex: 1; /* Take up remaining space */
-            text-align: center; /* Center content */
+            text-align: right; /* Align content to the right */
             padding: 10px;
             background-color: #f1f1f1; /* Gray background for content area */
             display: flex;
@@ -78,10 +73,10 @@
         }
         .button-container {
             display: flex;
-            justify-content: center; /* Center buttons */
+            justify-content: flex-end; /* Align buttons to the right */
             align-items: center;
             gap: 10px; /* Space between buttons */
-            margin-top: 10px; /* Space above buttons */
+            margin-bottom: 10px; /* Space below buttons */
         }
         .button {
             margin: 5px;
@@ -89,22 +84,31 @@
             font-size: 12px;
             cursor: pointer;
         }
-        .range-controls {
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #f1f1f1;
+        .range-selector {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-top: 10px;
+        }
+        .range-selector label {
+            margin: 5px 0;
+        }
+        .range-selector input {
+            margin: 0 5px;
+            padding: 5px;
+            font-size: 14px;
+        }
+        .header {
+            background-color: grey;
             padding: 10px;
-            border: 2px solid #000;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 60px; /* Adjust as needed */
         }
-        .range-controls label {
-            margin-right: 5px;
-        }
-        .range-controls input {
-            width: 60px;
-            margin-right: 10px;
+        .header h1 {
+            color: white;
+            margin: 0;
         }
         .nav-bar {
             display: flex;
@@ -125,19 +129,12 @@
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>Lotto Number Generator</h1>
-    </div>
-    <div class="range-controls">
-        <label for="minRange">Min:</label>
-        <input type="number" id="minRange" value="1">
-        <label for="maxRange">Max:</label>
-        <input type="number" id="maxRange" value="48">
-    </div>
     <div class="window" id="appWindow">
         <div class="image-container">
-            <img src="https://cdn.discordapp.com/attachments/1278733982657413174/1282626321599565879/image0.png?ex=66e00a59&is=66deb8d9&hm=da240d603592414f41edc5b2e77dc0299298207959d6534c2d80b0aad14e4599&" alt="Icon">
-            Lotto Number Picker
+            <div class="window-header">
+                <img src="https://cdn.discordapp.com/attachments/1278733982657413174/1282626321599565879/image0.png?ex=66e00a59&is=66deb8d9&hm=da240d603592414f41edc5b2e77dc0299298207959d6534c2d80b0aad14e4599&" alt="Icon">
+                Lotto Number Picker
+            </div>
         </div>
         <div class="content">
             <div>
@@ -150,9 +147,18 @@
             </div>
             <div class="button-container">
                 <button id="getBtn" class="button">Get My Lucky Numbers</button>
-                <button id="resetBtn" class="button" style="display: none;">Reset</button>
+                <button id="resetBtn" class="button">Reset</button>
+            </div>
+            <div class="range-selector">
+                <label for="minNumber">Minimum Number:</label>
+                <input type="number" id="minNumber" value="1" min="1">
+                <label for="maxNumber">Maximum Number:</label>
+                <input type="number" id="maxNumber" value="48" min="1">
             </div>
         </div>
+    </div>
+    <div class="header">
+        <h1>Lotto Number Generator</h1>
     </div>
     <div class="nav-bar">
         <a href="https://vugbigeriuerr3.github.io/github.io/" class="nav-link">Back to Main Website</a>
@@ -168,15 +174,15 @@
                 document.getElementById('label5'),
                 document.getElementById('label6')
             ];
-            const min = parseInt(document.getElementById('minRange').value);
-            const max = parseInt(document.getElementById('maxRange').value);
+            const min = parseInt(document.getElementById('minNumber').value, 10);
+            const max = parseInt(document.getElementById('maxNumber').value, 10);
 
             if (min >= max) {
-                alert("Minimum value must be less than maximum value.");
+                alert('Minimum number must be less than maximum number.');
                 return;
             }
 
-            const nums = Array.from({length: max - min + 1}, (_, i) => i + min);
+            const nums = Array.from({ length: max - min + 1 }, (_, i) => i + min);
             shuffle(nums);
             for (let i = 0; i < labels.length; i++) {
                 labels[i].textContent = nums[i];
@@ -194,7 +200,7 @@
                 document.getElementById('label6')
             ];
             labels.forEach(label => label.textContent = '...');
-            // Keep Reset button visible
+            // Removed line to keep Reset button visible
         });
 
         function shuffle(array) {
