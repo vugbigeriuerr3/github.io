@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lotto Number Picker</title>
-    <link rel="icon" href="https://cdn.discordapp.com/attachments/1278733982657413174/1282626321599565879/image0.png?ex=66e00a59&is=66deb8d9&hm=da240d603592414f41edc5b2e77dc0299298207959d6534c2d80b0aad14e4599&" type="image/png">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -19,20 +18,19 @@
             left: 50%;
             transform: translate(-50%, -50%);
             width: 644px; /* Width adjusted for image space */
-            height: 200px; /* Original height */
+            height: 200px; /* Increase height to be twice as deep */
             border: 2px solid #000;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
             cursor: default; /* Remove move cursor */
             display: flex;
-            flex-direction: column; /* Stack elements vertically */
             box-sizing: border-box;
             background-color: #f1f1f1; /* Gray background for content area */
         }
         .image-container {
-            width: 100%; /* Full width of the window */
+            width: 288px; /* Width of the image space */
             background: url('https://cdn.discordapp.com/attachments/1278733982657413174/1282626321599565879/image0.png?ex=66e00a59&is=66deb8d9&hm=da240d603592414f41edc5b2e77dc0299298207959d6534c2d80b0aad14e4599&') no-repeat center center;
             background-size: cover; /* Ensure image fits its container */
-            height: 100px; /* Height of the image space */
+            height: 100%; /* Full height of the window */
             display: flex;
             flex-direction: column;
         }
@@ -77,25 +75,12 @@
             justify-content: flex-end; /* Align buttons to the right */
             align-items: center;
             gap: 10px; /* Space between buttons */
-            margin-bottom: 10px; /* Space below buttons */
         }
         .button {
             margin: 5px;
             padding: 5px 10px;
             font-size: 12px;
             cursor: pointer;
-        }
-        .range-selector {
-            margin-top: 10px;
-            text-align: center; /* Center the range selector */
-        }
-        .range-selector label {
-            margin: 5px 10px;
-        }
-        .range-selector input {
-            margin: 0 5px;
-            padding: 5px;
-            font-size: 14px;
         }
         .header {
             background-color: grey;
@@ -105,15 +90,18 @@
             align-items: center;
             height: 60px; /* Adjust as needed */
         }
+
         .header h1 {
             color: white;
             margin: 0;
         }
+
         .nav-bar {
             display: flex;
             justify-content: center;
             padding: 10px;
         }
+
         .nav-bar .nav-link {
             background-color: black;
             color: white;
@@ -122,6 +110,7 @@
             font-size: 16px;
             border-radius: 5px; /* Optional: Adds rounded corners */
         }
+
         .nav-bar .nav-link:hover {
             background-color: #333; /* Optional: Adds a hover effect */
         }
@@ -150,12 +139,6 @@
             </div>
         </div>
     </div>
-    <div class="range-selector">
-        <label for="minNumber">Minimum Number:</label>
-        <input type="number" id="minNumber" value="1" min="1">
-        <label for="maxNumber">Maximum Number:</label>
-        <input type="number" id="maxNumber" value="48" min="1">
-    </div>
     <div class="header">
         <h1>Lotto Number Generator</h1>
     </div>
@@ -173,15 +156,7 @@
                 document.getElementById('label5'),
                 document.getElementById('label6')
             ];
-            const min = parseInt(document.getElementById('minNumber').value, 10);
-            const max = parseInt(document.getElementById('maxNumber').value, 10);
-
-            if (min >= max) {
-                alert('Minimum number must be less than maximum number.');
-                return;
-            }
-
-            const nums = Array.from({ length: max - min + 1 }, (_, i) => i + min);
+            const nums = Array.from({length: 48}, (_, i) => i + 1);
             shuffle(nums);
             for (let i = 0; i < labels.length; i++) {
                 labels[i].textContent = nums[i];
