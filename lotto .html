@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lotto Number Picker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Prevent scrollbars */
+            background-color: #fff; /* White background */
+        }
+        .window {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 644px; /* Width adjusted for image space */
+            height: 200px; /* Increase height to be twice as deep */
+            border: 2px solid #000;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            cursor: default; /* Remove move cursor */
+            display: flex;
+            box-sizing: border-box;
+            background-color: #f1f1f1; /* Gray background for content area */
+        }
+        .image-container {
+            width: 288px; /* Width of the image space */
+            background: url('https://cdn.discordapp.com/attachments/1278733982657413174/1282626321599565879/image0.png?ex=66e00a59&is=66deb8d9&hm=da240d603592414f41edc5b2e77dc0299298207959d6534c2d80b0aad14e4599&') no-repeat center center;
+            background-size: cover; /* Ensure image fits its container */
+            height: 100%; /* Full height of the window */
+            display: flex;
+            flex-direction: column;
+        }
+        .window-header {
+            height: 30px; /* Height of the top bar */
+            background-color: #fff; /* White background */
+            border-bottom: 2px solid #000; /* Border at the bottom */
+            display: flex;
+            align-items: center;
+            padding-left: 10px; /* Space between image and left edge */
+            box-sizing: border-box;
+            font-weight: normal; /* Remove bold */
+        }
+        .window-header img {
+            height: 20px; /* Adjust height of the image */
+            margin-right: 10px; /* Space between image and text */
+        }
+        .content {
+            flex: 1; /* Take up remaining space */
+            text-align: right; /* Align content to the right */
+            padding: 10px;
+            background-color: #f1f1f1; /* Gray background for content area */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-sizing: border-box;
+        }
+        .number-label {
+            display: inline-block;
+            width: 30px; /* Adjust width */
+            height: 30px; /* Adjust height */
+            line-height: 30px;
+            border: 2px solid #000;
+            margin: 0 5px;
+            text-align: center;
+            font-size: 14px; /* Adjust font size */
+            font-weight: normal; /* Remove bold */
+            background: #fff;
+        }
+        .button-container {
+            display: flex;
+            justify-content: flex-end; /* Align buttons to the right */
+            align-items: center;
+            gap: 10px; /* Space between buttons */
+        }
+        .button {
+            margin: 5px;
+            padding: 5px 10px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .header {
+            background-color: grey;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 60px; /* Adjust as needed */
+        }
+
+        .header h1 {
+            color: white;
+            margin: 0;
+        }
+
+        .nav-bar {
+            display: flex;
+            justify-content: center;
+            padding: 10px;
+        }
+
+        .nav-bar .nav-link {
+            background-color: black;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px; /* Optional: Adds rounded corners */
+        }
+
+        .nav-bar .nav-link:hover {
+            background-color: #333; /* Optional: Adds a hover effect */
+        }
+    </style>
+</head>
+<body>
+    <div class="window" id="appWindow">
+        <div class="image-container">
+            <div class="window-header">
+                <img src="https://cdn.discordapp.com/attachments/1278733982657413174/1282626321599565879/image0.png?ex=66e00a59&is=66deb8d9&hm=da240d603592414f41edc5b2e77dc0299298207959d6534c2d80b0aad14e4599&" alt="Icon">
+                Lotto Number Picker
+            </div>
+        </div>
+        <div class="content">
+            <div>
+                <span id="label1" class="number-label">...</span>
+                <span id="label2" class="number-label">...</span>
+                <span id="label3" class="number-label">...</span>
+                <span id="label4" class="number-label">...</span>
+                <span id="label5" class="number-label">...</span>
+                <span id="label6" class="number-label">...</span>
+            </div>
+            <div class="button-container">
+                <button id="getBtn" class="button">Get My Lucky Numbers</button>
+                <button id="resetBtn" class="button">Reset</button>
+            </div>
+        </div>
+    </div>
+    <div class="header">
+        <h1>Lotto Number Generator</h1>
+    </div>
+    <div class="nav-bar">
+        <a href="https://vugbigeriuerr3.github.io/github.io/" class="nav-link">Back to Main Website</a>
+    </div>
+    <script>
+        // Button functionality
+        document.getElementById('getBtn').addEventListener('click', function() {
+            const labels = [
+                document.getElementById('label1'),
+                document.getElementById('label2'),
+                document.getElementById('label3'),
+                document.getElementById('label4'),
+                document.getElementById('label5'),
+                document.getElementById('label6')
+            ];
+            const nums = Array.from({length: 48}, (_, i) => i + 1);
+            shuffle(nums);
+            for (let i = 0; i < labels.length; i++) {
+                labels[i].textContent = nums[i];
+            }
+            document.getElementById('resetBtn').style.display = 'inline'; // Show Reset button
+        });
+
+        document.getElementById('resetBtn').addEventListener('click', function() {
+            const labels = [
+                document.getElementById('label1'),
+                document.getElementById('label2'),
+                document.getElementById('label3'),
+                document.getElementById('label4'),
+                document.getElementById('label5'),
+                document.getElementById('label6')
+            ];
+            labels.forEach(label => label.textContent = '...');
+            // Removed line to keep Reset button visible
+        });
+
+        function shuffle(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex !== 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+    </script>
+</body>
+</html>
