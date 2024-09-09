@@ -18,39 +18,33 @@
             left: 50%;
             transform: translate(-50%, -50%);
             width: 644px; /* Width adjusted for image space */
-            height: 200px; /* Increase height to be twice as deep */
+            height: 250px; /* Increase height for additional fields */
             border: 2px solid #000;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
             cursor: default; /* Remove move cursor */
             display: flex;
             box-sizing: border-box;
             background-color: #f1f1f1; /* Gray background for content area */
+            flex-direction: column; /* Stack children vertically */
         }
         .image-container {
-            width: 288px; /* Width of the image space */
+            width: 100%;
             background: url('https://cdn.discordapp.com/attachments/1278733982657413174/1282626321599565879/image0.png?ex=66e00a59&is=66deb8d9&hm=da240d603592414f41edc5b2e77dc0299298207959d6534c2d80b0aad14e4599&') no-repeat center center;
             background-size: cover; /* Ensure image fits its container */
-            height: 100%; /* Full height of the window */
-            display: flex;
-            flex-direction: column;
-        }
-        .window-header {
             height: 30px; /* Height of the top bar */
-            background-color: #fff; /* White background */
-            border-bottom: 2px solid #000; /* Border at the bottom */
             display: flex;
             align-items: center;
             padding-left: 10px; /* Space between image and left edge */
             box-sizing: border-box;
             font-weight: normal; /* Remove bold */
         }
-        .window-header img {
+        .image-container img {
             height: 20px; /* Adjust height of the image */
             margin-right: 10px; /* Space between image and text */
         }
         .content {
             flex: 1; /* Take up remaining space */
-            text-align: right; /* Align content to the right */
+            text-align: center; /* Center content */
             padding: 10px;
             background-color: #f1f1f1; /* Gray background for content area */
             display: flex;
@@ -72,9 +66,10 @@
         }
         .button-container {
             display: flex;
-            justify-content: flex-end; /* Align buttons to the right */
+            justify-content: center; /* Center buttons */
             align-items: center;
             gap: 10px; /* Space between buttons */
+            margin-top: 10px; /* Space above buttons */
         }
         .button {
             margin: 5px;
@@ -90,18 +85,15 @@
             align-items: center;
             height: 60px; /* Adjust as needed */
         }
-
         .header h1 {
             color: white;
             margin: 0;
         }
-
         .nav-bar {
             display: flex;
             justify-content: center;
             padding: 10px;
         }
-
         .nav-bar .nav-link {
             background-color: black;
             color: white;
@@ -110,19 +102,19 @@
             font-size: 16px;
             border-radius: 5px; /* Optional: Adds rounded corners */
         }
-
         .nav-bar .nav-link:hover {
             background-color: #333; /* Optional: Adds a hover effect */
         }
     </style>
 </head>
 <body>
+    <div class="header">
+        <h1>Lotto Number Generator</h1>
+    </div>
     <div class="window" id="appWindow">
         <div class="image-container">
-            <div class="window-header">
-                <img src="https://cdn.discordapp.com/attachments/1278733982657413174/1282626321599565879/image0.png?ex=66e00a59&is=66deb8d9&hm=da240d603592414f41edc5b2e77dc0299298207959d6534c2d80b0aad14e4599&" alt="Icon">
-                Lotto Number Picker
-            </div>
+            <img src="https://cdn.discordapp.com/attachments/1278733982657413174/1282626321599565879/image0.png?ex=66e00a59&is=66deb8d9&hm=da240d603592414f41edc5b2e77dc0299298207959d6534c2d80b0aad14e4599&" alt="Icon">
+            Lotto Number Picker
         </div>
         <div class="content">
             <div>
@@ -133,14 +125,17 @@
                 <span id="label5" class="number-label">...</span>
                 <span id="label6" class="number-label">...</span>
             </div>
+            <div>
+                <label for="minRange">Min:</label>
+                <input type="number" id="minRange" value="1">
+                <label for="maxRange">Max:</label>
+                <input type="number" id="maxRange" value="48">
+            </div>
             <div class="button-container">
                 <button id="getBtn" class="button">Get My Lucky Numbers</button>
-                <button id="resetBtn" class="button">Reset</button>
+                <button id="resetBtn" class="button" style="display: none;">Reset</button>
             </div>
         </div>
-    </div>
-    <div class="header">
-        <h1>Lotto Number Generator</h1>
     </div>
     <div class="nav-bar">
         <a href="https://vugbigeriuerr3.github.io/github.io/" class="nav-link">Back to Main Website</a>
@@ -156,7 +151,15 @@
                 document.getElementById('label5'),
                 document.getElementById('label6')
             ];
-            const nums = Array.from({length: 48}, (_, i) => i + 1);
+            const min = parseInt(document.getElementById('minRange').value);
+            const max = parseInt(document.getElementById('maxRange').value);
+
+            if (min >= max) {
+                alert("Minimum value must be less than maximum value.");
+                return;
+            }
+
+            const nums = Array.from({length: max - min + 1}, (_, i) => i + min);
             shuffle(nums);
             for (let i = 0; i < labels.length; i++) {
                 labels[i].textContent = nums[i];
@@ -174,7 +177,7 @@
                 document.getElementById('label6')
             ];
             labels.forEach(label => label.textContent = '...');
-            // Removed line to keep Reset button visible
+            // Keep Reset button visible
         });
 
         function shuffle(array) {
