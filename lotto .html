@@ -23,9 +23,9 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
             cursor: default; /* Remove move cursor */
             display: flex;
+            flex-direction: column; /* Stack elements vertically */
             box-sizing: border-box;
             background-color: #f1f1f1; /* Gray background for content area */
-            flex-direction: column; /* Stack elements vertically */
         }
         .image-container {
             width: 100%; /* Full width of the window */
@@ -85,9 +85,6 @@
             cursor: pointer;
         }
         .range-selector {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
             margin-top: 10px;
         }
         .range-selector label {
