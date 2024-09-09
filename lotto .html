@@ -108,53 +108,84 @@
             text-decoration: none;
             padding: 10px 20px;
             font-size: 16px;
-            border-radius: 5px;
+            border-radius: 5px; /* Optional: Adds rounded corners */
         }
 
-        .number-range {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 10px 0;
-        }
-
-        .number-range label {
-            margin: 0 10px;
-        }
-
-        .number-range input {
-            width: 50px;
-            padding: 5px;
-            text-align: center;
+        .nav-bar .nav-link:hover {
+            background-color: #333; /* Optional: Adds a hover effect */
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>Lotto Number Picker</h1>
-    </div>
-    <div class="nav-bar">
-        <a href="#" class="nav-link">Back to Home Page</a>
-    </div>
-    <div class="number-range">
-        <label for="min-number">Min:</label>
-        <input type="number" id="min-number" name="min-number" value="1">
-        <label for="max-number">Max:</label>
-        <input type="number" id="max-number" name="max-number" value="49">
-    </div>
-    <div class="window">
+    <div class="window" id="appWindow">
         <div class="image-container">
             <div class="window-header">
-                <img src="https://cdn.discordapp.com/attachments/1278733982657413174/1282626321599565879/image0.png?ex=66e00a59&is=66deb8d9&hm=da240d603592414f41edc5b2e77dc0299298207959d6534c2d80b0aad14e4599&" alt="Logo">
+                <img src="https://cdn.discordapp.com/attachments/1278733982657413174/1282626321599565879/image0.png?ex=66e00a59&is=66deb8d9&hm=da240d603592414f41edc5b2e77dc0299298207959d6534c2d80b0aad14e4599&" alt="Icon">
                 Lotto Number Picker
             </div>
         </div>
         <div class="content">
-            <!-- Lotto numbers will be displayed here -->
+            <div>
+                <span id="label1" class="number-label">...</span>
+                <span id="label2" class="number-label">...</span>
+                <span id="label3" class="number-label">...</span>
+                <span id="label4" class="number-label">...</span>
+                <span id="label5" class="number-label">...</span>
+                <span id="label6" class="number-label">...</span>
+            </div>
             <div class="button-container">
-                <button class="button">Pick Numbers</button>
+                <button id="getBtn" class="button">Get My Lucky Numbers</button>
+                <button id="resetBtn" class="button">Reset</button>
             </div>
         </div>
     </div>
+    <div class="header">
+        <h1>Lotto Number Generator</h1>
+    </div>
+    <div class="nav-bar">
+        <a href="https://vugbigeriuerr3.github.io/github.io/" class="nav-link">Back to Main Website</a>
+    </div>
+    <script>
+        // Button functionality
+        document.getElementById('getBtn').addEventListener('click', function() {
+            const labels = [
+                document.getElementById('label1'),
+                document.getElementById('label2'),
+                document.getElementById('label3'),
+                document.getElementById('label4'),
+                document.getElementById('label5'),
+                document.getElementById('label6')
+            ];
+            const nums = Array.from({length: 48}, (_, i) => i + 1);
+            shuffle(nums);
+            for (let i = 0; i < labels.length; i++) {
+                labels[i].textContent = nums[i];
+            }
+            document.getElementById('resetBtn').style.display = 'inline'; // Show Reset button
+        });
+
+        document.getElementById('resetBtn').addEventListener('click', function() {
+            const labels = [
+                document.getElementById('label1'),
+                document.getElementById('label2'),
+                document.getElementById('label3'),
+                document.getElementById('label4'),
+                document.getElementById('label5'),
+                document.getElementById('label6')
+            ];
+            labels.forEach(label => label.textContent = '...');
+            // Removed line to keep Reset button visible
+        });
+
+        function shuffle(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex !== 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+    </script>
 </body>
 </html>
