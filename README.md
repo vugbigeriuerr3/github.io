@@ -11,11 +11,23 @@
             padding: 0;
             background-color: #f4f4f4;
         }
+        /* This will cover the top banner and doctype */
+        .cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 80px; /* Adjust this height if needed */
+            background-color: #fff;
+            z-index: 9999;
+        }
         .header {
             background-color: #333;
             color: white;
             text-align: center;
             padding: 15px 0;
+            position: relative;
+            z-index: 1; /* Make sure the header appears above the cover */
         }
         .header h1 {
             margin: 0;
@@ -47,6 +59,9 @@
     </style>
 </head>
 <body>
+    <!-- Covering element to hide unwanted elements -->
+    <div class="cover"></div>
+    
     <div class="header">
         <h1>HTML to Java</h1>
     </div>
