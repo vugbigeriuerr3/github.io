@@ -8,16 +8,15 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4; /* Grey background */
+            background-color: #f4f4f4;
         }
-        /* This will cover the top banner and doctype with the same grey color */
         .cover {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100px; /* Adjusted height to fully cover the <!DOCTYPE html> */
-            background-color: #f4f4f4; /* Same grey as the body background */
+            height: 100px;
+            background-color: #f4f4f4;
             z-index: 9999;
         }
         .header {
@@ -26,7 +25,7 @@
             text-align: center;
             padding: 15px 0;
             position: relative;
-            z-index: 1; /* Ensure header is above the cover */
+            z-index: 1;
         }
         .header h1 {
             margin: 0;
@@ -58,7 +57,6 @@
     </style>
 </head>
 <body>
-    <!-- Covering element to hide unwanted elements -->
     <div class="cover"></div>
     
     <div class="header">
