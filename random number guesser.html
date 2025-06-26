@@ -39,7 +39,8 @@
 
     <div class="fixed top-4 right-4 z-50 flex items-center space-x-2 bg-white rounded-full py-2 px-4 shadow-md">
         <span id="user-name-display" class="text-lg font-medium text-blue-600">Guest</span>
-        <button id="edit-settings-btn" class="text-gray-500 hover:text-gray-700 transition-colors duration-200 focus:outline-none">
+        <!-- This button now exclusively for name editing -->
+        <button id="edit-name-btn" class="text-gray-500 hover:text-gray-700 transition-colors duration-200 focus:outline-none">
             <i class="fas fa-pencil-alt text-base"></i>
         </button>
     </div>
@@ -56,20 +57,34 @@
                     class="inline-block w-full px-8 py-4 bg-red-500 text-white font-bold text-xl rounded-xl hover:bg-red-600 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75 hidden">
                 Redo It
             </button>
+
+            <!-- New button for Game Settings -->
+            <button id="game-settings-btn" 
+                    class="inline-block w-full px-8 py-4 bg-gray-500 text-white font-bold text-xl rounded-xl hover:bg-gray-600 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75">
+                Game Settings
+            </button>
         </div>
     </div>
 
-    <!-- Game Settings Modal -->
-    <div id="settings-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+    <!-- Name Edit Modal (New) -->
+    <div id="name-edit-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md transform transition-all duration-300 scale-100 opacity-100">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Change Your Name</h2>
+            <div class="mb-6">
+                <label for="name-edit-user-input" class="block text-gray-700 text-sm font-semibold mb-2">Your Name:</label>
+                <input type="text" id="name-edit-user-input" placeholder="Enter your name" 
+                       class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
+            </div>
+            <button id="save-name-only-btn" 
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-all duration-300 shadow-lg">Save Name</button>
+        </div>
+    </div>
+
+    <!-- Game Settings Modal (Updated) -->
+    <div id="game-settings-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md transform transition-all duration-300 scale-100 opacity-100">
             <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Game Settings</h2>
             
-            <div class="mb-4">
-                <label for="settings-user-name-input" class="block text-gray-700 text-sm font-semibold mb-2">Your Name:</label>
-                <input type="text" id="settings-user-name-input" placeholder="Enter your name" 
-                       class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
-            </div>
-
             <div class="mb-4">
                 <label for="min-number-input" class="block text-gray-700 text-sm font-semibold mb-2">Minimum Number:</label>
                 <input type="number" id="min-number-input" value="1" 
@@ -94,8 +109,8 @@
                        class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
             </div>
 
-            <button id="save-settings-btn" 
-                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-all duration-300 shadow-lg">Save Settings</button>
+            <button id="save-game-settings-btn" 
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-all duration-300 shadow-lg">Save Game Settings</button>
         </div>
     </div>
 
@@ -104,14 +119,19 @@
             // DOM Elements
             const goHomeBtn = document.getElementById('go-home-btn');
             const userNameDisplay = document.getElementById('user-name-display');
-            const editSettingsBtn = document.getElementById('edit-settings-btn'); // Renamed from editUserNameBtn
-            const settingsModal = document.getElementById('settings-modal'); // Renamed from nameSetupModal
-            const settingsUserNameInput = document.getElementById('settings-user-name-input'); // Renamed from modalUserNameInput
-            const minNumberInput = document.getElementById('min-number-input'); // New
-            const maxNumberInput = document.getElementById('max-number-input'); // New
-            const veryCloseDiffInput = document.getElementById('very-close-diff-input'); // New
-            const closeDiffInput = document.getElementById('close-diff-input'); // New
-            const saveSettingsBtn = document.getElementById('save-settings-btn'); // Renamed from saveNameBtn
+            const editNameBtn = document.getElementById('edit-name-btn'); // Renamed edit-settings-btn to edit-name-btn
+            const gameSettingsBtn = document.getElementById('game-settings-btn'); // New button for game settings
+
+            const nameEditModal = document.getElementById('name-edit-modal'); // New modal for name only
+            const nameEditUserInput = document.getElementById('name-edit-user-input');
+            const saveNameOnlyBtn = document.getElementById('save-name-only-btn');
+
+            const gameSettingsModal = document.getElementById('game-settings-modal'); // Renamed settings-modal
+            const minNumberInput = document.getElementById('min-number-input');
+            const maxNumberInput = document.getElementById('max-number-input');
+            const veryCloseDiffInput = document.getElementById('very-close-diff-input');
+            const closeDiffInput = document.getElementById('close-diff-input');
+            const saveGameSettingsBtn = document.getElementById('save-game-settings-btn'); // Renamed save-settings-btn
 
             const guessInput = document.getElementById('guess-input');
             const redoGameBtn = document.getElementById('redo-game-btn');
@@ -127,8 +147,8 @@
                 userName: '',
                 minNumber: 1,
                 maxNumber: 100,
-                veryCloseDiff: 5,  // Difference <= 5 for 'very close'
-                closeDiff: 15     // Difference <= 15 for 'close'
+                veryCloseDiff: 5,  
+                closeDiff: 15     
             };
 
             // Cookie Management Functions (consistent across apps)
@@ -160,25 +180,24 @@
             // User Name & Settings Modal Management
             const renderUserName = () => {
                 userNameDisplay.textContent = appState.userName || 'Guest';
-                // If userName is empty and modal hasn't been shown, display settings modal
-                if (!appState.userName && !sessionStorage.getItem('settingsModalShown')) {
-                    settingsModal.classList.remove('hidden');
-                    sessionStorage.setItem('settingsModalShown', 'true'); // Prevent showing repeatedly on refresh
+                // If userName is empty and modal hasn't been shown, display name edit modal
+                if (!appState.userName && !sessionStorage.getItem('nameEditModalShown')) {
+                    nameEditModal.classList.remove('hidden');
+                    sessionStorage.setItem('nameEditModalShown', 'true'); // Prevent showing repeatedly on refresh
                 } else if (appState.userName) {
-                    settingsModal.classList.add('hidden');
+                    nameEditModal.classList.add('hidden');
                 }
             };
 
             // Game Logic Functions
             const startGame = () => {
-                // Use configurable min/max numbers
                 secretNumber = Math.floor(Math.random() * (appState.maxNumber - appState.minNumber + 1)) + appState.minNumber;
                 attempts = 0;
                 gameOver = false;
                 gameMessage.textContent = `Guess a number between ${appState.minNumber} and ${appState.maxNumber}!`;
-                gameMessage.className = 'text-lg text-gray-600 mb-8'; // Reset color
+                gameMessage.className = 'text-lg text-gray-600 mb-8';
                 guessInput.value = '';
-                guessInput.min = appState.minNumber; // Update input field min/max attributes
+                guessInput.min = appState.minNumber;
                 guessInput.max = appState.maxNumber;
                 guessInput.disabled = false;
                 redoGameBtn.classList.add('hidden');
@@ -189,7 +208,7 @@
 
                 if (isNaN(guess) || guess < appState.minNumber || guess > appState.maxNumber) {
                     gameMessage.textContent = `Please enter a valid number between ${appState.minNumber} and ${appState.maxNumber}.`;
-                    gameMessage.classList.add('text-lg', 'text-red-600', 'mb-8'); // Error message color
+                    gameMessage.classList.add('text-lg', 'text-red-600', 'mb-8');
                     return;
                 }
 
@@ -197,26 +216,25 @@
 
                 const difference = Math.abs(guess - secretNumber);
 
-                // Remove existing color classes
                 gameMessage.classList.remove('text-green-600', 'text-yellow-600', 'text-orange-600', 'text-red-600', 'text-gray-600');
-                gameMessage.classList.add('text-lg', 'mb-8'); // Ensure base classes remain
+                gameMessage.classList.add('text-lg', 'mb-8');
 
                 if (guess === secretNumber) {
                     gameMessage.textContent = `Congratulations! You guessed the number ${secretNumber} in ${attempts} attempts!`;
-                    gameMessage.classList.add('text-green-600'); // Correct guess color
+                    gameMessage.classList.add('text-green-600');
                     gameOver = true;
                     guessInput.disabled = true;
                     redoGameBtn.classList.remove('hidden');
                 } else {
                     if (difference <= appState.veryCloseDiff) {
                         gameMessage.textContent = 'You\'re very close!';
-                        gameMessage.classList.add('text-yellow-600'); // Very close color
+                        gameMessage.classList.add('text-yellow-600');
                     } else if (difference <= appState.closeDiff) {
                         gameMessage.textContent = 'You\'re close!';
-                        gameMessage.classList.add('text-orange-600'); // Close color
+                        gameMessage.classList.add('text-orange-600');
                     } else {
                         gameMessage.textContent = 'You\'re far off!';
-                        gameMessage.classList.add('text-red-600'); // Far off color
+                        gameMessage.classList.add('text-red-600');
                     }
                     if (guess < secretNumber) {
                         gameMessage.textContent += ' Too low! Try again.';
@@ -231,14 +249,63 @@
                 window.location.href = 'https://vugbigeriuerr3.github.io/github.io/?' + new Date().getTime();
             });
 
-            saveSettingsBtn.addEventListener('click', () => {
-                const newUserName = settingsUserNameInput.value.trim();
+            // Event listener for the "Save Name" button in the Name Edit Modal
+            saveNameOnlyBtn.addEventListener('click', () => {
+                const newUserName = nameEditUserInput.value.trim();
+                if (newUserName) {
+                    const loadedCookieData = getCookie('appState');
+                    let currentAppState = {};
+                    if (loadedCookieData) {
+                        try {
+                            currentAppState = JSON.parse(loadedCookieData);
+                        } catch (e) {
+                            console.error('Error parsing existing appState cookie:', e);
+                        }
+                    }
+                    currentAppState.userName = newUserName; 
+                    appState.userName = newUserName; 
+
+                    setCookie('appState', JSON.stringify(currentAppState), 365);
+                    renderUserName();
+                    nameEditModal.classList.add('hidden');
+                } else {
+                    let messageElement = saveNameOnlyBtn.parentElement.querySelector('.temp-error-message');
+                    if (!messageElement) {
+                        messageElement = document.createElement('p');
+                        messageElement.className = 'text-red-500 text-sm mt-2 text-center temp-error-message';
+                        saveNameOnlyBtn.parentElement.insertBefore(messageElement, saveNameOnlyBtn);
+                    }
+                    messageElement.textContent = 'Please enter a name.';
+                    setTimeout(() => {
+                        messageElement.remove();
+                    }, 2000);
+                }
+            });
+
+            // Event listener for the pencil icon (Edit Name)
+            editNameBtn.addEventListener('click', () => {
+                nameEditUserInput.value = appState.userName;
+                nameEditModal.classList.remove('hidden');
+                const existingMessage = saveNameOnlyBtn.parentElement.querySelector('.temp-error-message');
+                if (existingMessage) existingMessage.remove();
+            });
+
+            // Event listener for the "Game Settings" button
+            gameSettingsBtn.addEventListener('click', () => {
+                minNumberInput.value = appState.minNumber;
+                maxNumberInput.value = appState.maxNumber;
+                veryCloseDiffInput.value = appState.veryCloseDiff;
+                closeDiffInput.value = appState.closeDiff;
+                gameSettingsModal.classList.remove('hidden');
+            });
+
+            // Event listener for the "Save Game Settings" button
+            saveGameSettingsBtn.addEventListener('click', () => {
                 const newMinNumber = parseInt(minNumberInput.value);
                 const newMaxNumber = parseInt(maxNumberInput.value);
                 const newVeryCloseDiff = parseInt(veryCloseDiffInput.value);
                 const newCloseDiff = parseInt(closeDiffInput.value);
 
-                // Basic validation for numbers
                 if (isNaN(newMinNumber) || newMinNumber < 1) {
                     alert('Please enter a valid minimum number (at least 1).');
                     return;
@@ -256,7 +323,6 @@
                     return;
                 }
                 
-                // Load existing cookie data to preserve other app settings
                 const loadedCookieData = getCookie('appState');
                 let currentAppState = {};
                 if (loadedCookieData) {
@@ -267,35 +333,18 @@
                     }
                 }
 
-                // Update only relevant properties
-                currentAppState.userName = newUserName || '';
                 currentAppState.minNumber = newMinNumber;
                 currentAppState.maxNumber = newMaxNumber;
                 currentAppState.veryCloseDiff = newVeryCloseDiff;
                 currentAppState.closeDiff = newCloseDiff;
                 
-                // Update local appState
                 appState = { ...appState, ...currentAppState };
 
-                setCookie('appState', JSON.stringify(appState), 365); // Save the entire merged state
-                renderUserName(); // Update display
-                settingsModal.classList.add('hidden'); // Hide modal
-                startGame(); // Restart game with new settings
+                setCookie('appState', JSON.stringify(appState), 365);
+                gameSettingsModal.classList.add('hidden');
+                startGame();
             });
 
-            editSettingsBtn.addEventListener('click', () => {
-                settingsUserNameInput.value = appState.userName;
-                minNumberInput.value = appState.minNumber;
-                maxNumberInput.value = appState.maxNumber;
-                veryCloseDiffInput.value = appState.veryCloseDiff;
-                closeDiffInput.value = appState.closeDiff;
-                settingsModal.classList.remove('hidden');
-                // Clear any temporary error messages when opening the modal
-                const existingMessage = saveSettingsBtn.parentElement.querySelector('.temp-error-message');
-                if (existingMessage) existingMessage.remove();
-            });
-
-            // Automatic guess submission on Enter key
             guessInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter' && !gameOver) {
                     checkGuess();
@@ -303,30 +352,26 @@
             });
             redoGameBtn.addEventListener('click', startGame);
 
-            // Initial setup on page load
             const init = () => {
                 const loadedCookieData = getCookie('appState');
                 if (loadedCookieData) {
                     try {
                         const parsedState = JSON.parse(loadedCookieData);
-                        // Merge loaded properties into appState, prioritizing loaded values
-                        // Ensure all expected properties are initialized if missing from old cookies
                         appState.userName = parsedState.userName || '';
                         appState.minNumber = parsedState.minNumber !== undefined ? parsedState.minNumber : 1;
                         appState.maxNumber = parsedState.maxNumber !== undefined ? parsedState.maxNumber : 100;
                         appState.veryCloseDiff = parsedState.veryCloseDiff !== undefined ? parsedState.veryCloseDiff : 5;
                         appState.closeDiff = parsedState.closeDiff !== undefined ? parsedState.closeDiff : 15;
                         
-                        // Preserve any other unknown properties from the cookie (e.g., from Counter app)
-                        appState = { ...parsedState, ...appState }; // Merge parsedState into appState, appState's defaults will override if parsedState doesn't have it, but parsedState will override if it does. This way other app's data is preserved.
+                        appState = { ...parsedState, ...appState };
                     } catch (e) {
                         console.error('Error parsing appState cookie on init:', e);
-                        deleteCookie('appState'); // Clear corrupted cookie
-                        // appState remains at its default values if cookie is bad
+                        deleteCookie('appState');
+                        appState.userName = '';
                     }
                 }
-                renderUserName(); // Display user name or show modal if empty
-                startGame(); // Start the game with current or default settings
+                renderUserName();
+                startGame();
             };
 
             init();
