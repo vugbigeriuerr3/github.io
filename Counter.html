@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Number Counter</title>
-    <!-- Tailwind CSS CDN -->
+    <title>Teacher Counter</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
@@ -19,29 +18,22 @@
         <h1 class="text-4xl font-bold text-center mb-8 text-gray-800">Number Counter</h1>
 
         <div class="flex flex-col space-y-6">
-            <!-- Evarard Counter Section -->
             <div class="flex flex-col items-center p-4 bg-blue-50 rounded-xl border border-blue-200 shadow-md">
                 <button id="evarardButton" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 mb-4 focus:outline-none focus:ring-4 focus:ring-blue-300">
                     Evarard
                 </button>
                 <p class="text-3xl font-extrabold text-blue-800" id="evarardCount">0</p>
             </div>
-
-            <!-- Buburu Counter Section -->
             <div class="flex flex-col items-center p-4 bg-green-50 rounded-xl border border-green-200 shadow-md">
                 <button id="buburuButton" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 mb-4 focus:outline-none focus:ring-4 focus:ring-green-300">
-                    Buburu
+                    Muburu
                 </button>
                 <p class="text-3xl font-extrabold text-green-800" id="buburuCount">0</p>
             </div>
         </div>
-
-        <!-- User ID Display -->
         <div class="mt-8 text-center text-sm text-gray-600">
             <p>Your User ID: <span id="userIdDisplay" class="font-mono bg-gray-100 px-2 py-1 rounded-md text-gray-700 break-all">rafferty</span></p>
         </div>
-
-        <!-- Message Box (kept for general notifications if needed, though less critical without Firebase) -->
         <div id="messageBox" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50 hidden">
             <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
                 <p id="messageText" class="text-lg font-semibold text-gray-800 mb-4"></p>
@@ -49,9 +41,7 @@
             </div>
         </div>
     </div>
-
     <script type="module">
-        // Element references
         const evarardCountElement = document.getElementById('evarardCount');
         const buburuCountElement = document.getElementById('buburuCount');
         const evarardButton = document.getElementById('evarardButton');
@@ -61,37 +51,20 @@
         const messageText = document.getElementById('messageText');
         const messageCloseButton = document.getElementById('messageCloseButton');
 
-        const userId = 'rafferty'; // Fixed user ID as requested
-
-        // Function to show a custom message box
+        const userId = 'rafferty';
         function showMessageBox(message) {
             messageText.textContent = message;
             messageBox.classList.remove('hidden');
         }
-
-        // Event listener for message box close button
         messageCloseButton.addEventListener('click', () => {
             messageBox.classList.add('hidden');
         });
-
-        /**
-         * Sets a cookie with a given name, value, and expiration days.
-         * @param {string} name The name of the cookie.
-         * @param {string} value The value to store in the cookie.
-         * @param {number} days The number of days until the cookie expires.
-         */
         function setCookie(name, value, days) {
             const date = new Date();
             date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
             const expires = "expires=" + date.toUTCString();
             document.cookie = name + "=" + value + ";" + expires + ";path=/";
         }
-
-        /**
-         * Gets the value of a cookie by its name.
-         * @param {string} name The name of the cookie to retrieve.
-         * @returns {string} The cookie's value, or an empty string if not found.
-         */
         function getCookie(name) {
             const nameEQ = name + "=";
             const ca = document.cookie.split(';');
@@ -102,48 +75,27 @@
             }
             return "";
         }
-
-        /**
-         * Initializes the counter values from cookies on page load.
-         */
         function initializeCounters() {
-            // Display the fixed user ID
             userIdDisplay.textContent = userId;
-
-            // Load counts from cookies
             const evarardCount = parseInt(getCookie('evarardCount')) || 0;
             const buburuCount = parseInt(getCookie('buburuCount')) || 0;
 
             evarardCountElement.textContent = evarardCount;
             buburuCountElement.textContent = buburuCount;
         }
-
-        /**
-         * Increments the specified counter and saves the new value to a cookie.
-         * @param {string} type The type of counter to increment ('evarard' or 'buburu').
-         */
         function incrementCounter(type) {
             let currentCount = parseInt(getCookie(`${type}Count`)) || 0;
             currentCount++;
-
-            // Update the display
             if (type === 'evarard') {
                 evarardCountElement.textContent = currentCount;
             } else if (type === 'buburu') {
                 buburuCountElement.textContent = currentCount;
             }
-
-            // Save the new count to a cookie (persists for 365 days)
             setCookie(`${type}Count`, currentCount, 365);
         }
-
-        // Event listeners for buttons
         evarardButton.addEventListener('click', () => incrementCounter('evarard'));
         buburuButton.addEventListener('click', () => incrementCounter('buburu'));
-
-        // Initialize counters on window load
         window.onload = initializeCounters;
-
     </script>
 </body>
 </html>
