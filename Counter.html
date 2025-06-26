@@ -311,12 +311,14 @@
                     customCardBg: '#ffffff',
                     textSize: 'text-custom-base'
                 },
-                counters: [],
+                pages: {
+                    '1': []
+                }, // Store counters per page
                 currentPage: 1,
                 countersPerPage: 6
             };
 
-            let currentEditingCounterIndex = -1;
+            let currentEditingCounterId = null;
 
             const setCookie = (name, value, days) => {
                 let expires = '';
@@ -454,18 +456,26 @@
 
             const renderCounters = () => {
                 countersGrid.innerHTML = '';
-                const startIndex = (appState.currentPage - 1) * appState.countersPerPage;
-                const endIndex = Math.min(startIndex + appState.countersPerPage, appState.counters.length);
-                
-                const countersToRender = appState.counters.slice(startIndex, endIndex);
+                const currentPageKey = appState.currentPage.toString();
+                let currentCounters = appState.pages[currentPageKey] || [];
 
-                if (countersToRender.length === 0 && appState.currentPage > 1) {
-                    appState.currentPage--;
+                if (currentCounters.length === 0 && Object.keys(appState.pages).length > 1 && appState.currentPage > 1) {
+                    delete appState.pages[currentPageKey]; // Remove empty page if navigating away
+                    appState.currentPage--; // Go back to previous page
+                    saveAppState();
                     renderCounters();
                     return;
+                } else if (currentCounters.length === 0 && appState.currentPage === 1 && Object.keys(appState.pages).length === 1) {
+                    // If page 1 is empty and it's the only page, initialize it if it's not an array
+                    if (!Array.isArray(appState.pages[currentPageKey])) {
+                        appState.pages[currentPageKey] = [];
+                    }
+                } else if (!Array.isArray(appState.pages[currentPageKey])) {
+                     appState.pages[currentPageKey] = []; // Ensure it's an array if not defined during navigation
                 }
+                currentCounters = appState.pages[currentPageKey]; // Re-fetch after potential updates
 
-                countersToRender.forEach((counter) => {
+                currentCounters.forEach((counter) => {
                     const counterCard = document.createElement('div');
                     counterCard.className = 'counter-card';
                     counterCard.innerHTML = `
@@ -482,28 +492,30 @@
                     countersGrid.appendChild(counterCard);
                 });
 
-                const totalPages = Math.max(1, Math.ceil(appState.counters.length / appState.countersPerPage));
+                const totalPages = Math.max(1, Object.keys(appState.pages).length);
                 pageInfo.textContent = `Page ${appState.currentPage} of ${totalPages}`;
 
                 prevPageBtn.disabled = appState.currentPage === 1;
-                nextPageBtn.disabled = appState.currentPage === totalPages;
+                nextPageBtn.disabled = appState.currentPage >= totalPages;
 
                 applyDisplaySettings();
             };
 
             const incrementCounter = (id) => {
-                const index = appState.counters.findIndex(c => c.id === id);
+                const currentPageKey = appState.currentPage.toString();
+                const index = appState.pages[currentPageKey].findIndex(c => c.id === id);
                 if (index !== -1) {
-                    appState.counters[index].value++;
+                    appState.pages[currentPageKey][index].value++;
                     saveAppState();
                     renderCounters();
                 }
             };
 
             const decrementCounter = (id) => {
-                const index = appState.counters.findIndex(c => c.id === id);
+                const currentPageKey = appState.currentPage.toString();
+                const index = appState.pages[currentPageKey].findIndex(c => c.id === id);
                 if (index !== -1) {
-                    appState.counters[index].value--;
+                    appState.pages[currentPageKey][index].value--;
                     saveAppState();
                     renderCounters();
                 }
@@ -522,15 +534,29 @@
                     return;
                 }
 
-                if (currentEditingCounterIndex === -1) {
-                    const totalCountersOnCurrentPage = appState.counters.slice((appState.currentPage - 1) * appState.countersPerPage, appState.currentPage * appState.countersPerPage).length;
-                    if (totalCountersOnCurrentPage >= appState.countersPerPage) {
-                        appState.currentPage++;
+                const currentPageKey = appState.currentPage.toString();
+
+                if (currentEditingCounterId === null) {
+                    // Adding new counter
+                    if (!appState.pages[currentPageKey]) {
+                        appState.pages[currentPageKey] = [];
                     }
-                    appState.counters.push({ id: Date.now(), name, value });
+
+                    if (appState.pages[currentPageKey].length >= appState.countersPerPage) {
+                        appState.currentPage++;
+                        const nextPageKey = appState.currentPage.toString();
+                        appState.pages[nextPageKey] = [];
+                        appState.pages[nextPageKey].push({ id: Date.now(), name, value });
+                    } else {
+                        appState.pages[currentPageKey].push({ id: Date.now(), name, value });
+                    }
                 } else {
-                    appState.counters[currentEditingCounterIndex].name = name;
-                    appState.counters[currentEditingCounterIndex].value = value;
+                    // Updating existing counter
+                    const index = appState.pages[currentPageKey].findIndex(c => c.id === currentEditingCounterId);
+                    if (index !== -1) {
+                        appState.pages[currentPageKey][index].name = name;
+                        appState.pages[currentPageKey][index].value = value;
+                    }
                 }
                 saveAppState();
                 configureCounterModal.classList.add('hidden');
@@ -538,11 +564,15 @@
             };
 
             const deleteCounter = () => {
-                if (currentEditingCounterIndex !== -1 && confirm('Are you sure you want to delete this counter?')) {
-                    appState.counters.splice(currentEditingCounterIndex, 1);
-                    saveAppState();
-                    configureCounterModal.classList.add('hidden');
-                    renderCounters();
+                if (currentEditingCounterId !== null && confirm('Are you sure you want to delete this counter?')) {
+                    const currentPageKey = appState.currentPage.toString();
+                    const index = appState.pages[currentPageKey].findIndex(c => c.id === currentEditingCounterId);
+                    if (index !== -1) {
+                        appState.pages[currentPageKey].splice(index, 1);
+                        saveAppState();
+                        configureCounterModal.classList.add('hidden');
+                        renderCounters();
+                    }
                 }
             };
 
@@ -653,12 +683,14 @@
                 countersPerPageInput.value = appState.countersPerPage;
 
                 dynamicCounterNamesContainer.innerHTML = '';
-                appState.counters.forEach((counter, index) => {
+                // Only show names for counters on the current page
+                const currentPageCounters = appState.pages[appState.currentPage.toString()] || [];
+                currentPageCounters.forEach((counter, index) => {
                     const div = document.createElement('div');
                     div.className = 'flex items-center space-x-2';
                     div.innerHTML = `
-                        <label for="counter-name-${counter.id}" class="block text-gray-700 text-sm font-semibold w-1/4 text-right">Name ${index + 1}:</label>
-                        <input type="text" id="counter-name-${counter.id}" value="${counter.name}" data-counter-id="${counter.id}"
+                        <label for="settings-counter-name-${counter.id}" class="block text-gray-700 text-sm font-semibold w-1/4 text-right">Counter ${index + 1}:</label>
+                        <input type="text" id="settings-counter-name-${counter.id}" value="${counter.name}" data-counter-id="${counter.id}"
                                class="shadow-sm appearance-none border rounded-xl flex-1 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
                     `;
                     dynamicCounterNamesContainer.appendChild(div);
@@ -683,19 +715,21 @@
                 document.title = newWebsiteTitle;
                 websiteMainTitle.textContent = newWebsiteTitle;
 
+                const currentPageKey = appState.currentPage.toString();
+                const currentCounters = appState.pages[currentPageKey] || [];
                 dynamicCounterNamesContainer.querySelectorAll('input').forEach(input => {
                     const counterId = parseInt(input.dataset.counterId);
                     const newName = input.value.trim();
-                    const counterIndex = appState.counters.findIndex(c => c.id === counterId);
-                    if (counterIndex !== -1) {
-                        appState.counters[counterIndex].name = newName;
+                    const counter = currentCounters.find(c => c.id === counterId);
+                    if (counter) {
+                        counter.name = newName;
                     }
                 });
 
                 appState.countersPerPage = newCountersPerPage;
-                const totalPagesAfterChange = Math.max(1, Math.ceil(appState.counters.length / appState.countersPerPage));
-                if (appState.currentPage > totalPagesAfterChange) {
-                    appState.currentPage = totalPagesAfterChange;
+                const totalPages = Math.max(1, Object.keys(appState.pages).length);
+                if (appState.currentPage > totalPages) {
+                    appState.currentPage = totalPages;
                 }
                 saveAppState();
                 renderCounters();
@@ -708,7 +742,7 @@
                 configureCounterModalTitle.textContent = 'Add New Counter';
                 saveCounterBtn.textContent = 'Add Counter';
                 deleteCounterBtn.classList.add('hidden');
-                currentEditingCounterIndex = -1;
+                currentEditingCounterId = null;
                 configureCounterModal.classList.remove('hidden');
             });
 
@@ -717,23 +751,23 @@
                 if (!targetButton) return;
 
                 const id = parseInt(targetButton.dataset.id);
-                const index = appState.counters.findIndex(c => c.id === id);
-
-                if (index === -1) return;
-
+                
                 if (targetButton.classList.contains('increment-btn')) {
                     incrementCounter(id);
                 } else if (targetButton.classList.contains('decrement-btn')) {
                     decrementCounter(id);
                 } else if (targetButton.classList.contains('edit-counter-btn')) {
-                    currentEditingCounterIndex = index;
-                    const counter = appState.counters[index];
-                    counterNameInput.value = counter.name;
-                    counterValueInput.value = counter.value;
-                    configureCounterModalTitle.textContent = 'Edit Counter';
-                    saveCounterBtn.textContent = 'Save Changes';
-                    deleteCounterBtn.classList.remove('hidden');
-                    configureCounterModal.classList.remove('hidden');
+                    const currentPageKey = appState.currentPage.toString();
+                    const counter = appState.pages[currentPageKey].find(c => c.id === id);
+                    if (counter) {
+                        currentEditingCounterId = id;
+                        counterNameInput.value = counter.name;
+                        counterValueInput.value = counter.value;
+                        configureCounterModalTitle.textContent = 'Edit Counter';
+                        saveCounterBtn.textContent = 'Save Changes';
+                        deleteCounterBtn.classList.remove('hidden');
+                        configureCounterModal.classList.remove('hidden');
+                    }
                 }
             });
 
@@ -749,11 +783,20 @@
             });
 
             nextPageBtn.addEventListener('click', () => {
-                const totalPages = Math.ceil(appState.counters.length / appState.countersPerPage);
+                const totalPages = Object.keys(appState.pages).length;
                 if (appState.currentPage < totalPages) {
                     appState.currentPage++;
                     saveAppState();
                     renderCounters();
+                } else {
+                    // If at last page, and it's full, create a new page
+                    const currentPageKey = appState.currentPage.toString();
+                    if (!appState.pages[currentPageKey] || appState.pages[currentPageKey].length >= appState.countersPerPage) {
+                        appState.currentPage++;
+                        appState.pages[appState.currentPage.toString()] = [];
+                        saveAppState();
+                        renderCounters();
+                    }
                 }
             });
 
@@ -762,6 +805,15 @@
                 if (loadedCookieData) {
                     try {
                         const parsedState = JSON.parse(loadedCookieData);
+                        // Handle migration from old 'counters' array to new 'pages' object
+                        if (parsedState.counters && !parsedState.pages) {
+                            appState.pages = { '1': parsedState.counters };
+                            appState.currentPage = 1;
+                            delete parsedState.counters; // Clean up old property
+                        } else {
+                            appState.pages = parsedState.pages || { '1': [] };
+                        }
+
                         appState = { ...appState, ...parsedState };
                         
                         appState.userName = parsedState.userName || '';
@@ -772,7 +824,6 @@
                             appState.displaySettings.customCardBg = parsedState.displaySettings.customCardBg || '#ffffff';
                             appState.displaySettings.textSize = parsedState.displaySettings.textSize || 'text-custom-base';
                         }
-                        appState.counters = parsedState.counters || [];
                         appState.currentPage = parsedState.currentPage || 1;
                         appState.countersPerPage = parsedState.countersPerPage !== undefined ? parsedState.countersPerPage : 6;
 
@@ -781,6 +832,11 @@
                         deleteCookie('appState');
                     }
                 }
+                // Ensure current page exists, if not, create it
+                if (!appState.pages[appState.currentPage.toString()]) {
+                    appState.pages[appState.currentPage.toString()] = [];
+                }
+
                 document.title = appState.websiteTitle;
                 websiteMainTitle.textContent = appState.websiteTitle;
                 renderUserName();
