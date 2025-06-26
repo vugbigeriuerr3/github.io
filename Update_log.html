@@ -337,27 +337,27 @@
             // Updates content data
             const updates = [
                 {
-                    date: 'June 20, 2025',
+                    date: 'June 26, 2025',
                     title: 'Initial Website Setup & Basic Counter',
                     description: 'The very first version of the website with a simple counter application was created.'
                 },
                 {
-                    date: 'June 22, 2025',
+                    date: 'June 26, 2025',
                     title: 'Counter App Enhancements (Pagination & Max 5)',
                     description: 'Introduced pagination for the counter application, limiting counters to 5 per page with individual page titles. Enabled navigation with arrow buttons. (This update was later reverted for a different approach).'
                 },
                 {
-                    date: 'June 23, 2025',
+                    date: 'June 26, 2025',
                     title: 'Counter App Refinement: No Warning Threshold, Strict Max 5',
                     description: 'Removed the "Warning Threshold" feature from the Counter app and strictly enforced a maximum of 5 counters per page with visual feedback for invalid input. This was a revised approach after initial pagination ideas.'
                 },
                 {
-                    date: 'June 24, 2025',
+                    date: 'June 26, 2025',
                     title: 'Homepage Revamp & Navigation',
                     description: 'Completely redesigned the homepage with a modern, consistent look. Added a prominent "Go to Dynamic Counter Application" button and ensured the default GitHub Pages text was hidden.'
                 },
                 {
-                    date: 'June 25, 2025',
+                    date: 'June 26, 2025',
                     title: 'Random Number Guesser: Revamped & Cookie Integration',
                     description: 'Overhauled the Random Number Guesser app with a new design, user name persistence via cookies, automatic guess submission on Enter, and message color changes based on guess closeness. The "Change User" button was also removed and replaced by the top-right edit icon.'
                 },
@@ -489,19 +489,21 @@
                 if (loadedCookieData) {
                     try {
                         currentAppState = JSON.parse(loadedCookieData);
+                        // Ensure displaySettings exists before trying to assign properties
+                        if (!currentAppState.displaySettings) {
+                            currentAppState.displaySettings = {};
+                        }
                     } catch (e) {
                         console.error('Error parsing existing appState cookie:', e);
                     }
                 }
 
-                currentAppState.displaySettings = {
-                    theme: selectedTheme,
-                    customBodyBg: newCustomBodyBg,
-                    customCardBg: newCustomCardBg,
-                    textSize: newTextSize
-                };
+                currentAppState.displaySettings.theme = selectedTheme;
+                currentAppState.displaySettings.customBodyBg = newCustomBodyBg;
+                currentAppState.displaySettings.customCardBg = newCustomCardBg;
+                currentAppState.displaySettings.textSize = newTextSize;
                 
-                appState.displaySettings = currentAppState.displaySettings;
+                appState.displaySettings = currentAppState.displaySettings; // Update local appState with new display settings
 
                 setCookie('appState', JSON.stringify(currentAppState), 365);
                 applyDisplaySettings();
@@ -520,6 +522,7 @@
                             appState.displaySettings.customCardBg = parsedState.displaySettings.customCardBg || '#ffffff';
                             appState.displaySettings.textSize = parsedState.displaySettings.textSize || 'text-custom-base';
                         }
+                        // Merge to preserve any other unknown properties from the cookie (e.g., from other apps)
                         appState = { ...parsedState, ...appState };
                     } catch (e) {
                         console.error('Error parsing appState cookie on init:', e);
