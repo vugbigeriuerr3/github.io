@@ -39,7 +39,6 @@
 
     <div class="fixed top-4 right-4 z-50 flex items-center space-x-2 bg-white rounded-full py-2 px-4 shadow-md">
         <span id="user-name-display" class="text-lg font-medium text-blue-600">Guest</span>
-        <!-- This button now exclusively for name editing -->
         <button id="edit-name-btn" class="text-gray-500 hover:text-gray-700 transition-colors duration-200 focus:outline-none">
             <i class="fas fa-pencil-alt text-base"></i>
         </button>
@@ -58,7 +57,6 @@
                 Redo It
             </button>
 
-            <!-- New button for Game Settings -->
             <button id="game-settings-btn" 
                     class="inline-block w-full px-8 py-4 bg-gray-500 text-white font-bold text-xl rounded-xl hover:bg-gray-600 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75">
                 Game Settings
@@ -66,7 +64,7 @@
         </div>
     </div>
 
-    <!-- Name Edit Modal (New) -->
+    <!-- Name Edit Modal -->
     <div id="name-edit-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md transform transition-all duration-300 scale-100 opacity-100">
             <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Change Your Name</h2>
@@ -80,7 +78,7 @@
         </div>
     </div>
 
-    <!-- Game Settings Modal (Updated) -->
+    <!-- Game Settings Modal -->
     <div id="game-settings-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md transform transition-all duration-300 scale-100 opacity-100">
             <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Game Settings</h2>
@@ -96,6 +94,27 @@
                 <input type="number" id="max-number-input" value="100" 
                        class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
             </div>
+
+            <div class="mb-6">
+                <label class="block text-gray-700 text-sm font-semibold mb-2">Secret Number Mode:</label>
+                <div class="flex flex-col space-y-2">
+                    <label class="inline-flex items-center">
+                        <input type="radio" name="secret-number-mode" value="random" class="form-radio text-blue-600" checked>
+                        <span class="ml-2 text-gray-700">Random Number</span>
+                    </label>
+                    <label class="inline-flex items-center">
+                        <input type="radio" name="secret-number-mode" value="manual" class="form-radio text-blue-600">
+                        <span class="ml-2 text-gray-700">Set Specific Number</span>
+                    </label>
+                </div>
+            </div>
+
+            <div id="manual-secret-number-input-group" class="mb-6 hidden">
+                <label for="manual-secret-number-input" class="block text-gray-700 text-sm font-semibold mb-2">Set Secret Number:</label>
+                <input type="number" id="manual-secret-number-input" placeholder="Enter secret number" 
+                       class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
+            </div>
+
 
             <div class="mb-4">
                 <label for="very-close-diff-input" class="block text-gray-700 text-sm font-semibold mb-2">"Very Close" Difference (e.g., 5):</label>
@@ -119,19 +138,22 @@
             // DOM Elements
             const goHomeBtn = document.getElementById('go-home-btn');
             const userNameDisplay = document.getElementById('user-name-display');
-            const editNameBtn = document.getElementById('edit-name-btn'); // Renamed edit-settings-btn to edit-name-btn
-            const gameSettingsBtn = document.getElementById('game-settings-btn'); // New button for game settings
+            const editNameBtn = document.getElementById('edit-name-btn');
+            const gameSettingsBtn = document.getElementById('game-settings-btn'); 
 
-            const nameEditModal = document.getElementById('name-edit-modal'); // New modal for name only
+            const nameEditModal = document.getElementById('name-edit-modal');
             const nameEditUserInput = document.getElementById('name-edit-user-input');
             const saveNameOnlyBtn = document.getElementById('save-name-only-btn');
 
-            const gameSettingsModal = document.getElementById('game-settings-modal'); // Renamed settings-modal
+            const gameSettingsModal = document.getElementById('game-settings-modal');
             const minNumberInput = document.getElementById('min-number-input');
             const maxNumberInput = document.getElementById('max-number-input');
+            const secretNumberModeRadios = document.querySelectorAll('input[name="secret-number-mode"]'); // New
+            const manualSecretNumberInputGroup = document.getElementById('manual-secret-number-input-group'); // New
+            const manualSecretNumberInput = document.getElementById('manual-secret-number-input'); // New
             const veryCloseDiffInput = document.getElementById('very-close-diff-input');
             const closeDiffInput = document.getElementById('close-diff-input');
-            const saveGameSettingsBtn = document.getElementById('save-game-settings-btn'); // Renamed save-settings-btn
+            const saveGameSettingsBtn = document.getElementById('save-game-settings-btn');
 
             const guessInput = document.getElementById('guess-input');
             const redoGameBtn = document.getElementById('redo-game-btn');
@@ -147,6 +169,8 @@
                 userName: '',
                 minNumber: 1,
                 maxNumber: 100,
+                guessMode: 'random', // 'random' or 'manual'
+                manualSecretNumber: null, // Stores the user-set number
                 veryCloseDiff: 5,  
                 closeDiff: 15     
             };
@@ -180,10 +204,9 @@
             // User Name & Settings Modal Management
             const renderUserName = () => {
                 userNameDisplay.textContent = appState.userName || 'Guest';
-                // If userName is empty and modal hasn't been shown, display name edit modal
                 if (!appState.userName && !sessionStorage.getItem('nameEditModalShown')) {
                     nameEditModal.classList.remove('hidden');
-                    sessionStorage.setItem('nameEditModalShown', 'true'); // Prevent showing repeatedly on refresh
+                    sessionStorage.setItem('nameEditModalShown', 'true');
                 } else if (appState.userName) {
                     nameEditModal.classList.add('hidden');
                 }
@@ -191,7 +214,13 @@
 
             // Game Logic Functions
             const startGame = () => {
-                secretNumber = Math.floor(Math.random() * (appState.maxNumber - appState.minNumber + 1)) + appState.minNumber;
+                // Determine secret number based on guess mode
+                if (appState.guessMode === 'random') {
+                    secretNumber = Math.floor(Math.random() * (appState.maxNumber - appState.minNumber + 1)) + appState.minNumber;
+                } else { // manual mode
+                    secretNumber = appState.manualSecretNumber;
+                }
+
                 attempts = 0;
                 gameOver = false;
                 gameMessage.textContent = `Guess a number between ${appState.minNumber} and ${appState.maxNumber}!`;
@@ -249,7 +278,6 @@
                 window.location.href = 'https://vugbigeriuerr3.github.io/github.io/?' + new Date().getTime();
             });
 
-            // Event listener for the "Save Name" button in the Name Edit Modal
             saveNameOnlyBtn.addEventListener('click', () => {
                 const newUserName = nameEditUserInput.value.trim();
                 if (newUserName) {
@@ -282,7 +310,6 @@
                 }
             });
 
-            // Event listener for the pencil icon (Edit Name)
             editNameBtn.addEventListener('click', () => {
                 nameEditUserInput.value = appState.userName;
                 nameEditModal.classList.remove('hidden');
@@ -290,22 +317,48 @@
                 if (existingMessage) existingMessage.remove();
             });
 
-            // Event listener for the "Game Settings" button
             gameSettingsBtn.addEventListener('click', () => {
                 minNumberInput.value = appState.minNumber;
                 maxNumberInput.value = appState.maxNumber;
+
+                // Set radio button based on current guessMode
+                secretNumberModeRadios.forEach(radio => {
+                    radio.checked = (radio.value === appState.guessMode);
+                });
+
+                // Show/hide manual input based on guessMode
+                if (appState.guessMode === 'manual') {
+                    manualSecretNumberInputGroup.classList.remove('hidden');
+                    manualSecretNumberInput.value = appState.manualSecretNumber;
+                } else {
+                    manualSecretNumberInputGroup.classList.add('hidden');
+                }
+
                 veryCloseDiffInput.value = appState.veryCloseDiff;
                 closeDiffInput.value = appState.closeDiff;
                 gameSettingsModal.classList.remove('hidden');
             });
 
-            // Event listener for the "Save Game Settings" button
+            // Event listener for secret number mode radio buttons
+            secretNumberModeRadios.forEach(radio => {
+                radio.addEventListener('change', () => {
+                    if (radio.value === 'manual') {
+                        manualSecretNumberInputGroup.classList.remove('hidden');
+                    } else {
+                        manualSecretNumberInputGroup.classList.add('hidden');
+                    }
+                });
+            });
+
             saveGameSettingsBtn.addEventListener('click', () => {
                 const newMinNumber = parseInt(minNumberInput.value);
                 const newMaxNumber = parseInt(maxNumberInput.value);
+                const newGuessMode = document.querySelector('input[name="secret-number-mode"]:checked').value;
                 const newVeryCloseDiff = parseInt(veryCloseDiffInput.value);
                 const newCloseDiff = parseInt(closeDiffInput.value);
+                let newManualSecretNumber = appState.manualSecretNumber; // Default to existing
 
+                // Validation for numbers
                 if (isNaN(newMinNumber) || newMinNumber < 1) {
                     alert('Please enter a valid minimum number (at least 1).');
                     return;
@@ -322,6 +375,14 @@
                     alert('Please enter a valid "Close" difference (greater than or equal to "Very Close" difference).');
                     return;
                 }
+
+                if (newGuessMode === 'manual') {
+                    newManualSecretNumber = parseInt(manualSecretNumberInput.value);
+                    if (isNaN(newManualSecretNumber) || newManualSecretNumber < newMinNumber || newManualSecretNumber > newMaxNumber) {
+                        alert(`Please enter a valid secret number between ${newMinNumber} and ${newMaxNumber}.`);
+                        return;
+                    }
+                }
                 
                 const loadedCookieData = getCookie('appState');
                 let currentAppState = {};
@@ -335,6 +396,8 @@
 
                 currentAppState.minNumber = newMinNumber;
                 currentAppState.maxNumber = newMaxNumber;
+                currentAppState.guessMode = newGuessMode;
+                currentAppState.manualSecretNumber = newManualSecretNumber;
                 currentAppState.veryCloseDiff = newVeryCloseDiff;
                 currentAppState.closeDiff = newCloseDiff;
                 
@@ -342,7 +405,7 @@
 
                 setCookie('appState', JSON.stringify(appState), 365);
                 gameSettingsModal.classList.add('hidden');
-                startGame();
+                startGame(); // Restart game with new settings
             });
 
             guessInput.addEventListener('keypress', (e) => {
@@ -360,6 +423,8 @@
                         appState.userName = parsedState.userName || '';
                         appState.minNumber = parsedState.minNumber !== undefined ? parsedState.minNumber : 1;
                         appState.maxNumber = parsedState.maxNumber !== undefined ? parsedState.maxNumber : 100;
+                        appState.guessMode = parsedState.guessMode || 'random'; // Default to random
+                        appState.manualSecretNumber = parsedState.manualSecretNumber !== undefined ? parsedState.manualSecretNumber : null;
                         appState.veryCloseDiff = parsedState.veryCloseDiff !== undefined ? parsedState.veryCloseDiff : 5;
                         appState.closeDiff = parsedState.closeDiff !== undefined ? parsedState.closeDiff : 15;
                         
