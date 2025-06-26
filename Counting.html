@@ -30,6 +30,14 @@
             color: #333;
             margin-bottom: 30px;
             font-size: 2em;
+            display: flex; /* Use flex to align title and pencil */
+            align-items: center;
+            justify-content: center;
+        }
+        .title-edit-icon {
+            font-size: 1.2em; /* Adjust size of the pencil */
+            margin-left: 10px;
+            cursor: pointer;
         }
         .counter-item {
             background-color: #e0f0ff; /* Light blue for default */
@@ -67,7 +75,7 @@
             font-weight: bold;
             color: #333;
         }
-        .edit-button {
+        .edit-counter-name { /* New class for the pencil next to counter name */
             position: absolute;
             top: 10px;
             right: 10px;
@@ -114,20 +122,11 @@
         .hidden {
             display: none;
         }
-        .header-edit-button {
-            background: none;
-            border: none;
-            font-size: 1em;
-            cursor: pointer;
-            color: #007bff;
-            margin-left: 10px;
-            vertical-align: middle;
-        }
     </style>
 </head>
 <body>
     <div class="container" id="mainContainer">
-        <h1 id="pageTitle">Loading Counter... <button class="header-edit-button" id="editTitleButton">✏️</button></h1>
+        <h1 id="pageTitle">Loading Counter... <span class="title-edit-icon" id="editTitleButton">✏️</span></h1>
 
         <div id="initialSetup" class="initial-setup hidden">
             <label for="userName">Your User ID (Name):</label>
@@ -179,8 +178,10 @@
                 counters = JSON.parse(storedCounters);
             }
             customTitle = localStorage.getItem('customTitle') || 'Teacher Counter';
-            pageTitle.innerHTML = `${customTitle} <button class="header-edit-button" id="editTitleButton">✏️</button>`;
-            document.getElementById('editTitleButton').addEventListener('click', editPageTitle); // Re-attach event listener
+            // Update title HTML, including the pencil icon
+            pageTitle.innerHTML = `${customTitle} <span class="title-edit-icon" id="editTitleButton">✏️</span>`;
+            // Re-attach event listener for the main title edit button
+            document.getElementById('editTitleButton').addEventListener('click', editPageTitle);
         }
 
         // --- Initial Setup Flow ---
@@ -262,16 +263,16 @@
                 const counterDiv = document.createElement('div');
                 counterDiv.classList.add('counter-item');
                 // Apply green background to the second counter, if it exists, to match the example
-                if (index === 1) {
+                if (index === 1) { // Apply green background to the second item (index 1)
                     counterDiv.classList.add('green');
                 }
-
+                // Determine button color based on index to match the image
                 const buttonClass = (index === 1) ? 'counter-button green-button' : 'counter-button';
 
                 counterDiv.innerHTML = `
                     <button class="${buttonClass}" data-index="${index}">${counter.name}</button>
                     <div class="count-display" id="countDisplay${index}">${counter.count}</div>
-                    <button class="edit-button" data-index="${index}">✏️</button>
+                    <span class="edit-counter-name" data-index="${index}">✏️</span>
                 `;
                 countersDisplayDiv.appendChild(counterDiv);
             });
@@ -280,24 +281,38 @@
             document.querySelectorAll('.counter-button').forEach(button => {
                 button.addEventListener('click', (event) => {
                     const index = parseInt(event.target.dataset.index);
-                    if (counters[index].count > 0) { // Ensure count doesn't go below 0
-                        counters[index].count--;
-                        document.getElementById(`countDisplay${index}`).textContent = counters[index].count;
-                        saveData();
-                    }
+                    counters[index].count++; // Increment the count
+                    document.getElementById(`countDisplay${index}`).textContent = counters[index].count;
+                    saveData();
                 });
             });
 
-            document.querySelectorAll('.edit-button').forEach(button => {
-                button.addEventListener('click', (event) => {
+            document.querySelectorAll('.edit-counter-name').forEach(pencil => {
+                pencil.addEventListener('click', (event) => {
                     const index = parseInt(event.target.dataset.index);
-                    const newCount = prompt(`Edit count for ${counters[index].name}:`, counters[index].count);
-                    if (newCount !== null && !isNaN(parseInt(newCount))) {
-                        counters[index].count = parseInt(newCount);
-                        document.getElementById(`countDisplay${index}`).textContent = counters[index].count;
-                        saveData();
-                    } else if (newCount !== null) {
-                        alert('Invalid input. Please enter a number.');
+                    const action = prompt(`What do you want to edit for "${counters[index].name}"?\n1. Change Name\n2. Change Count`, '');
+
+                    if (action === '1') {
+                        const newName = prompt(`Edit name for counter ${counters[index].name}:`, counters[index].name);
+                        if (newName !== null && newName.trim() !== '') {
+                            counters[index].name = newName.trim();
+                            // Re-render to update the button name immediately
+                            renderCounters();
+                            saveData();
+                        } else if (newName !== null) {
+                            alert('Name cannot be empty.');
+                        }
+                    } else if (action === '2') {
+                        const newCount = prompt(`Edit count for ${counters[index].name}:`, counters[index].count);
+                        if (newCount !== null && !isNaN(parseInt(newCount))) {
+                            counters[index].count = parseInt(newCount);
+                            document.getElementById(`countDisplay${index}`).textContent = counters[index].count;
+                            saveData();
+                        } else if (newCount !== null) {
+                            alert('Invalid input. Please enter a number.');
+                        }
+                    } else if (action !== null) {
+                        alert('Invalid option. Please enter 1 or 2.');
                     }
                 });
             });
@@ -308,8 +323,10 @@
             const newTitle = prompt('Enter a new title for the counter page:', customTitle);
             if (newTitle !== null && newTitle.trim() !== '') {
                 customTitle = newTitle.trim();
-                pageTitle.innerHTML = `${customTitle} <button class="header-edit-button" id="editTitleButton">✏️</button>`;
-                document.getElementById('editTitleButton').addEventListener('click', editPageTitle); // Re-attach event listener
+                // Update title HTML, including the pencil icon
+                pageTitle.innerHTML = `${customTitle} <span class="title-edit-icon" id="editTitleButton">✏️</span>`;
+                // Re-attach event listener because the innerHTML was updated
+                document.getElementById('editTitleButton').addEventListener('click', editPageTitle);
                 saveData();
             } else if (newTitle !== null) {
                 alert('Title cannot be empty.');
@@ -328,8 +345,7 @@
             }
         });
 
-        // Event listener for the initial title edit button
-        // This is necessary because the button is part of the initial HTML
+        // Initial attachment of the title edit button listener
         document.getElementById('editTitleButton').addEventListener('click', editPageTitle);
 
     </script>
