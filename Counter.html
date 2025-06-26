@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Counter App</title>
+    <title></title> <!-- Website title is now empty by default -->
     <!-- Tailwind CSS CDN for modern styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome for Plus/Minus icons (ensures a clean, scalable look) -->
@@ -37,7 +37,7 @@
         <div id="main-content" class="hidden">
             <header class="flex flex-col md:flex-row justify-between items-center pb-4 border-b border-gray-200 mb-6">
                 <!-- Website Title Display -->
-                <h1 id="website-title-display" class="text-3xl font-bold text-gray-800 mb-4 md:mb-0 text-center md:text-left">My Awesome Counter App</h1>
+                <h1 id="website-title-display" class="text-3xl font-bold text-gray-800 mb-4 md:mb-0 text-center md:text-left"></h1>
                 <div class="flex items-center space-x-4">
                     <!-- User Name Display -->
                     <span id="user-name-display" class="text-xl font-medium text-blue-600">Guest</span>
@@ -66,7 +66,7 @@
                 <!-- Input for Website Title -->
                 <div class="mb-6">
                     <label for="website-title-input" class="block text-gray-700 text-sm font-semibold mb-2">Website Title:</label>
-                    <input type="text" id="website-title-input" placeholder="e.g., My Team Counters" class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
+                    <input type="text" id="website-title-input" placeholder="Enter website title" class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
                 </div>
 
                 <!-- Input for Number of People/Counters (changed from select to number input) -->
@@ -114,7 +114,7 @@
             // It will be saved to and loaded from cookies.
             let appState = {
                 userName: '',
-                websiteTitle: 'My Dynamic Counter', // Default title
+                websiteTitle: '', // Default title is now empty
                 warningThreshold: 100, // Default warning threshold
                 counters: [] // Array of counter objects: { id: string (UUID), name: string, value: number }
             };
@@ -232,7 +232,10 @@
             const renderMainContent = () => {
                 // Update header displays
                 userNameDisplay.textContent = appState.userName || 'Guest';
-                websiteTitleDisplay.textContent = appState.websiteTitle || 'My Dynamic Counter';
+                // Set the document title and header display title based on appState.websiteTitle
+                document.title = appState.websiteTitle || '';
+                websiteTitleDisplay.textContent = appState.websiteTitle || ''; // If empty, display nothing
+
                 countersList.innerHTML = ''; // Clear existing counter cards before re-rendering
 
                 // Check if there are any counters to display
@@ -475,7 +478,7 @@
 
                 // Update the global appState with the newly collected data
                 appState.userName = newUserName || 'Guest'; // Default to 'Guest' if name is empty
-                appState.websiteTitle = newWebsiteTitle || 'My Dynamic Counter'; // Default title if empty
+                appState.websiteTitle = newWebsiteTitle; // Now directly use the input, can be empty
                 appState.counters = newCounters; // This handles both truncation and expansion correctly
 
                 saveAppState(); // Persist the updated state to cookies
@@ -521,13 +524,17 @@
                     if (typeof appState.warningThreshold === 'undefined' || isNaN(appState.warningThreshold)) {
                         appState.warningThreshold = 100;
                     }
+                    // Ensure websiteTitle is initialized correctly, even if it was "My Dynamic Counter" from old cookie
+                    if (typeof appState.websiteTitle === 'undefined' || appState.websiteTitle === 'My Dynamic Counter') {
+                        appState.websiteTitle = '';
+                    }
                     renderMainContent(); // Render the main application UI
                     setupModal.classList.add('hidden'); // Hide the setup modal
                     mainContent.classList.remove('hidden'); // Show the main content
                 } else {
                     // If no valid state is found (first visit or corrupted cookie), show the setup
                     userNameInput.value = ''; // Ensure user name input is empty for a fresh start
-                    websiteTitleInput.value = appState.websiteTitle; // Use default website title
+                    websiteTitleInput.value = ''; // Website title input is now empty by default
                     numPeopleInput.value = '1'; // Default to 1 person
                     warningThresholdInput.value = appState.warningThreshold.toString(); // Set default warning threshold
                     generateCounterNameInputs(); // Generate initial input for 1 person
