@@ -21,7 +21,7 @@
         <div class="flex flex-col space-y-6">
             <!-- Evarard Counter Section -->
             <div class="flex flex-col items-center p-4 bg-blue-50 rounded-xl border border-blue-200 shadow-md">
-                <button id="evarardButton" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 mb-4 focus:outline-none focus:ring-4 focus:ring-blue-300 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                <button id="evarardButton" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 mb-4 focus:outline-none focus:ring-4 focus:ring-blue-300">
                     Evarard
                 </button>
                 <p class="text-3xl font-extrabold text-blue-800" id="evarardCount">0</p>
@@ -29,7 +29,7 @@
 
             <!-- Buburu Counter Section -->
             <div class="flex flex-col items-center p-4 bg-green-50 rounded-xl border border-green-200 shadow-md">
-                <button id="buburuButton" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 mb-4 focus:outline-none focus:ring-4 focus:ring-green-300 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                <button id="buburuButton" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 mb-4 focus:outline-none focus:ring-4 focus:ring-green-300">
                     Buburu
                 </button>
                 <p class="text-3xl font-extrabold text-green-800" id="buburuCount">0</p>
@@ -38,10 +38,10 @@
 
         <!-- User ID Display -->
         <div class="mt-8 text-center text-sm text-gray-600">
-            <p>Your User ID: <span id="userIdDisplay" class="font-mono bg-gray-100 px-2 py-1 rounded-md text-gray-700 break-all">Loading...</span></p>
+            <p>Your User ID: <span id="userIdDisplay" class="font-mono bg-gray-100 px-2 py-1 rounded-md text-gray-700 break-all">rafferty</span></p>
         </div>
 
-        <!-- Message Box -->
+        <!-- Message Box (kept for general notifications if needed, though less critical without Firebase) -->
         <div id="messageBox" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50 hidden">
             <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
                 <p id="messageText" class="text-lg font-semibold text-gray-800 mb-4"></p>
@@ -50,22 +50,8 @@
         </div>
     </div>
 
-    <!-- Firebase SDKs -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, onSnapshot, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // Global variables for Firebase config and app ID, provided by the Canvas environment.
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-
-        let app;
-        let db;
-        let auth;
-        let userId = 'loading'; // Initialize with a loading state
-
+        // Element references
         const evarardCountElement = document.getElementById('evarardCount');
         const buburuCountElement = document.getElementById('buburuCount');
         const evarardButton = document.getElementById('evarardButton');
@@ -74,6 +60,8 @@
         const messageBox = document.getElementById('messageBox');
         const messageText = document.getElementById('messageText');
         const messageCloseButton = document.getElementById('messageCloseButton');
+
+        const userId = 'rafferty'; // Fixed user ID as requested
 
         // Function to show a custom message box
         function showMessageBox(message) {
@@ -86,113 +74,75 @@
             messageBox.classList.add('hidden');
         });
 
-        // Initialize Firebase and set up authentication
-        async function initializeFirebase() {
-            try {
-                // Initialize Firebase app only once
-                if (!app) {
-                    app = initializeApp(firebaseConfig);
-                    db = getFirestore(app);
-                    auth = getAuth(app);
-                }
-
-                // Sign in using the custom token if provided, otherwise sign in anonymously
-                if (initialAuthToken) {
-                    await signInWithCustomToken(auth, initialAuthToken);
-                } else {
-                    await signInAnonymously(auth);
-                }
-
-                // Listen for authentication state changes
-                onAuthStateChanged(auth, (user) => {
-                    if (user) {
-                        userId = user.uid || crypto.randomUUID(); // Use UID if available, otherwise a random ID
-                        userIdDisplay.textContent = userId;
-                        evarardButton.disabled = false; // Enable buttons
-                        buburuButton.disabled = false;
-                        setupFirestoreListener(); // Set up Firestore listener after authentication
-                    } else {
-                        // User is signed out or anonymous. Generate a random ID for demonstration.
-                        userId = crypto.randomUUID();
-                        userIdDisplay.textContent = userId;
-                        evarardButton.disabled = false; // Enable buttons for anonymous use
-                        buburuButton.disabled = false;
-                        setupFirestoreListener(); // Still set up listener for anonymous user data
-                    }
-                });
-
-            } catch (error) {
-                console.error("Error initializing Firebase or authenticating:", error);
-                showMessageBox("Failed to initialize the application. Please try again later.");
-                evarardButton.disabled = true; // Keep buttons disabled on error
-                buburuButton.disabled = true;
-            }
+        /**
+         * Sets a cookie with a given name, value, and expiration days.
+         * @param {string} name The name of the cookie.
+         * @param {string} value The value to store in the cookie.
+         * @param {number} days The number of days until the cookie expires.
+         */
+        function setCookie(name, value, days) {
+            const date = new Date();
+            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            const expires = "expires=" + date.toUTCString();
+            document.cookie = name + "=" + value + ";" + expires + ";path=/";
         }
 
-        // Path to the public counter data in Firestore
-        // Storing in /artifacts/{appId}/public/data/counters/mainCounterDocument
-        const countersDocPath = `artifacts/${appId}/public/data/counters/mainCounterDocument`;
-
-        // Set up real-time listener for the counter document
-        function setupFirestoreListener() {
-            if (!db) {
-                console.error("Firestore is not initialized.");
-                return;
+        /**
+         * Gets the value of a cookie by its name.
+         * @param {string} name The name of the cookie to retrieve.
+         * @returns {string} The cookie's value, or an empty string if not found.
+         */
+        function getCookie(name) {
+            const nameEQ = name + "=";
+            const ca = document.cookie.split(';');
+            for(let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
             }
-
-            const counterDocRef = doc(db, countersDocPath);
-
-            onSnapshot(counterDocRef, (docSnap) => {
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    evarardCountElement.textContent = data.evarard || 0;
-                    buburuCountElement.textContent = data.buburu || 0;
-                } else {
-                    // Document doesn't exist, initialize it to 0
-                    console.log("Counter document does not exist, initializing to 0.");
-                    setDoc(counterDocRef, { evarard: 0, buburu: 0 }).catch(e => {
-                        console.error("Error initializing counter document:", e);
-                        showMessageBox("Failed to initialize counters.");
-                    });
-                }
-            }, (error) => {
-                console.error("Error listening to counter document:", error);
-                showMessageBox("Failed to load real-time counter updates. Please check your connection.");
-            });
+            return "";
         }
 
-        // Function to increment a counter
-        async function incrementCounter(type) {
-            // The buttons are disabled until db and userId are ready, so this check is mostly for robustness.
-            if (!db || !userId || evarardButton.disabled) { // Check one of the buttons' disabled state
-                showMessageBox("Application is not ready. Please wait for initialization.");
-                return;
+        /**
+         * Initializes the counter values from cookies on page load.
+         */
+        function initializeCounters() {
+            // Display the fixed user ID
+            userIdDisplay.textContent = userId;
+
+            // Load counts from cookies
+            const evarardCount = parseInt(getCookie('evarardCount')) || 0;
+            const buburuCount = parseInt(getCookie('buburuCount')) || 0;
+
+            evarardCountElement.textContent = evarardCount;
+            buburuCountElement.textContent = buburuCount;
+        }
+
+        /**
+         * Increments the specified counter and saves the new value to a cookie.
+         * @param {string} type The type of counter to increment ('evarard' or 'buburu').
+         */
+        function incrementCounter(type) {
+            let currentCount = parseInt(getCookie(`${type}Count`)) || 0;
+            currentCount++;
+
+            // Update the display
+            if (type === 'evarard') {
+                evarardCountElement.textContent = currentCount;
+            } else if (type === 'buburu') {
+                buburuCountElement.textContent = currentCount;
             }
 
-            const counterDocRef = doc(db, countersDocPath);
-            try {
-                // Get the current document to read the existing value
-                const docSnap = await getDoc(counterDocRef);
-                let currentCount = 0;
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    currentCount = data[type] || 0;
-                }
-
-                // Increment and update Firestore
-                await setDoc(counterDocRef, { [type]: currentCount + 1 }, { merge: true });
-            } catch (error) {
-                console.error(`Error incrementing ${type} counter:`, error);
-                showMessageBox(`Failed to update ${type} counter. Please try again.`);
-            }
+            // Save the new count to a cookie (persists for 365 days)
+            setCookie(`${type}Count`, currentCount, 365);
         }
 
         // Event listeners for buttons
         evarardButton.addEventListener('click', () => incrementCounter('evarard'));
         buburuButton.addEventListener('click', () => incrementCounter('buburu'));
 
-        // Initialize Firebase on window load
-        window.onload = initializeFirebase;
+        // Initialize counters on window load
+        window.onload = initializeCounters;
 
     </script>
 </body>
