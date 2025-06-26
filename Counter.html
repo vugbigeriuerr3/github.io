@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Random Number Guesser</title>
+    <title>Dynamic Counter Application</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -18,50 +17,137 @@
             margin: 0;
             padding: 20px;
             box-sizing: border-box;
-            background-image: url('https://placehold.co/1920x1080/e5e7eb/e5e7eb?text=');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
+            transition: background-color 0.3s ease;
+        }
+        .main-card {
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
         .modal {
             max-height: 90vh;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
         }
+        .counter-card {
+            background-color: #f9fafb;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .counter-value {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 1rem;
+        }
+        .counter-controls button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.2s ease;
+        }
+        .counter-name-input {
+            width: 100%;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid #d1d5db;
+            margin-bottom: 0.75rem;
+            text-align: center;
+        }
+        /* Dark mode overrides */
+        body.dark-mode {
+            background-color: #1a202c;
+        }
+        body.dark-mode .main-card, body.dark-mode .modal > div {
+            background-color: #2d3748;
+            color: #e2e8f0;
+        }
+        body.dark-mode h1, body.dark-mode h2, body.dark-mode label {
+            color: #e2e8f0;
+        }
+        body.dark-mode .counter-card {
+            background-color: #4a5568;
+        }
+        body.dark-mode .counter-value {
+            color: #e2e8f0;
+        }
+        body.dark-mode .counter-name-input {
+            background-color: #2d3748;
+            border-color: #616e80;
+            color: #e2e8f0;
+        }
+        body.dark-mode .text-gray-700 {
+            color: #e2e8f0;
+        }
+        body.dark-mode .text-gray-600 {
+            color: #cbd5e0;
+        }
+        body.dark-mode .fixed.bg-white { /* For top-right user name box */
+            background-color: #2d3748;
+        }
+        /* Custom text sizes for counter card content */
+        .text-custom-sm .counter-card h3 { font-size: 1.125rem; } /* 18px */
+        .text-custom-sm .counter-value { font-size: 2.5rem; }    /* 40px */
+        .text-custom-base .counter-card h3 { font-size: 1.25rem; } /* 20px */
+        .text-custom-base .counter-value { font-size: 3rem; }    /* 48px */
+        .text-custom-lg .counter-card h3 { font-size: 1.5rem; }  /* 24px */
+        .text-custom-lg .counter-value { font-size: 3.5rem; }   /* 56px */
+        .text-custom-xl .counter-card h3 { font-size: 1.75rem; } /* 28px */
+        .text-custom-xl .counter-value { font-size: 4rem; }     /* 64px */
+
     </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+<body>
     <div class="fixed top-4 left-4 z-50">
         <button id="go-home-btn" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors duration-300 shadow-md focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75 text-sm md:text-base">
             Go back to home
         </button>
     </div>
 
-    <div class="fixed top-4 right-4 z-50 flex items-center space-x-2 bg-white rounded-full py-2 px-4 shadow-md">
+    <div class="fixed top-4 right-4 z-50 flex items-center space-x-2 bg-white rounded-full py-2 px-4 shadow-md transition-colors duration-300">
         <span id="user-name-display" class="text-lg font-medium text-blue-600">Guest</span>
         <button id="edit-name-btn" class="text-gray-500 hover:text-gray-700 transition-colors duration-200 focus:outline-none">
             <i class="fas fa-pencil-alt text-base"></i>
         </button>
     </div>
 
-    <div id="app" class="relative w-full max-w-lg bg-white shadow-lg rounded-2xl p-8 text-center">
-        <h1 class="text-4xl font-bold text-gray-800 mb-6">Number Guesser</h1>
-        <p class="text-lg text-gray-600 mb-8" id="game-message">Guess a number between 1 and 100!</p>
-        
-        <div class="space-y-4">
-            <input type="number" id="guess-input" placeholder="Enter your guess" min="1" max="100" 
-                   class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200 mb-2">
-            
-            <button id="redo-game-btn" 
-                    class="inline-block w-full px-8 py-4 bg-red-500 text-white font-bold text-xl rounded-xl hover:bg-red-600 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75 hidden">
-                Redo It
-            </button>
+    <div class="fixed top-16 left-4 z-50">
+        <button id="configure-display-btn" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors duration-300 shadow-md focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75 text-sm md:text-base">
+            <i class="fas fa-palette mr-2"></i>Configure Display
+        </button>
+    </div>
 
-            <button id="game-settings-btn" 
-                    class="inline-block w-full px-8 py-4 bg-gray-500 text-white font-bold text-xl rounded-xl hover:bg-gray-600 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75">
-                Game Settings
+    <div id="main-content-card" class="w-full max-w-4xl bg-white shadow-lg rounded-2xl p-8 text-center main-card">
+        <h1 class="text-4xl font-bold text-gray-800 mb-6">Dynamic Counter</h1>
+        <p class="text-lg text-gray-600 mb-8" id="page-title">Welcome!</p>
+
+        <div id="counters-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <!-- Counters will be loaded here -->
+        </div>
+
+        <div class="flex justify-between items-center mb-8">
+            <button id="prev-page-btn" class="px-6 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75">
+                <i class="fas fa-arrow-left mr-2"></i>Previous Page
+            </button>
+            <span id="page-info" class="text-xl font-semibold text-gray-700">Page 1 of 1</span>
+            <button id="next-page-btn" class="px-6 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75">
+                Next Page<i class="fas fa-arrow-right ml-2"></i>
             </button>
         </div>
+
+        <button id="add-counter-btn" 
+                class="inline-block w-full px-8 py-4 bg-green-600 text-white font-bold text-xl rounded-xl hover:bg-green-700 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-75">
+            Add New Counter
+        </button>
     </div>
 
     <!-- Name Edit Modal -->
@@ -78,104 +164,134 @@
         </div>
     </div>
 
-    <!-- Game Settings Modal -->
-    <div id="game-settings-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+    <!-- Configure Counter Modal -->
+    <div id="configure-counter-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md transform transition-all duration-300 scale-100 opacity-100">
-            <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Game Settings</h2>
-            
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center" id="configure-counter-modal-title">Configure Counter</h2>
             <div class="mb-4">
-                <label for="min-number-input" class="block text-gray-700 text-sm font-semibold mb-2">Minimum Number:</label>
-                <input type="number" id="min-number-input" value="1" 
+                <label for="counter-name-input" class="block text-gray-700 text-sm font-semibold mb-2">Counter Name:</label>
+                <input type="text" id="counter-name-input" placeholder="e.g. My Daily Steps" 
                        class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
             </div>
-
             <div class="mb-6">
-                <label for="max-number-input" class="block text-gray-700 text-sm font-semibold mb-2">Maximum Number:</label>
-                <input type="number" id="max-number-input" value="100" 
+                <label for="counter-value-input" class="block text-gray-700 text-sm font-semibold mb-2">Initial Value:</label>
+                <input type="number" id="counter-value-input" value="0" 
                        class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
             </div>
+            <div class="flex justify-between space-x-4">
+                <button id="save-counter-btn" 
+                        class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-all duration-300 shadow-lg">Save Counter</button>
+                <button id="delete-counter-btn" 
+                        class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-75 transition-all duration-300 shadow-lg hidden">Delete Counter</button>
+            </div>
+        </div>
+    </div>
 
+    <!-- Display Settings Modal -->
+    <div id="display-settings-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md transform transition-all duration-300 scale-100 opacity-100">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Display Settings</h2>
+            
             <div class="mb-6">
-                <label class="block text-gray-700 text-sm font-semibold mb-2">Secret Number Mode:</label>
+                <label class="block text-gray-700 text-sm font-semibold mb-2">Theme:</label>
                 <div class="flex flex-col space-y-2">
                     <label class="inline-flex items-center">
-                        <input type="radio" name="secret-number-mode" value="random" class="form-radio text-blue-600" checked>
-                        <span class="ml-2 text-gray-700">Random Number</span>
+                        <input type="radio" name="theme" value="light" class="form-radio text-blue-600" checked>
+                        <span class="ml-2 text-gray-700">Light Mode</span>
                     </label>
                     <label class="inline-flex items-center">
-                        <input type="radio" name="secret-number-mode" value="manual" class="form-radio text-blue-600">
-                        <span class="ml-2 text-gray-700">Set Specific Number</span>
+                        <input type="radio" name="theme" value="dark" class="form-radio text-blue-600">
+                        <span class="ml-2 text-gray-700">Dark Mode</span>
+                    </label>
+                    <label class="inline-flex items-center">
+                        <input type="radio" name="theme" value="custom" class="form-radio text-blue-600">
+                        <span class="ml-2 text-gray-700">Custom Colors</span>
                     </label>
                 </div>
             </div>
 
-            <div id="manual-secret-number-input-group" class="mb-6 hidden">
-                <label for="manual-secret-number-input" class="block text-gray-700 text-sm font-semibold mb-2">Set Secret Number:</label>
-                <input type="number" id="manual-secret-number-input" placeholder="Enter secret number" 
-                       class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
-            </div>
-
-
-            <div class="mb-4">
-                <label for="very-close-diff-input" class="block text-gray-700 text-sm font-semibold mb-2">"Very Close" Difference (e.g., 5):</label>
-                <input type="number" id="very-close-diff-input" value="5" min="0"
-                       class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
+            <div id="custom-color-inputs" class="space-y-4 mb-6 hidden">
+                <div>
+                    <label for="custom-body-bg-color" class="block text-gray-700 text-sm font-semibold mb-2">Body Background Color:</label>
+                    <input type="color" id="custom-body-bg-color" value="#f3f4f6"
+                           class="w-full h-10 border rounded-lg p-1">
+                </div>
+                <div>
+                    <label for="custom-card-bg-color" class="block text-gray-700 text-sm font-semibold mb-2">Card Background Color:</label>
+                    <input type="color" id="custom-card-bg-color" value="#ffffff"
+                           class="w-full h-10 border rounded-lg p-1">
+                </div>
             </div>
 
             <div class="mb-6">
-                <label for="close-diff-input" class="block text-gray-700 text-sm font-semibold mb-2">"Close" Difference (e.g., 15):</label>
-                <input type="number" id="close-diff-input" value="15" min="0"
-                       class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
+                <label for="text-size-select" class="block text-gray-700 text-sm font-semibold mb-2">Text Size:</label>
+                <select id="text-size-select" class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
+                    <option value="text-custom-sm">Small</option>
+                    <option value="text-custom-base" selected>Normal</option>
+                    <option value="text-custom-lg">Large</option>
+                    <option value="text-custom-xl">Extra Large</option>
+                </select>
             </div>
 
-            <button id="save-game-settings-btn" 
-                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-all duration-300 shadow-lg">Save Game Settings</button>
+            <button id="save-display-settings-btn" 
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-all duration-300 shadow-lg">Save Display Settings</button>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // DOM Elements
+            // Main App Elements
             const goHomeBtn = document.getElementById('go-home-btn');
             const userNameDisplay = document.getElementById('user-name-display');
             const editNameBtn = document.getElementById('edit-name-btn');
-            const gameSettingsBtn = document.getElementById('game-settings-btn'); 
+            const configureDisplayBtn = document.getElementById('configure-display-btn');
+            const mainContentCard = document.getElementById('main-content-card');
+            const pageTitle = document.getElementById('page-title');
+            const countersGrid = document.getElementById('counters-grid');
+            const addCounterBtn = document.getElementById('add-counter-btn');
+            const prevPageBtn = document.getElementById('prev-page-btn');
+            const nextPageBtn = document.getElementById('next-page-btn');
+            const pageInfo = document.getElementById('page-info');
 
+            // Name Edit Modal Elements
             const nameEditModal = document.getElementById('name-edit-modal');
             const nameEditUserInput = document.getElementById('name-edit-user-input');
             const saveNameOnlyBtn = document.getElementById('save-name-only-btn');
 
-            const gameSettingsModal = document.getElementById('game-settings-modal');
-            const minNumberInput = document.getElementById('min-number-input');
-            const maxNumberInput = document.getElementById('max-number-input');
-            const secretNumberModeRadios = document.querySelectorAll('input[name="secret-number-mode"]');
-            const manualSecretNumberInputGroup = document.getElementById('manual-secret-number-input-group');
-            const manualSecretNumberInput = document.getElementById('manual-secret-number-input');
-            const veryCloseDiffInput = document.getElementById('very-close-diff-input');
-            const closeDiffInput = document.getElementById('close-diff-input');
-            const saveGameSettingsBtn = document.getElementById('save-game-settings-btn');
+            // Counter Configuration Modal Elements
+            const configureCounterModal = document.getElementById('configure-counter-modal');
+            const configureCounterModalTitle = document.getElementById('configure-counter-modal-title');
+            const counterNameInput = document.getElementById('counter-name-input');
+            const counterValueInput = document.getElementById('counter-value-input');
+            const saveCounterBtn = document.getElementById('save-counter-btn');
+            const deleteCounterBtn = document.getElementById('delete-counter-btn');
 
-            const guessInput = document.getElementById('guess-input');
-            const redoGameBtn = document.getElementById('redo-game-btn');
-            const gameMessage = document.getElementById('game-message');
+            // Display Settings Modal Elements
+            const displaySettingsModal = document.getElementById('display-settings-modal');
+            const themeRadios = document.querySelectorAll('input[name="theme"]');
+            const customColorInputsDiv = document.getElementById('custom-color-inputs');
+            const customBodyBgColorInput = document.getElementById('custom-body-bg-color');
+            const customCardBgColorInput = document.getElementById('custom-card-bg-color');
+            const textSizeSelect = document.getElementById('text-size-select');
+            const saveDisplaySettingsBtn = document.getElementById('save-display-settings-btn');
 
-            // Game State Variables
-            let secretNumber;
-            let attempts = 0;
-            let gameOver = false;
-
-            // Shared App State (for cookies)
+            // App State
             let appState = {
                 userName: '',
-                minNumber: 1,
-                maxNumber: 100,
-                guessMode: 'random',
-                manualSecretNumber: null,
-                veryCloseDiff: 5,  
-                closeDiff: 15     
+                displaySettings: {
+                    theme: 'light',
+                    customBodyBg: '#f3f4f6',
+                    customCardBg: '#ffffff',
+                    textSize: 'text-custom-base'
+                },
+                counters: [], // Array to store counter objects
+                currentPage: 1,
+                countersPerPage: 6 // Max 6 counters per page for better layout
             };
 
-            // Cookie Management Functions (consistent across apps)
+            let currentEditingCounterIndex = -1; // -1 for new counter, index for existing
+
+            // Cookie Management Functions
             const setCookie = (name, value, days) => {
                 let expires = '';
                 if (days) {
@@ -201,76 +317,215 @@
                 document.cookie = name + '=; Max-Age=-99999999; path=/; SameSite=Lax';
             };
 
-            // User Name & Settings Modal Management
+            const saveAppState = () => {
+                setCookie('appState', JSON.stringify(appState), 365);
+            };
+
+            // Display & Theme Functions (consistent with other apps)
+            const applyDisplaySettings = () => {
+                const { theme, customBodyBg, customCardBg, textSize } = appState.displaySettings;
+
+                // Apply text size to the main content card and counter names
+                const textSizes = ['text-custom-sm', 'text-custom-base', 'text-custom-lg', 'text-custom-xl'];
+                textSizes.forEach(cls => {
+                    mainContentCard.classList.remove(cls);
+                    countersGrid.classList.remove(cls); // Apply to counter grid directly if needed for h3/value
+                });
+                mainContentCard.classList.add(textSize);
+                
+                // Clear body classes and inline styles first to ensure proper application
+                document.body.classList.remove('bg-gray-100', 'dark-mode');
+                document.body.style.backgroundColor = '';
+                document.body.style.backgroundImage = '';
+                
+                mainContentCard.classList.remove('bg-white', 'bg-gray-800');
+                mainContentCard.style.backgroundColor = '';
+
+                mainContentCard.querySelector('h1').style.color = '';
+                mainContentCard.querySelector('p#page-title').style.color = ''; // Target page title specifically
+                pageInfo.style.color = ''; // Page info text
+
+                document.querySelectorAll('.counter-card h3').forEach(el => el.style.color = '');
+                document.querySelectorAll('.counter-value').forEach(el => el.style.color = '');
+
+                const userNameBox = document.querySelector('.fixed.top-4.right-4');
+                userNameBox.classList.remove('bg-white', 'bg-gray-900');
+                userNameBox.querySelector('span').style.color = '';
+                userNameBox.querySelector('button').style.color = '';
+
+                if (theme === 'dark') {
+                    document.body.classList.add('dark-mode');
+                    document.body.style.backgroundImage = 'url("https://placehold.co/1920x1080/2d3748/2d3748?text=")';
+                    document.body.style.backgroundColor = '#1a202c';
+                    
+                    mainContentCard.classList.add('bg-gray-800');
+                    mainContentCard.querySelector('h1').style.color = '#e2e8f0';
+                    mainContentCard.querySelector('p#page-title').style.color = '#cbd5e0';
+                    pageInfo.style.color = '#e2e8f0';
+
+                    document.querySelectorAll('.counter-card h3').forEach(el => el.style.color = '#e2e8f0');
+                    document.querySelectorAll('.counter-value').forEach(el => el.style.color = '#e2e8f0');
+                    document.querySelectorAll('.counter-card').forEach(card => card.style.backgroundColor = '#4a5568');
+
+
+                    userNameBox.classList.add('bg-gray-900');
+                    userNameBox.querySelector('span').style.color = '#90cdf4';
+                    userNameBox.querySelector('button').style.color = '#a0aec0';
+
+                } else if (theme === 'custom') {
+                    document.body.style.backgroundColor = customBodyBg;
+                    document.body.style.backgroundImage = 'none';
+                    
+                    mainContentCard.style.backgroundColor = customCardBg;
+                    
+                    const isDark = (color) => {
+                        if (!color) return false;
+                        const rgb = parseInt(color.replace('#', ''), 16);
+                        const r = (rgb >> 16) & 0xff;
+                        const g = (rgb >> 8) & 0xff;
+                        const b = (rgb >> 0) & 0xff;
+                        return (0.2126 * r + 0.7152 * g + 0.0722 * b) < 128;
+                    };
+
+                    if (isDark(customBodyBg)) {
+                        mainContentCard.querySelector('h1').style.color = '#e2e8f0';
+                        mainContentCard.querySelector('p#page-title').style.color = '#cbd5e0';
+                        pageInfo.style.color = '#e2e8f0';
+                        userNameBox.classList.add('bg-gray-900');
+                        userNameBox.querySelector('span').style.color = '#90cdf4';
+                        userNameBox.querySelector('button').style.color = '#a0aec0';
+                    } else {
+                        mainContentCard.querySelector('h1').style.color = '#1a202c';
+                        mainContentCard.querySelector('p#page-title').style.color = '#4a5568';
+                        pageInfo.style.color = '#4a5568';
+                        userNameBox.classList.add('bg-white');
+                        userNameBox.querySelector('span').style.color = '#3182ce';
+                        userNameBox.querySelector('button').style.color = '#a0aec0';
+                    }
+                    if (isDark(customCardBg)) {
+                         mainContentCard.querySelector('h1').style.color = '#e2e8f0';
+                         mainContentCard.querySelector('p#page-title').style.color = '#cbd5e0';
+                         document.querySelectorAll('.counter-card h3').forEach(el => el.style.color = '#e2e8f0');
+                         document.querySelectorAll('.counter-value').forEach(el => el.style.color = '#e2e8f0');
+                         document.querySelectorAll('.counter-card').forEach(card => card.style.backgroundColor = '#4a5568'); // Match dark mode card
+                    } else {
+                        mainContentCard.querySelector('h1').style.color = '#1a202c';
+                        mainContentCard.querySelector('p#page-title').style.color = '#4a5568';
+                        document.querySelectorAll('.counter-card h3').forEach(el => el.style.color = '#1f2937');
+                        document.querySelectorAll('.counter-value').forEach(el => el.style.color = '#1f2937');
+                        document.querySelectorAll('.counter-card').forEach(card => card.style.backgroundColor = '#f9fafb');
+                    }
+
+                } else { // 'light' theme
+                    document.body.classList.add('bg-gray-100');
+                    document.body.style.backgroundImage = 'url("https://placehold.co/1920x1080/e5e7eb/e5e7eb?text=")';
+                    mainContentCard.classList.add('bg-white');
+                    userNameBox.classList.add('bg-white');
+                }
+            };
+
+            // User Name Management (consistent with other apps)
             const renderUserName = () => {
                 userNameDisplay.textContent = appState.userName || 'Guest';
-                // Only show name edit modal on first load if name is not set
-                if (!appState.userName && !sessionStorage.getItem('nameEditModalShownOnce')) {
+                if (!appState.userName && !sessionStorage.getItem('nameEditModalShown')) {
                     nameEditUserInput.value = appState.userName; // Pre-fill if any
                     nameEditModal.classList.remove('hidden');
-                    sessionStorage.setItem('nameEditModalShownOnce', 'true'); // Mark as shown
+                    sessionStorage.setItem('nameEditModalShown', 'true'); // Mark as shown
                 } else if (appState.userName) {
                     nameEditModal.classList.add('hidden'); // Ensure hidden if name exists
                 }
             };
 
-            // Game Logic Functions
-            const startGame = () => {
-                if (appState.guessMode === 'random') {
-                    secretNumber = Math.floor(Math.random() * (appState.maxNumber - appState.minNumber + 1)) + appState.minNumber;
-                } else {
-                    secretNumber = appState.manualSecretNumber;
-                }
+            // Counter Logic
+            const renderCounters = () => {
+                countersGrid.innerHTML = '';
+                const startIndex = (appState.currentPage - 1) * appState.countersPerPage;
+                const endIndex = Math.min(startIndex + appState.countersPerPage, appState.counters.length);
+                
+                const countersToRender = appState.counters.slice(startIndex, endIndex);
 
-                attempts = 0;
-                gameOver = false;
-                gameMessage.textContent = `Guess a number between ${appState.minNumber} and ${appState.maxNumber}!`;
-                gameMessage.className = 'text-lg text-gray-600 mb-8';
-                guessInput.value = '';
-                guessInput.min = appState.minNumber;
-                guessInput.max = appState.maxNumber;
-                guessInput.disabled = false;
-                redoGameBtn.classList.add('hidden');
-            };
-
-            const checkGuess = () => {
-                const guess = parseInt(guessInput.value);
-
-                if (isNaN(guess) || guess < appState.minNumber || guess > appState.maxNumber) {
-                    gameMessage.textContent = `Please enter a valid number between ${appState.minNumber} and ${appState.maxNumber}.`;
-                    gameMessage.classList.add('text-lg', 'text-red-600', 'mb-8');
+                if (countersToRender.length === 0 && appState.currentPage > 1) {
+                    appState.currentPage--;
+                    renderCounters(); // Re-render if current page became empty
                     return;
                 }
 
-                attempts++;
+                countersToRender.forEach((counter, index) => {
+                    const globalIndex = startIndex + index; // Get actual index in appState.counters
+                    const counterCard = document.createElement('div');
+                    counterCard.className = 'counter-card';
+                    counterCard.innerHTML = `
+                        <h3 class="text-xl font-semibold mb-2">${counter.name}</h3>
+                        <div class="counter-value">${counter.value}</div>
+                        <div class="counter-controls flex space-x-2">
+                            <button class="bg-red-500 text-white hover:bg-red-600 decrement-btn" data-index="${globalIndex}">-</button>
+                            <button class="bg-blue-500 text-white hover:bg-blue-600 edit-counter-btn" data-index="${globalIndex}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="bg-green-500 text-white hover:bg-green-600 increment-btn" data-index="${globalIndex}">+</button>
+                        </div>
+                    `;
+                    countersGrid.appendChild(counterCard);
+                });
 
-                const difference = Math.abs(guess - secretNumber);
+                // Update page info
+                const totalPages = Math.max(1, Math.ceil(appState.counters.length / appState.countersPerPage));
+                pageInfo.textContent = `Page ${appState.currentPage} of ${totalPages}`;
 
-                gameMessage.classList.remove('text-green-600', 'text-yellow-600', 'text-orange-600', 'text-red-600', 'text-gray-600');
-                gameMessage.classList.add('text-lg', 'mb-8');
+                // Manage pagination button visibility
+                prevPageBtn.disabled = appState.currentPage === 1;
+                nextPageBtn.disabled = appState.currentPage === totalPages;
 
-                if (guess === secretNumber) {
-                    gameMessage.textContent = `Congratulations! You guessed the number ${secretNumber} in ${attempts} attempts!`;
-                    gameMessage.classList.add('text-green-600');
-                    gameOver = true;
-                    guessInput.disabled = true;
-                    redoGameBtn.classList.remove('hidden');
-                } else {
-                    if (difference <= appState.veryCloseDiff) {
-                        gameMessage.textContent = 'You\'re very close!';
-                        gameMessage.classList.add('text-yellow-600');
-                    } else if (difference <= appState.closeDiff) {
-                        gameMessage.textContent = 'You\'re close!';
-                        gameMessage.classList.add('text-orange-600');
-                    } else {
-                        gameMessage.textContent = 'You\'re far off!';
-                        gameMessage.classList.add('text-red-600');
+                // Re-apply display settings to newly rendered counter elements
+                applyDisplaySettings();
+            };
+
+            const incrementCounter = (index) => {
+                appState.counters[index].value++;
+                saveAppState();
+                renderCounters();
+            };
+
+            const decrementCounter = (index) => {
+                appState.counters[index].value--;
+                saveAppState();
+                renderCounters();
+            };
+
+            const addOrUpdateCounter = () => {
+                const name = counterNameInput.value.trim();
+                const value = parseInt(counterValueInput.value);
+
+                if (!name) {
+                    alert('Counter name cannot be empty.');
+                    return;
+                }
+                if (isNaN(value)) {
+                    alert('Please enter a valid number for the initial value.');
+                    return;
+                }
+
+                if (currentEditingCounterIndex === -1) { // Adding new counter
+                    if (appState.counters.length >= (appState.currentPage * appState.countersPerPage)) {
+                        // If current page is full, move to next page
+                        appState.currentPage++;
                     }
-                    if (guess < secretNumber) {
-                        gameMessage.textContent += ' Too low! Try again.';
-                    } else {
-                        gameMessage.textContent += ' Too high! Try again.';
-                    }
+                    appState.counters.push({ id: Date.now(), name, value });
+                } else { // Updating existing counter
+                    appState.counters[currentEditingCounterIndex].name = name;
+                    appState.counters[currentEditingCounterIndex].value = value;
+                }
+                saveAppState();
+                configureCounterModal.classList.add('hidden');
+                renderCounters();
+            };
+
+            const deleteCounter = () => {
+                if (currentEditingCounterIndex !== -1 && confirm('Are you sure you want to delete this counter?')) {
+                    appState.counters.splice(currentEditingCounterIndex, 1);
+                    saveAppState();
+                    configureCounterModal.classList.add('hidden');
+                    renderCounters();
                 }
             };
 
@@ -279,6 +534,7 @@
                 window.location.href = 'https://vugbigeriuerr3.github.io/github.io/?' + new Date().getTime();
             });
 
+            // Name Edit Modal Listeners
             saveNameOnlyBtn.addEventListener('click', () => {
                 const newUserName = nameEditUserInput.value.trim();
                 if (newUserName) {
@@ -295,8 +551,8 @@
                     appState.userName = newUserName; 
 
                     setCookie('appState', JSON.stringify(currentAppState), 365);
-                    renderUserName(); // Update display and hide modal
-                    nameEditModal.classList.add('hidden'); // Ensure modal is explicitly hidden
+                    renderUserName();
+                    nameEditModal.classList.add('hidden');
                 } else {
                     let messageElement = saveNameOnlyBtn.parentElement.querySelector('.temp-error-message');
                     if (!messageElement) {
@@ -312,131 +568,161 @@
             });
 
             editNameBtn.addEventListener('click', () => {
-                nameEditUserInput.value = appState.userName; // Pre-fill with current name
+                nameEditUserInput.value = appState.userName;
                 nameEditModal.classList.remove('hidden');
                 const existingMessage = saveNameOnlyBtn.parentElement.querySelector('.temp-error-message');
                 if (existingMessage) existingMessage.remove();
             });
 
-            gameSettingsBtn.addEventListener('click', () => {
-                minNumberInput.value = appState.minNumber;
-                maxNumberInput.value = appState.maxNumber;
-
-                secretNumberModeRadios.forEach(radio => {
-                    radio.checked = (radio.value === appState.guessMode);
+            // Display Settings Modal Listeners
+            configureDisplayBtn.addEventListener('click', () => {
+                themeRadios.forEach(radio => {
+                    radio.checked = (radio.value === appState.displaySettings.theme);
                 });
 
-                if (appState.guessMode === 'manual') {
-                    manualSecretNumberInputGroup.classList.remove('hidden');
-                    manualSecretNumberInput.value = appState.manualSecretNumber;
+                if (appState.displaySettings.theme === 'custom') {
+                    customColorInputsDiv.classList.remove('hidden');
+                    customBodyBgColorInput.value = appState.displaySettings.customBodyBg;
+                    customCardBgColorInput.value = appState.displaySettings.customCardBg;
                 } else {
-                    manualSecretNumberInputGroup.classList.add('hidden');
+                    customColorInputsDiv.classList.add('hidden');
                 }
+                textSizeSelect.value = appState.displaySettings.textSize;
 
-                veryCloseDiffInput.value = appState.veryCloseDiff;
-                closeDiffInput.value = appState.closeDiff;
-                gameSettingsModal.classList.remove('hidden');
+                displaySettingsModal.classList.remove('hidden');
             });
 
-            secretNumberModeRadios.forEach(radio => {
+            themeRadios.forEach(radio => {
                 radio.addEventListener('change', () => {
-                    if (radio.value === 'manual') {
-                        manualSecretNumberInputGroup.classList.remove('hidden');
+                    if (radio.value === 'custom') {
+                        customColorInputsDiv.classList.remove('hidden');
                     } else {
-                        manualSecretNumberInputGroup.classList.add('hidden');
+                        customColorInputsDiv.classList.add('hidden');
                     }
                 });
             });
 
-            saveGameSettingsBtn.addEventListener('click', () => {
-                const newMinNumber = parseInt(minNumberInput.value);
-                const newMaxNumber = parseInt(maxNumberInput.value);
-                const newGuessMode = document.querySelector('input[name="secret-number-mode"]:checked').value;
-                const newVeryCloseDiff = parseInt(veryCloseDiffInput.value);
-                const newCloseDiff = parseInt(closeDiffInput.value);
-                let newManualSecretNumber = appState.manualSecretNumber;
+            saveDisplaySettingsBtn.addEventListener('click', () => {
+                const selectedTheme = document.querySelector('input[name="theme"]:checked').value;
+                const newCustomBodyBg = customBodyBgColorInput.value;
+                const newCustomCardBg = customCardBgColorInput.value;
+                const newTextSize = textSizeSelect.value;
 
-                if (isNaN(newMinNumber) || newMinNumber < 1) {
-                    alert('Please enter a valid minimum number (at least 1).');
-                    return;
-                }
-                if (isNaN(newMaxNumber) || newMaxNumber < newMinNumber) {
-                    alert('Please enter a valid maximum number (greater than or equal to minimum).');
-                    return;
-                }
-                if (isNaN(newVeryCloseDiff) || newVeryCloseDiff < 0) {
-                    alert('Please enter a valid "Very Close" difference (non-negative).');
-                    return;
-                }
-                if (isNaN(newCloseDiff) || newCloseDiff < newVeryCloseDiff) {
-                    alert('Please enter a valid "Close" difference (greater than or equal to "Very Close" difference).');
-                    return;
-                }
-
-                if (newGuessMode === 'manual') {
-                    newManualSecretNumber = parseInt(manualSecretNumberInput.value);
-                    if (isNaN(newManualSecretNumber) || newManualSecretNumber < newMinNumber || newManualSecretNumber > newMaxNumber) {
-                        alert(`Please enter a valid secret number between ${newMinNumber} and ${newMaxNumber}.`);
-                        return;
-                    }
-                }
-                
                 const loadedCookieData = getCookie('appState');
                 let currentAppState = {};
                 if (loadedCookieData) {
                     try {
                         currentAppState = JSON.parse(loadedCookieData);
+                        if (!currentAppState.displaySettings) { // Ensure property exists
+                            currentAppState.displaySettings = {};
+                        }
                     } catch (e) {
                         console.error('Error parsing existing appState cookie:', e);
                     }
                 }
 
-                currentAppState.minNumber = newMinNumber;
-                currentAppState.maxNumber = newMaxNumber;
-                currentAppState.guessMode = newGuessMode;
-                currentAppState.manualSecretNumber = newManualSecretNumber;
-                currentAppState.veryCloseDiff = newVeryCloseDiff;
-                currentAppState.closeDiff = newCloseDiff;
+                currentAppState.displaySettings.theme = selectedTheme;
+                currentAppState.displaySettings.customBodyBg = newCustomBodyBg;
+                currentAppState.displaySettings.customCardBg = newCustomCardBg;
+                currentAppState.displaySettings.textSize = newTextSize;
                 
-                appState = { ...appState, ...currentAppState };
+                appState.displaySettings = currentAppState.displaySettings;
 
-                setCookie('appState', JSON.stringify(appState), 365);
-                gameSettingsModal.classList.add('hidden');
-                startGame();
+                setCookie('appState', JSON.stringify(currentAppState), 365);
+                applyDisplaySettings(); // Re-apply to the page
+                renderCounters(); // Re-render counters to pick up text size changes
+                displaySettingsModal.classList.add('hidden');
             });
 
-            guessInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter' && !gameOver) {
-                    checkGuess();
+            // Counter Specific Event Listeners
+            addCounterBtn.addEventListener('click', () => {
+                if (appState.counters.length >= (appState.currentPage * appState.countersPerPage) + appState.countersPerPage) {
+                    // This logic prevents adding if next page is also full.
+                    // Instead, let's just make sure it respects the countersPerPage limit for the *current* page for direct adds.
+                    // If the current page is full, the add action should implicitly move to the next page.
+                }
+                
+                // Clear inputs for new counter
+                counterNameInput.value = '';
+                counterValueInput.value = 0;
+                configureCounterModalTitle.textContent = 'Add New Counter';
+                saveCounterBtn.textContent = 'Add Counter';
+                deleteCounterBtn.classList.add('hidden'); // Hide delete for new counter
+                currentEditingCounterIndex = -1; // Indicate new counter
+                configureCounterModal.classList.remove('hidden');
+            });
+
+            countersGrid.addEventListener('click', (e) => {
+                if (e.target.classList.contains('increment-btn')) {
+                    const index = parseInt(e.target.dataset.index);
+                    incrementCounter(index);
+                } else if (e.target.classList.contains('decrement-btn')) {
+                    const index = parseInt(e.target.dataset.index);
+                    decrementCounter(index);
+                } else if (e.target.classList.contains('edit-counter-btn') || e.target.closest('.edit-counter-btn')) {
+                    const button = e.target.closest('.edit-counter-btn');
+                    const index = parseInt(button.dataset.index);
+                    currentEditingCounterIndex = index;
+                    const counter = appState.counters[index];
+                    counterNameInput.value = counter.name;
+                    counterValueInput.value = counter.value;
+                    configureCounterModalTitle.textContent = 'Edit Counter';
+                    saveCounterBtn.textContent = 'Save Changes';
+                    deleteCounterBtn.classList.remove('hidden'); // Show delete for existing counter
+                    configureCounterModal.classList.remove('hidden');
                 }
             });
-            redoGameBtn.addEventListener('click', startGame);
 
+            saveCounterBtn.addEventListener('click', addOrUpdateCounter);
+            deleteCounterBtn.addEventListener('click', deleteCounter);
+
+            prevPageBtn.addEventListener('click', () => {
+                if (appState.currentPage > 1) {
+                    appState.currentPage--;
+                    saveAppState();
+                    renderCounters();
+                }
+            });
+
+            nextPageBtn.addEventListener('click', () => {
+                const totalPages = Math.ceil(appState.counters.length / appState.countersPerPage);
+                if (appState.currentPage < totalPages) {
+                    appState.currentPage++;
+                    saveAppState();
+                    renderCounters();
+                }
+            });
+
+            // Initial load function
             const init = () => {
                 const loadedCookieData = getCookie('appState');
                 if (loadedCookieData) {
                     try {
                         const parsedState = JSON.parse(loadedCookieData);
-                        // Ensure all properties from parsedState are merged into appState
+                        // Merge parsed state into appState, preserving new defaults if old cookie lacks properties
                         appState = { ...appState, ...parsedState };
                         
-                        // Set defaults if any new properties are missing in old cookies
+                        // Explicitly set defaults for new properties if not found in cookie
                         appState.userName = parsedState.userName || '';
-                        appState.minNumber = parsedState.minNumber !== undefined ? parsedState.minNumber : 1;
-                        appState.maxNumber = parsedState.maxNumber !== undefined ? parsedState.maxNumber : 100;
-                        appState.guessMode = parsedState.guessMode || 'random';
-                        appState.manualSecretNumber = parsedState.manualSecretNumber !== undefined ? parsedState.manualSecretNumber : null;
-                        appState.veryCloseDiff = parsedState.veryCloseDiff !== undefined ? parsedState.veryCloseDiff : 5;
-                        appState.closeDiff = parsedState.closeDiff !== undefined ? parsedState.closeDiff : 15;
+                        if (parsedState.displaySettings) {
+                            appState.displaySettings.theme = parsedState.displaySettings.theme || 'light';
+                            appState.displaySettings.customBodyBg = parsedState.displaySettings.customBodyBg || '#f3f4f6';
+                            appState.displaySettings.customCardBg = parsedState.displaySettings.customCardBg || '#ffffff';
+                            appState.displaySettings.textSize = parsedState.displaySettings.textSize || 'text-custom-base';
+                        }
+                        appState.counters = parsedState.counters || [];
+                        appState.currentPage = parsedState.currentPage || 1;
+                        appState.countersPerPage = parsedState.countersPerPage || 6; // Ensure this default is set
 
                     } catch (e) {
                         console.error('Error parsing appState cookie on init:', e);
-                        deleteCookie('appState');
-                        appState.userName = '';
+                        deleteCookie('appState'); // Clear corrupted cookie
+                        // appState remains at its default initial values
                     }
                 }
                 renderUserName();
-                startGame();
+                applyDisplaySettings();
+                renderCounters();
             };
 
             init();
