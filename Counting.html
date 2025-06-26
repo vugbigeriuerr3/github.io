@@ -3,111 +3,335 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teacher Counter</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>Dynamic Counter</title>
     <style>
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f0f4f8;
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+        .counter-item {
+            background-color: #e0f0ff; /* Light blue for default */
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        .counter-item.green { /* For specific green background */
+            background-color: #e6ffe6;
+        }
+        .counter-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            cursor: pointer;
+            width: fit-content;
+            margin-bottom: 10px;
+            transition: background-color 0.2s;
+            color: white;
+            background-color: #007bff; /* Default blue button */
+        }
+        .counter-button.green-button {
+            background-color: #28a745; /* Green button */
+        }
+        .counter-button:hover {
+            opacity: 0.9;
+        }
+        .count-display {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #333;
+        }
+        .edit-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            color: #555;
+        }
+        .initial-setup {
+            text-align: left;
+        }
+        .initial-setup label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        .initial-setup input[type="text"],
+        .initial-setup input[type="number"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+        .initial-setup button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            margin-top: 10px;
+        }
+        .initial-setup button:hover {
+            opacity: 0.9;
+        }
+        .name-input-group {
+            margin-bottom: 10px;
+        }
+        .hidden {
+            display: none;
+        }
+        .header-edit-button {
+            background: none;
+            border: none;
+            font-size: 1em;
+            cursor: pointer;
+            color: #007bff;
+            margin-left: 10px;
+            vertical-align: middle;
         }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen p-4">
-    <div class="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full border border-gray-200">
-        <h1 class="text-4xl font-bold text-center mb-8 text-gray-800">Teacher Counter</h1>
+<body>
+    <div class="container" id="mainContainer">
+        <h1 id="pageTitle">Loading Counter... <button class="header-edit-button" id="editTitleButton">✏️</button></h1>
 
-        <div class="flex flex-col space-y-6">
-            <div class="flex flex-col items-center p-4 bg-blue-50 rounded-xl border border-blue-200 shadow-md">
-                <button id="evarardButton" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 mb-4 focus:outline-none focus:ring-4 focus:ring-blue-300">
-                    Evarard
-                </button>
-                <p class="text-3xl font-extrabold text-blue-800" id="evarardCount">0</p>
-            </div>
-
-            <div class="flex flex-col items-center p-4 bg-green-50 rounded-xl border border-green-200 shadow-md">
-                <button id="MuburuButton" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 mb-4 focus:outline-none focus:ring-4 focus:ring-green-300">
-                    Muburu
-                </button>
-                <p class="text-3xl font-extrabold text-green-800" id="MuburuCount">0</p>
-            </div>
+        <div id="initialSetup" class="initial-setup hidden">
+            <label for="userName">Your User ID (Name):</label>
+            <input type="text" id="userName" placeholder="e.g., John Doe">
+            <button id="nextSetupButton">Next</button>
         </div>
 
-        <div class="mt-8 text-center text-sm text-gray-600">
-            <p>Your User ID: <span id="userIdDisplay" class="font-mono bg-gray-100 px-2 py-1 rounded-md text-gray-700 break-all"></span></p>
+        <div id="countSetup" class="initial-setup hidden">
+            <label for="numCounters">How many items/people to count?</label>
+            <input type="number" id="numCounters" min="1" value="1">
+            <button id="generateNameInputs">Generate Name Fields</button>
+            <div id="nameInputsContainer"></div>
+            <button id="saveSetupButton" class="hidden">Start Counting</button>
         </div>
 
-        <div id="messageBox" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50 hidden">
-            <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
-                <p id="messageText" class="text-lg font-semibold text-gray-800 mb-4"></p>
-                <button id="messageCloseButton" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">OK</button>
+        <div id="countersDisplay" class="hidden">
             </div>
-        </div>
     </div>
 
-    <script type="module">
-        const evarardCountElement = document.getElementById('evarardCount');
-        const MuburuCountElement = document.getElementById('MuburuCount');
-        const evarardButton = document.getElementById('evarardButton');
-        const MuburuButton = document.getElementById('MuburuButton');
-        const userIdDisplay = document.getElementById('userIdDisplay');
-        const messageBox = document.getElementById('messageBox');
-        const messageText = document.getElementById('messageText');
-        const messageCloseButton = document.getElementById('messageCloseButton');
+    <script>
+        const userNameInput = document.getElementById('userName');
+        const nextSetupButton = document.getElementById('nextSetupButton');
+        const initialSetupDiv = document.getElementById('initialSetup');
+        const countSetupDiv = document.getElementById('countSetup');
+        const numCountersInput = document.getElementById('numCounters');
+        const generateNameInputsButton = document.getElementById('generateNameInputs');
+        const nameInputsContainer = document.getElementById('nameInputsContainer');
+        const saveSetupButton = document.getElementById('saveSetupButton');
+        const countersDisplayDiv = document.getElementById('countersDisplay');
+        const mainContainer = document.getElementById('mainContainer');
+        const pageTitle = document.getElementById('pageTitle');
+        const editTitleButton = document.getElementById('editTitleButton');
 
-        const userId = 'Counter';
+        let counters = [];
+        let userId = '';
+        let customTitle = 'Teacher Counter'; // Default title
 
-        function showMessageBox(message) {
-            messageText.textContent = message;
-            messageBox.classList.remove('hidden');
+        // --- Functions for saving/loading data ---
+        function saveData() {
+            localStorage.setItem('userId', userId);
+            localStorage.setItem('counters', JSON.stringify(counters));
+            localStorage.setItem('customTitle', customTitle);
         }
 
-        messageCloseButton.addEventListener('click', () => {
-            messageBox.classList.add('hidden');
+        function loadData() {
+            userId = localStorage.getItem('userId') || '';
+            const storedCounters = localStorage.getItem('counters');
+            if (storedCounters) {
+                counters = JSON.parse(storedCounters);
+            }
+            customTitle = localStorage.getItem('customTitle') || 'Teacher Counter';
+            pageTitle.innerHTML = `${customTitle} <button class="header-edit-button" id="editTitleButton">✏️</button>`;
+            document.getElementById('editTitleButton').addEventListener('click', editPageTitle); // Re-attach event listener
+        }
+
+        // --- Initial Setup Flow ---
+        function showInitialSetup() {
+            initialSetupDiv.classList.remove('hidden');
+            countSetupDiv.classList.add('hidden');
+            countersDisplayDiv.classList.add('hidden');
+        }
+
+        function showCountSetup() {
+            initialSetupDiv.classList.add('hidden');
+            countSetupDiv.classList.remove('hidden');
+            countersDisplayDiv.classList.add('hidden');
+            nameInputsContainer.innerHTML = ''; // Clear previous inputs
+            saveSetupButton.classList.add('hidden');
+        }
+
+        function showCountersDisplay() {
+            initialSetupDiv.classList.add('hidden');
+            countSetupDiv.classList.add('hidden');
+            countersDisplayDiv.classList.remove('hidden');
+            renderCounters();
+        }
+
+        nextSetupButton.addEventListener('click', () => {
+            userId = userNameInput.value.trim();
+            if (userId) {
+                showCountSetup();
+            } else {
+                alert('Please enter your User ID (Name).');
+            }
         });
 
-        function setCookie(name, value, days) {
-            const date = new Date();
-            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-            const expires = "expires=" + date.toUTCString();
-            document.cookie = name + "=" + value + ";" + expires + ";path=/";
-        }
-
-        function getCookie(name) {
-            const nameEQ = name + "=";
-            const ca = document.cookie.split(';');
-            for(let i = 0; i < ca.length; i++) {
-                let c = ca[i];
-                while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-                if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+        generateNameInputsButton.addEventListener('click', () => {
+            const num = parseInt(numCountersInput.value);
+            if (isNaN(num) || num <= 0) {
+                alert('Please enter a valid number of counters.');
+                return;
             }
-            return "";
-        }
 
-        function initializeCounters() {
-            userIdDisplay.textContent = userId;
-            const evarardCount = parseInt(getCookie('evarardCount')) || 0;
-            const MuburuCount = parseInt(getCookie('MuburuCount')) || 0;
-
-            evarardCountElement.textContent = evarardCount;
-            MuburuCountElement.textContent = MuburuCount;
-        }
-
-        function incrementCounter(type) {
-            let currentCount = parseInt(getCookie(`${type}Count`)) || 0;
-            currentCount++;
-            if (type === 'evarard') {
-                evarardCountElement.textContent = currentCount;
-            } else if (type === 'Muburu') {
-                MuburuCountElement.textContent = currentCount;
+            nameInputsContainer.innerHTML = '';
+            for (let i = 0; i < num; i++) {
+                const div = document.createElement('div');
+                div.classList.add('name-input-group');
+                div.innerHTML = `
+                    <label for="counterName${i}">Name for Counter ${i + 1}:</label>
+                    <input type="text" id="counterName${i}" placeholder="e.g., Evrard or Muburu">
+                `;
+                nameInputsContainer.appendChild(div);
             }
-            setCookie(`${type}Count`, currentCount, 365);
+            saveSetupButton.classList.remove('hidden');
+        });
+
+        saveSetupButton.addEventListener('click', () => {
+            counters = [];
+            let allNamesEntered = true;
+            for (let i = 0; i < parseInt(numCountersInput.value); i++) {
+                const nameInput = document.getElementById(`counterName${i}`);
+                const name = nameInput.value.trim();
+                if (!name) {
+                    allNamesEntered = false;
+                    break;
+                }
+                counters.push({ name: name, count: 0 });
+            }
+
+            if (allNamesEntered) {
+                saveData();
+                showCountersDisplay();
+            } else {
+                alert('Please enter a name for all counters.');
+            }
+        });
+
+        // --- Counter Functionality ---
+        function renderCounters() {
+            countersDisplayDiv.innerHTML = '';
+            counters.forEach((counter, index) => {
+                const counterDiv = document.createElement('div');
+                counterDiv.classList.add('counter-item');
+                // Apply green background to the second counter, if it exists, to match the example
+                if (index === 1) {
+                    counterDiv.classList.add('green');
+                }
+
+                const buttonClass = (index === 1) ? 'counter-button green-button' : 'counter-button';
+
+                counterDiv.innerHTML = `
+                    <button class="${buttonClass}" data-index="${index}">${counter.name}</button>
+                    <div class="count-display" id="countDisplay${index}">${counter.count}</div>
+                    <button class="edit-button" data-index="${index}">✏️</button>
+                `;
+                countersDisplayDiv.appendChild(counterDiv);
+            });
+
+            // Add event listeners to the new buttons
+            document.querySelectorAll('.counter-button').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const index = parseInt(event.target.dataset.index);
+                    if (counters[index].count > 0) { // Ensure count doesn't go below 0
+                        counters[index].count--;
+                        document.getElementById(`countDisplay${index}`).textContent = counters[index].count;
+                        saveData();
+                    }
+                });
+            });
+
+            document.querySelectorAll('.edit-button').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const index = parseInt(event.target.dataset.index);
+                    const newCount = prompt(`Edit count for ${counters[index].name}:`, counters[index].count);
+                    if (newCount !== null && !isNaN(parseInt(newCount))) {
+                        counters[index].count = parseInt(newCount);
+                        document.getElementById(`countDisplay${index}`).textContent = counters[index].count;
+                        saveData();
+                    } else if (newCount !== null) {
+                        alert('Invalid input. Please enter a number.');
+                    }
+                });
+            });
         }
 
-        evarardButton.addEventListener('click', () => incrementCounter('evarard'));
-        MuburuButton.addEventListener('click', () => incrementCounter('Muburu'));
+        // --- Title Editing ---
+        function editPageTitle() {
+            const newTitle = prompt('Enter a new title for the counter page:', customTitle);
+            if (newTitle !== null && newTitle.trim() !== '') {
+                customTitle = newTitle.trim();
+                pageTitle.innerHTML = `${customTitle} <button class="header-edit-button" id="editTitleButton">✏️</button>`;
+                document.getElementById('editTitleButton').addEventListener('click', editPageTitle); // Re-attach event listener
+                saveData();
+            } else if (newTitle !== null) {
+                alert('Title cannot be empty.');
+            }
+        }
 
-        window.onload = initializeCounters;
+        // Initial load and display
+        window.addEventListener('load', () => {
+            loadData();
+            if (userId && counters.length > 0) {
+                showCountersDisplay();
+            } else if (userId) {
+                showCountSetup();
+            } else {
+                showInitialSetup();
+            }
+        });
+
+        // Event listener for the initial title edit button
+        // This is necessary because the button is part of the initial HTML
+        document.getElementById('editTitleButton').addEventListener('click', editPageTitle);
+
     </script>
 </body>
 </html>
