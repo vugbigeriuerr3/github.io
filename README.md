@@ -26,8 +26,7 @@
             z-index: 20; /* Higher than overlay */
         }
 
-        /* --- Specific CSS to hide GitHub Pages default elements --- */
-        /* This hides the default GitHub Pages header that sometimes appears */
+
         header.site-header, .site-header {
             display: none !important;
             visibility: hidden !important;
@@ -35,7 +34,7 @@
             overflow: hidden !important;
         }
 
-        /* Full-screen overlay to cover unexpected GitHub Pages elements */
+
         #github-pages-overlay {
             position: fixed;
             top: 0;
