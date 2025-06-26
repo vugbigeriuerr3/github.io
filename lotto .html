@@ -45,6 +45,15 @@
         .lotto-number-bubble:hover {
             transform: translateY(-3px);
         }
+
+        /* Styles for the new lotto visual area with background image */
+        #lotto-visual-area {
+            background-image: url('https://placehold.co/600x200/4c7cbf/ffffff/png?text=YOUR+LOTTO+BALL+IMAGE'); /* Placeholder image */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            min-height: 200px; /* Ensure space for the image */
+        }
     </style>
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
@@ -63,9 +72,12 @@
 
     <div id="app" class="relative w-full max-w-lg bg-white shadow-lg rounded-2xl p-8 text-center">
         <h1 class="text-4xl font-bold text-gray-800 mb-6">Lotto Number Generator</h1>
-        <p class="text-lg text-gray-600 mb-8" id="generator-message">Click "Generate Numbers" to get your lucky draw!</p>
         
-        <div id="lotto-numbers-display" class="flex flex-wrap justify-center gap-4 mb-8 min-h-[80px] items-center">
+        <!-- New container for lotto numbers and message with background image -->
+        <div id="lotto-visual-area" class="relative w-full rounded-lg flex flex-col justify-between items-center p-4 mb-8 shadow-inner">
+            <p class="text-lg text-white mb-2" id="generator-message">Click "Generate Numbers" to get your lucky draw!</p>
+            <div id="lotto-numbers-display" class="flex flex-wrap justify-center gap-4">
+            </div>
         </div>
         
         <div class="space-y-4">
@@ -197,11 +209,18 @@
                 let numbers = new Set();
                 let generated = [];
 
+                lottoNumbersDisplay.innerHTML = ''; // Clear previous numbers
+
+                if (minNumber > maxNumber || numToGenerate < 1) {
+                    generatorMessage.textContent = `Error: Invalid range or number count. Check settings.`;
+                    generatorMessage.classList.add('text-red-600');
+                    return;
+                }
+
                 if (!allowDuplicates) {
                     if ((maxNumber - minNumber + 1) < numToGenerate) {
                         generatorMessage.textContent = `Error: Cannot generate ${numToGenerate} unique numbers in the range ${minNumber}-${maxNumber}. Adjust settings.`;
                         generatorMessage.classList.add('text-red-600');
-                        lottoNumbersDisplay.innerHTML = '';
                         return;
                     }
                     while (numbers.size < numToGenerate) {
@@ -215,7 +234,6 @@
                     generated.sort((a, b) => a - b);
                 }
 
-                lottoNumbersDisplay.innerHTML = '';
                 generated.forEach(num => {
                     const bubble = document.createElement('div');
                     bubble.className = 'lotto-number-bubble';
@@ -224,7 +242,7 @@
                 });
                 generatorMessage.textContent = `Here are your ${numToGenerate} lucky numbers!`;
                 generatorMessage.classList.remove('text-red-600');
-                generatorMessage.classList.add('text-gray-600');
+                generatorMessage.classList.add('text-white'); // Make message white for background contrast
             };
 
             goHomeBtn.addEventListener('click', () => {
@@ -303,6 +321,7 @@
                     }
                 }
 
+                // Update only lottoSettings property
                 currentAppState.lottoSettings = {
                     minNumber: newMin,
                     maxNumber: newMax,
@@ -310,11 +329,12 @@
                     allowDuplicates: newAllowDuplicates
                 };
                 
+                // Update local appState's lottoSettings
                 appState.lottoSettings = currentAppState.lottoSettings;
 
                 setCookie('appState', JSON.stringify(currentAppState), 365);
                 lottoSettingsModal.classList.add('hidden');
-                generateLottoNumbers(); // Generate numbers with new settings immediately
+                generateLottoNumbers();
             });
 
             generateNumbersBtn.addEventListener('click', generateLottoNumbers);
@@ -328,7 +348,8 @@
                         if (parsedState.lottoSettings) {
                             appState.lottoSettings = { ...appState.lottoSettings, ...parsedState.lottoSettings };
                         }
-                        appState = { ...parsedState, ...appState }; // Merge to preserve other app data
+                        // Merge to preserve any other unknown properties from the cookie (e.g., from Counter app)
+                        appState = { ...parsedState, ...appState };
                     } catch (e) {
                         console.error('Error parsing appState cookie on init:', e);
                         deleteCookie('appState');
@@ -336,7 +357,7 @@
                     }
                 }
                 renderUserName();
-                generateLottoNumbers(); // Generate initial numbers on load
+                generateLottoNumbers();
             };
 
             init();
