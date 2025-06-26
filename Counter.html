@@ -126,8 +126,6 @@
 
     <div id="main-content-card" class="w-full max-w-4xl bg-white shadow-lg rounded-2xl p-8 text-center main-card">
         <h1 class="text-4xl font-bold text-gray-800 mb-6" id="website-main-title">Dynamic Counter</h1>
-        <p class="text-lg text-gray-600 mb-8" id="page-title">Welcome!</p>
-
         <div id="counters-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         </div>
 
@@ -181,9 +179,9 @@
             </div>
             <div class="flex justify-between space-x-4">
                 <button id="save-counter-btn"
-                         class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-all duration-300 shadow-lg">Save Counter</button>
+                             class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-all duration-300 shadow-lg">Save Counter</button>
                 <button id="delete-counter-btn"
-                         class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-75 transition-all duration-300 shadow-lg hidden">Delete Counter</button>
+                             class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-75 transition-all duration-300 shadow-lg hidden">Delete Counter</button>
             </div>
         </div>
     </div>
@@ -273,7 +271,7 @@
             const configureDisplayBtn = document.getElementById('configure-display-btn');
             const mainContentCard = document.getElementById('main-content-card');
             const websiteMainTitle = document.getElementById('website-main-title');
-            const pageTitle = document.getElementById('page-title');
+            // const pageTitle = document.getElementById('page-title'); // This element has been removed
             const countersGrid = document.getElementById('counters-grid');
             const addCounterBtn = document.getElementById('add-counter-btn');
             const prevPageBtn = document.getElementById('prev-page-btn');
@@ -311,7 +309,7 @@
             let appState = {
                 userName: '',
                 websiteTitle: 'Dynamic Counter Application',
-                websiteMainTitleText: 'Dynamic Counter',
+                websiteMainTitleText: 'Dynamic Counter', // Initial value for the big title
                 displaySettings: {
                     theme: 'light',
                     customBodyBg: '#f3f4f6',
@@ -354,15 +352,46 @@
                 setCookie('appState', JSON.stringify(appState), 365);
             };
 
+            const loadAppState = () => {
+                const storedState = getCookie('appState');
+                if (storedState) {
+                    try {
+                        const parsedState = JSON.parse(storedState);
+                        // Merge with default state to ensure new properties are included
+                        appState = { ...appState, ...parsedState };
+
+                        // Apply loaded settings immediately
+                        userNameDisplay.textContent = appState.userName || 'Guest';
+                        websiteTitleTag.textContent = appState.websiteTitle;
+                        websiteMainTitle.textContent = appState.websiteMainTitleText; // Load and apply main title
+
+                        // Update input fields in settings modals
+                        websiteTitleInput.value = appState.websiteTitle;
+                        websiteMainTitleInput.value = appState.websiteMainTitleText;
+                        countersPerPageInput.value = appState.countersPerPage;
+
+                    } catch (e) {
+                        console.error("Error parsing appState from cookie:", e);
+                        // Optionally reset cookie if it's corrupted
+                        deleteCookie('appState');
+                    }
+                }
+            };
+
             const applyDisplaySettings = () => {
                 const { theme, customBodyBg, customCardBg, textSize } = appState.displaySettings;
 
                 const textSizes = ['text-custom-sm', 'text-custom-base', 'text-custom-lg', 'text-custom-xl'];
                 textSizes.forEach(cls => {
                     mainContentCard.classList.remove(cls);
-                    countersGrid.classList.remove(cls);
+                    countersGrid.classList.remove(cls); // Ensure counters grid also removes old text size classes
                 });
                 mainContentCard.classList.add(textSize);
+                // Also apply text size to individual counter cards for consistency if needed,
+                // or ensure your CSS .counter-card h3 and .counter-value rules are scoped correctly
+                // or add it to the counters grid which contains them.
+                countersGrid.classList.add(textSize);
+
 
                 document.body.classList.remove('bg-gray-100', 'dark-mode');
                 document.body.style.backgroundColor = '';
@@ -372,11 +401,13 @@
                 mainContentCard.style.backgroundColor = '';
 
                 websiteMainTitle.style.color = '';
-                pageTitle.style.color = '';
+                // pageTitle.style.color = ''; // Removed as pageTitle element is gone
                 pageInfo.style.color = '';
 
                 document.querySelectorAll('.counter-card h3').forEach(el => el.style.color = '');
                 document.querySelectorAll('.counter-value').forEach(el => el.style.color = '');
+                document.querySelectorAll('.counter-card').forEach(card => card.style.backgroundColor = ''); // Reset card background
+
 
                 const userNameBox = document.querySelector('.fixed.top-4.right-4');
                 userNameBox.classList.remove('bg-white', 'bg-gray-900');
@@ -390,7 +421,7 @@
 
                     mainContentCard.classList.add('bg-gray-800');
                     websiteMainTitle.style.color = '#e2e8f0';
-                    pageTitle.style.color = '#cbd5e0';
+                    // pageTitle.style.color = '#cbd5e0'; // Removed
                     pageInfo.style.color = '#e2e8f0';
 
                     document.querySelectorAll('.counter-card h3').forEach(el => el.style.color = '#e2e8f0');
@@ -417,32 +448,30 @@
                         return (0.2126 * r + 0.7152 * g + 0.0722 * b) < 128;
                     };
 
+                    // Determine text color based on background luminance
+                    const bodyTextColor = isDark(customBodyBg) ? '#e2e8f0' : '#1a202c';
+                    websiteMainTitle.style.color = bodyTextColor;
+                    // pageTitle.style.color = isDark(customBodyBg) ? '#cbd5e0' : '#4a5568'; // Removed
+                    pageInfo.style.color = isDark(customBodyBg) ? '#e2e8f0' : '#4a5568';
+
+                    // Update username box colors based on body background
                     if (isDark(customBodyBg)) {
-                        websiteMainTitle.style.color = '#e2e8f0';
-                        pageTitle.style.color = '#cbd5e0';
-                        pageInfo.style.color = '#e2e8f0';
                         userNameBox.classList.add('bg-gray-900');
                         userNameBox.querySelector('span').style.color = '#90cdf4';
                         userNameBox.querySelector('button').style.color = '#a0aec0';
                     } else {
-                        websiteMainTitle.style.color = '#1a202c';
-                        pageTitle.style.color = '#4a5568';
-                        pageInfo.style.color = '#4a5568';
                         userNameBox.classList.add('bg-white');
                         userNameBox.querySelector('span').style.color = '#3182ce';
                         userNameBox.querySelector('button').style.color = '#a0aec0';
                     }
-                    if (isDark(customCardBg)) {
-                            websiteMainTitle.style.color = '#e2e8f0';
-                            document.querySelectorAll('.counter-card h3').forEach(el => el.style.color = '#e2e8f0');
-                            document.querySelectorAll('.counter-value').forEach(el => el.style.color = '#e2e8f0');
-                            document.querySelectorAll('.counter-card').forEach(card => card.style.backgroundColor = '#4a5568');
-                    } else {
-                        websiteMainTitle.style.color = '#1a202c';
-                        document.querySelectorAll('.counter-card h3').forEach(el => el.style.color = '#1f2937');
-                        document.querySelectorAll('.counter-value').forEach(el => el.style.color = '#1f2937');
-                        document.querySelectorAll('.counter-card').forEach(card => card.style.backgroundColor = '#f9fafb');
-                    }
+
+                    // Update counter card text and background colors based on customCardBg
+                    const cardTextColor = isDark(customCardBg) ? '#e2e8f0' : '#1f2937';
+                    const cardBgColor = customCardBg;
+
+                    document.querySelectorAll('.counter-card h3').forEach(el => el.style.color = cardTextColor);
+                    document.querySelectorAll('.counter-value').forEach(el => el.style.color = cardTextColor);
+                    document.querySelectorAll('.counter-card').forEach(card => card.style.backgroundColor = cardBgColor);
 
                 } else {
                     document.body.classList.add('bg-gray-100');
@@ -500,7 +529,7 @@
                 prevPageBtn.disabled = appState.currentPage === 1;
                 nextPageBtn.disabled = appState.currentPage === totalPages;
 
-                applyDisplaySettings();
+                applyDisplaySettings(); // Re-apply settings after rendering counters to ensure colors are correct
             };
 
             const incrementCounter = (id) => {
@@ -571,38 +600,19 @@
             saveNameOnlyBtn.addEventListener('click', () => {
                 const newUserName = nameEditUserInput.value.trim();
                 if (newUserName) {
-                    const loadedCookieData = getCookie('appState');
-                    let currentAppState = {};
-                    if (loadedCookieData) {
-                        try {
-                            currentAppState = JSON.parse(loadedCookieData);
-                        } catch (e) {
-                            console.error('Error parsing existing appState cookie:', e);
-                        }
-                    }
-                    currentAppState.userName = newUserName;
                     appState.userName = newUserName;
-
-                    setCookie('appState', JSON.stringify(currentAppState), 365);
+                    saveAppState();
                     renderUserName();
                     nameEditModal.classList.add('hidden');
                 } else {
-                    let messageElement = saveNameOnlyBtn.parentElement.querySelector('.temp-error-message');
-                    if (!messageElement) {
-                        messageElement = document.createElement('p');
-                        messageElement.className = 'text-red-500 text-sm mt-2 text-center temp-error-message';
-                        saveNameOnlyBtn.parentElement.insertBefore(messageElement, saveNameOnlyBtn);
-                    }
-                    messageElement.textContent = 'Please enter a name.';
-                    setTimeout(() => {
-                        messageElement.remove();
-                    }, 2000);
+                    alert('Please enter a name.');
                 }
             });
 
             editNameBtn.addEventListener('click', () => {
                 nameEditUserInput.value = appState.userName;
                 nameEditModal.classList.remove('hidden');
+                sessionStorage.removeItem('nameEditModalShown'); // Allow modal to show again if name is cleared
             });
 
             nameEditModal.addEventListener('click', (e) => {
@@ -610,6 +620,7 @@
                     nameEditModal.classList.add('hidden');
                 }
             });
+
 
             addCounterBtn.addEventListener('click', () => {
                 currentEditingCounterId = null;
@@ -620,31 +631,34 @@
                 configureCounterModal.classList.remove('hidden');
             });
 
-            countersGrid.addEventListener('click', (e) => {
-                if (e.target.classList.contains('increment-btn')) {
-                    incrementCounter(parseInt(e.target.dataset.id));
-                } else if (e.target.classList.contains('decrement-btn')) {
-                    decrementCounter(parseInt(e.target.dataset.id));
-                } else if (e.target.classList.contains('edit-counter-btn') || e.target.closest('.edit-counter-btn')) {
-                    const id = parseInt(e.target.dataset.id || e.target.closest('.edit-counter-btn').dataset.id);
-                    const counter = appState.counters.find(c => c.id === id);
-                    if (counter) {
-                        currentEditingCounterId = id;
-                        configureCounterModalTitle.textContent = 'Configure Counter';
-                        counterNameInput.value = counter.name;
-                        counterValueInput.value = counter.value;
-                        deleteCounterBtn.classList.remove('hidden');
-                        configureCounterModal.classList.remove('hidden');
-                    }
-                }
-            });
-
             saveCounterBtn.addEventListener('click', addOrUpdateCounter);
             deleteCounterBtn.addEventListener('click', deleteCounter);
 
             configureCounterModal.addEventListener('click', (e) => {
                 if (e.target === configureCounterModal) {
                     configureCounterModal.classList.add('hidden');
+                }
+            });
+
+            countersGrid.addEventListener('click', (e) => {
+                if (e.target.classList.contains('increment-btn')) {
+                    const id = parseInt(e.target.dataset.id);
+                    incrementCounter(id);
+                } else if (e.target.classList.contains('decrement-btn')) {
+                    const id = parseInt(e.target.dataset.id);
+                    decrementCounter(id);
+                } else if (e.target.classList.contains('edit-counter-btn') || e.target.closest('.edit-counter-btn')) {
+                    const btn = e.target.classList.contains('edit-counter-btn') ? e.target : e.target.closest('.edit-counter-btn');
+                    const id = parseInt(btn.dataset.id);
+                    currentEditingCounterId = id;
+                    const counter = appState.counters.find(c => c.id === id);
+                    if (counter) {
+                        configureCounterModalTitle.textContent = `Edit Counter: ${counter.name}`;
+                        counterNameInput.value = counter.name;
+                        counterValueInput.value = counter.value;
+                        deleteCounterBtn.classList.remove('hidden');
+                        configureCounterModal.classList.remove('hidden');
+                    }
                 }
             });
 
@@ -666,27 +680,25 @@
             });
 
             configureDisplayBtn.addEventListener('click', () => {
+                // Set radio buttons based on current theme
                 themeRadios.forEach(radio => {
-                    radio.checked = (radio.value === appState.displaySettings.theme);
+                    radio.checked = radio.value === appState.displaySettings.theme;
                 });
-                if (appState.displaySettings.theme === 'custom') {
-                    customColorInputsDiv.classList.remove('hidden');
-                    customBodyBgColorInput.value = appState.displaySettings.customBodyBg;
-                    customCardBgColorInput.value = appState.displaySettings.customCardBg;
-                } else {
-                    customColorInputsDiv.classList.add('hidden');
-                }
+
+                // Show/hide custom color inputs
+                customColorInputsDiv.classList.toggle('hidden', appState.displaySettings.theme !== 'custom');
+                customBodyBgColorInput.value = appState.displaySettings.customBodyBg;
+                customCardBgColorInput.value = appState.displaySettings.customCardBg;
+
+                // Set text size select
                 textSizeSelect.value = appState.displaySettings.textSize;
+
                 displaySettingsModal.classList.remove('hidden');
             });
 
             themeRadios.forEach(radio => {
                 radio.addEventListener('change', (e) => {
-                    if (e.target.value === 'custom') {
-                        customColorInputsDiv.classList.remove('hidden');
-                    } else {
-                        customColorInputsDiv.classList.add('hidden');
-                    }
+                    customColorInputsDiv.classList.toggle('hidden', e.target.value !== 'custom');
                 });
             });
 
@@ -706,33 +718,31 @@
                 }
             });
 
+
             counterAppSettingsBtn.addEventListener('click', () => {
                 countersPerPageInput.value = appState.countersPerPage;
                 websiteTitleInput.value = appState.websiteTitle;
-                websiteMainTitleInput.value = appState.websiteMainTitleText;
+                websiteMainTitleInput.value = appState.websiteMainTitleText; // Populate input with current main title
                 counterAppSettingsModal.classList.remove('hidden');
             });
 
             saveCounterAppSettingsBtn.addEventListener('click', () => {
                 const newCountersPerPage = parseInt(countersPerPageInput.value);
-                const newWebsiteTitle = websiteTitleInput.value.trim();
-                const newWebsiteMainTitleText = websiteMainTitleInput.value.trim();
-
-                if (isNaN(newCountersPerPage) || newCountersPerPage < 1) {
-                    alert('Counters per page must be a positive number.');
-                    return;
+                if (!isNaN(newCountersPerPage) && newCountersPerPage > 0) {
+                    appState.countersPerPage = newCountersPerPage;
+                } else {
+                    alert('Please enter a valid number for counters per page (must be greater than 0).');
+                    countersPerPageInput.value = appState.countersPerPage; // Reset to old value
                 }
 
-                appState.countersPerPage = newCountersPerPage;
-                appState.websiteTitle = newWebsiteTitle;
-                appState.websiteMainTitleText = newWebsiteMainTitleText;
-
-                document.title = appState.websiteTitle;
+                appState.websiteTitle = websiteTitleInput.value.trim();
                 websiteTitleTag.textContent = appState.websiteTitle;
-                websiteMainTitle.textContent = appState.websiteMainTitleText;
+
+                appState.websiteMainTitleText = websiteMainTitleInput.value.trim(); // Update appState
+                websiteMainTitle.textContent = appState.websiteMainTitleText; // Update the displayed H1
 
                 saveAppState();
-                renderCounters();
+                renderCounters(); // Re-render counters to apply new items per page, and potentially new page layout
                 counterAppSettingsModal.classList.add('hidden');
             });
 
@@ -742,26 +752,11 @@
                 }
             });
 
-            const loadAppState = () => {
-                const storedState = getCookie('appState');
-                if (storedState) {
-                    try {
-                        const parsedState = JSON.parse(storedState);
-                        appState = { ...appState, ...parsedState };
-                    } catch (e) {
-                        console.error('Error parsing appState from cookie:', e);
-                        deleteCookie('appState');
-                    }
-                }
-                document.title = appState.websiteTitle;
-                websiteTitleTag.textContent = appState.websiteTitle;
-                websiteMainTitle.textContent = appState.websiteMainTitleText;
-                renderUserName();
-                applyDisplaySettings();
-                renderCounters();
-            };
 
+            // Initial load and render
             loadAppState();
+            renderUserName();
+            renderCounters();
         });
     </script>
 </body>
