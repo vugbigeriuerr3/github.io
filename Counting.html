@@ -139,6 +139,20 @@
         .hidden {
             display: none;
         }
+        .manage-counters-btn {
+            background-color: #6c757d; /* Grey button */
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 20px;
+            width: 100%;
+        }
+        .manage-counters-btn:hover {
+            background-color: #5a6268;
+        }
     </style>
 </head>
 <body>
@@ -160,7 +174,8 @@
         </div>
 
         <div id="countersDisplay" class="hidden">
-            </div>
+            <button class="manage-counters-btn" id="manageCountersButton">Manage Counters</button>
+        </div>
     </div>
 
     <script>
@@ -176,6 +191,7 @@
         const mainContainer = document.getElementById('mainContainer');
         const pageTitle = document.getElementById('pageTitle');
         const editTitleButton = document.getElementById('editTitleButton');
+        const manageCountersButton = document.getElementById('manageCountersButton'); // New button element
 
         let counters = [];
         let userId = '';
@@ -208,12 +224,22 @@
             countersDisplayDiv.classList.add('hidden');
         }
 
-        function showCountSetup() {
+        function showCountSetup(editMode = false) {
             initialSetupDiv.classList.add('hidden');
             countSetupDiv.classList.remove('hidden');
             countersDisplayDiv.classList.add('hidden');
             nameInputsContainer.innerHTML = ''; // Clear previous inputs
-            saveSetupButton.classList.add('hidden');
+            saveSetupButton.classList.add('hidden'); // Hide until names are generated
+
+            if (editMode) {
+                numCountersInput.value = counters.length;
+                saveSetupButton.textContent = 'Save Changes';
+                // Trigger generateNameInputs to pre-fill names
+                generateNameInputs(true); // Pass true to indicate pre-fill
+            } else {
+                numCountersInput.value = 1; // Reset to 1 for new setup
+                saveSetupButton.textContent = 'Start Counting';
+            }
         }
 
         function showCountersDisplay() {
@@ -232,7 +258,8 @@
             }
         });
 
-        generateNameInputsButton.addEventListener('click', () => {
+        // Modified generateNameInputs function to handle pre-filling
+        function generateNameInputs(prefill = false) {
             const num = parseInt(numCountersInput.value);
             if (isNaN(num) || num <= 0) {
                 alert('Please enter a valid number of counters.');
@@ -243,29 +270,52 @@
             for (let i = 0; i < num; i++) {
                 const div = document.createElement('div');
                 div.classList.add('name-input-group');
+                const existingName = prefill && counters[i] ? counters[i].name : '';
                 div.innerHTML = `
                     <label for="counterName${i}">Name for Counter ${i + 1}:</label>
-                    <input type="text" id="counterName${i}" placeholder="e.g., Evrard or Muburu">
+                    <input type="text" id="counterName${i}" placeholder="e.g., Evrard or Muburu" value="${existingName}">
                 `;
                 nameInputsContainer.appendChild(div);
             }
             saveSetupButton.classList.remove('hidden');
-        });
+        }
+
+        generateNameInputsButton.addEventListener('click', () => generateNameInputs(false)); // Call without prefill
 
         saveSetupButton.addEventListener('click', () => {
-            counters = [];
+            const newNum = parseInt(numCountersInput.value);
+            if (isNaN(newNum) || newNum <= 0) {
+                alert('Please enter a valid number of counters.');
+                return;
+            }
+
+            const newCountersArray = [];
             let allNamesEntered = true;
-            for (let i = 0; i < parseInt(numCountersInput.value); i++) {
+
+            for (let i = 0; i < newNum; i++) {
                 const nameInput = document.getElementById(`counterName${i}`);
-                const name = nameInput.value.trim();
+                const name = nameInput ? nameInput.value.trim() : ''; // Handle case where input might not exist if num was reduced
                 if (!name) {
                     allNamesEntered = false;
                     break;
                 }
-                counters.push({ name: name, count: 0 });
+
+                // Preserve existing count if name matches or if it's the same index and name is same
+                let existingCount = 0;
+                // Try to find the counter by name first, if a name has changed but existed
+                const existingCounterByName = counters.find(c => c.name === name);
+                if (existingCounterByName) {
+                    existingCount = existingCounterByName.count;
+                } else if (i < counters.length && counters[i].name === name) {
+                    // If name is the same at the same position
+                    existingCount = counters[i].count;
+                }
+                // If it's a new counter or name has truly changed, start at 0
+                newCountersArray.push({ name: name, count: existingCount });
             }
 
             if (allNamesEntered) {
+                counters = newCountersArray; // Update the main counters array
                 saveData();
                 showCountersDisplay();
             } else {
@@ -273,9 +323,15 @@
             }
         });
 
+        // New event listener for the "Manage Counters" button
+        manageCountersButton.addEventListener('click', () => {
+            showCountSetup(true); // Pass true to enable edit mode and pre-fill
+        });
+
+
         // --- Counter Functionality ---
         function renderCounters() {
-            countersDisplayDiv.innerHTML = '';
+            countersDisplayDiv.innerHTML = '<button class="manage-counters-btn" id="manageCountersButton">Manage Counters</button>'; // Re-add button
             counters.forEach((counter, index) => {
                 const counterDiv = document.createElement('div');
                 counterDiv.classList.add('counter-item');
@@ -294,7 +350,8 @@
                     </div>
                     <span class="edit-counter-name" data-index="${index}">✏️</span>
                 `;
-                countersDisplayDiv.appendChild(counterDiv);
+                // Insert new counter items before the manage button
+                countersDisplayDiv.insertBefore(counterDiv, manageCountersButton);
             });
 
             // Add event listeners to the new buttons
@@ -302,7 +359,7 @@
                 button.addEventListener('click', (event) => {
                     const index = parseInt(event.target.dataset.index);
                     counters[index].count++; // Increment the count
-                    document.getElementById(`countDisplay${index}`).textContent = counters[index].count;
+                    document.getElementById(`countDisplay${index}`).firstChild.nodeValue = counters[index].count;
                     saveData();
                 });
             });
@@ -314,8 +371,8 @@
                     const newName = prompt(`Edit name for counter ${counters[index].name}:`, counters[index].name);
                     if (newName !== null && newName.trim() !== '') {
                         counters[index].name = newName.trim();
-                        // Re-render to update the button name immediately
-                        renderCounters();
+                        // Update the button's text directly
+                        event.target.previousElementSibling.textContent = newName.trim();
                         saveData();
                     } else if (newName !== null) {
                         alert('Name cannot be empty.');
@@ -331,7 +388,7 @@
                     if (newCount !== null && !isNaN(parseInt(newCount))) {
                         counters[index].count = parseInt(newCount);
                         // Update only the text content to avoid re-rendering entire section
-                        document.getElementById(`countDisplay${index}`).firstChild.nodeValue = counters[index].count;
+                        event.target.parentNode.firstChild.nodeValue = counters[index].count; // Access text node
                         saveData();
                     } else if (newCount !== null) {
                         alert('Invalid input. Please enter a number.');
