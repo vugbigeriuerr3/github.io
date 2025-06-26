@@ -10,7 +10,6 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body {
             font-family: 'Inter', sans-serif;
-            /* Default body styling that will be overridden by JS */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -18,15 +17,13 @@
             margin: 0;
             padding: 20px;
             box-sizing: border-box;
-            transition: background-color 0.3s ease; /* Smooth transition for background color changes */
+            transition: background-color 0.3s ease;
         }
 
-        /* Base styles for the main content card, colors will be set by JS */
         .main-card {
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* Specific header hiding for GitHub Pages */
         header.site-header {
             display: none;
         }
@@ -38,7 +35,6 @@
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4">
-    <!-- Top-right user name and edit button -->
     <div class="fixed top-4 right-4 z-50 flex items-center space-x-2 bg-white rounded-full py-2 px-4 shadow-md transition-colors duration-300">
         <span id="user-name-display" class="text-lg font-medium text-blue-600">Guest</span>
         <button id="edit-name-btn" class="text-gray-500 hover:text-gray-700 transition-colors duration-200 focus:outline-none">
@@ -46,7 +42,6 @@
         </button>
     </div>
 
-    <!-- Top-left Configure Display button -->
     <div class="fixed top-4 left-4 z-50">
         <button id="configure-display-btn" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors duration-300 shadow-md focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75 text-sm md:text-base">
             <i class="fas fa-palette mr-2"></i>Configure Display
@@ -72,10 +67,15 @@
                class="inline-block w-full px-8 py-4 bg-blue-600 text-white font-bold text-xl rounded-xl hover:bg-blue-700 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75">
                 Dynamic Counter Application
             </a>
+
+            <!-- Updated link for Update Log with correct capitalization -->
+            <a href="https://vugbigeriuerr3.github.io/github.io/Update_log.html" 
+               class="inline-block w-full px-8 py-4 bg-blue-600 text-white font-bold text-xl rounded-xl hover:bg-blue-700 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75">
+                Website Update Log
+            </a>
         </div>
     </div>
 
-    <!-- Name Edit Modal -->
     <div id="name-edit-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md transform transition-all duration-300 scale-100 opacity-100">
             <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Change Your Name</h2>
@@ -89,7 +89,6 @@
         </div>
     </div>
 
-    <!-- Display Settings Modal -->
     <div id="display-settings-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md transform transition-all duration-300 scale-100 opacity-100">
             <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Display Settings</h2>
@@ -185,12 +184,11 @@
             const applyDisplaySettings = () => {
                 const { theme, customBodyBg, customCardBg } = appState.displaySettings;
 
-                // Reset all dynamic styling first
                 document.body.classList.remove('bg-gray-100', 'dark-mode');
                 document.body.style.backgroundColor = '';
                 document.body.style.backgroundImage = '';
                 
-                mainContentCard.classList.remove('bg-white', 'bg-gray-800'); // Remove default light/dark card backgrounds
+                mainContentCard.classList.remove('bg-white', 'bg-gray-800');
                 mainContentCard.style.backgroundColor = '';
 
                 mainContentCard.querySelector('h1').style.color = '';
@@ -201,14 +199,12 @@
                 userNameBox.querySelector('span').style.color = '';
                 userNameBox.querySelector('button').style.color = '';
 
-                // Apply theme-specific styles
                 if (theme === 'dark') {
                     document.body.classList.add('dark-mode');
-                    // Add the image directly for dark mode, or set a solid color
                     document.body.style.backgroundImage = 'url("https://placehold.co/1920x1080/2d3748/2d3748?text=")';
-                    document.body.style.backgroundColor = '#1a202c'; // Fallback color
+                    document.body.style.backgroundColor = '#1a202c';
                     
-                    mainContentCard.classList.add('bg-gray-800'); // Dark card background
+                    mainContentCard.classList.add('bg-gray-800');
                     mainContentCard.querySelector('h1').style.color = '#e2e8f0';
                     mainContentCard.querySelector('p').style.color = '#cbd5e0';
 
@@ -218,11 +214,10 @@
 
                 } else if (theme === 'custom') {
                     document.body.style.backgroundColor = customBodyBg;
-                    document.body.style.backgroundImage = 'none'; // No image for custom solid color
+                    document.body.style.backgroundImage = 'none';
                     
                     mainContentCard.style.backgroundColor = customCardBg;
                     
-                    // Simple heuristic for text color based on background luminance
                     const isDark = (color) => {
                         if (!color) return false;
                         const rgb = parseInt(color.replace('#', ''), 16);
@@ -254,9 +249,9 @@
                     }
 
                 } else { // 'light' theme
-                    document.body.classList.add('bg-gray-100'); // Default light body background
+                    document.body.classList.add('bg-gray-100');
                     document.body.style.backgroundImage = 'url("https://placehold.co/1920x1080/e5e7eb/e5e7eb?text=")';
-                    mainContentCard.classList.add('bg-white'); // Default light card background
+                    mainContentCard.classList.add('bg-white');
                     userNameBox.classList.add('bg-white');
                 }
             };
