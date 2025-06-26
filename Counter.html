@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
+    <title>Random Number Guesser</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -18,97 +18,164 @@
             margin: 0;
             padding: 20px;
             box-sizing: border-box;
+            background-image: url('https://placehold.co/1920x1080/e5e7eb/e5e7eb?text=');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
         }
         .modal {
             max-height: 90vh;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
         }
-        .input-error {
-            border-color: #ef4444;
-            box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.5);
-        }
     </style>
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
-    <!-- Go Back to Home Button (top-left of the entire page) -->
     <div class="fixed top-4 left-4 z-50">
         <button id="go-home-btn" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors duration-300 shadow-md focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75 text-sm md:text-base">
             Go back to home
         </button>
     </div>
 
-    <div id="app" class="relative w-full max-w-4xl bg-white shadow-lg rounded-2xl p-6 md:p-8">
-        <div id="main-content" class="hidden">
-            <header class="flex flex-col md:flex-row justify-between items-center pb-4 border-b border-gray-200 mb-6 relative">
-                
-                <!-- Website Title Display (centered relative to header) -->
-                <h1 id="website-title-display" class="text-3xl font-bold text-gray-800 mb-4 md:mb-0 text-center md:flex-grow md:text-center"></h1>
-                
-                <!-- User Name and Edit Button (top-right) -->
-                <div class="flex items-center space-x-4 ml-auto">
-                    <span id="user-name-display" class="text-xl font-medium text-blue-600">Guest</span>
-                    <button id="edit-settings-btn" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-300 shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75">Edit</button>
-                </div>
-            </header>
+    <div class="fixed top-4 right-4 z-50 flex items-center space-x-2 bg-white rounded-full py-2 px-4 shadow-md">
+        <span id="user-name-display" class="text-lg font-medium text-blue-600">Guest</span>
+        <button id="edit-name-btn" class="text-gray-500 hover:text-gray-700 transition-colors duration-200 focus:outline-none">
+            <i class="fas fa-pencil-alt text-base"></i>
+        </button>
+    </div>
 
-            <div id="counters-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            </div>
+    <div id="app" class="relative w-full max-w-lg bg-white shadow-lg rounded-2xl p-8 text-center">
+        <h1 class="text-4xl font-bold text-gray-800 mb-6">Number Guesser</h1>
+        <p class="text-lg text-gray-600 mb-8" id="game-message">Guess a number between 1 and 100!</p>
+        
+        <div class="space-y-4">
+            <input type="number" id="guess-input" placeholder="Enter your guess" min="1" max="100" 
+                   class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200 mb-2">
+            
+            <button id="redo-game-btn" 
+                    class="inline-block w-full px-8 py-4 bg-red-500 text-white font-bold text-xl rounded-xl hover:bg-red-600 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75 hidden">
+                Redo It
+            </button>
+
+            <button id="game-settings-btn" 
+                    class="inline-block w-full px-8 py-4 bg-gray-500 text-white font-bold text-xl rounded-xl hover:bg-gray-600 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75">
+                Game Settings
+            </button>
         </div>
+    </div>
 
-        <div id="setup-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md transform transition-all duration-300 scale-100 opacity-100">
-                <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center" id="setup-title">Welcome! Let's get started.</h2>
-
-                <div class="mb-4">
-                    <label for="user-name-input" class="block text-gray-700 text-sm font-semibold mb-2">Your Name:</label>
-                    <input type="text" id="user-name-input" placeholder="Enter your name" class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
-                </div>
-
-                <div class="mb-6">
-                    <label for="website-title-input" class="block text-gray-700 text-sm font-semibold mb-2">Website Title:</label>
-                    <input type="text" id="website-title-input" placeholder="Enter website title" class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
-                </div>
-
-                <div class="mb-6">
-                    <label for="num-people-input" class="block text-gray-700 text-sm font-semibold mb-2">How many people to counter? (Max 5)</label>
-                    <input type="number" id="num-people-input" min="1" max="5" value="1" class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
-                    <p id="num-people-error" class="text-red-500 text-sm mt-1 hidden">Number of people cannot exceed 5.</p>
-                </div>
-                
-                <div id="counter-names-section" class="mb-6">
-                </div>
-
-                <button id="done-setup-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-all duration-300 shadow-lg">Done</button>
+    <!-- Name Edit Modal -->
+    <div id="name-edit-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md transform transition-all duration-300 scale-100 opacity-100">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Change Your Name</h2>
+            <div class="mb-6">
+                <label for="name-edit-user-input" class="block text-gray-700 text-sm font-semibold mb-2">Your Name:</label>
+                <input type="text" id="name-edit-user-input" placeholder="Enter your name" 
+                       class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
             </div>
+            <button id="save-name-only-btn" 
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-all duration-300 shadow-lg">Save Name</button>
+        </div>
+    </div>
+
+    <!-- Game Settings Modal -->
+    <div id="game-settings-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md transform transition-all duration-300 scale-100 opacity-100">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Game Settings</h2>
+            
+            <div class="mb-4">
+                <label for="min-number-input" class="block text-gray-700 text-sm font-semibold mb-2">Minimum Number:</label>
+                <input type="number" id="min-number-input" value="1" 
+                       class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
+            </div>
+
+            <div class="mb-6">
+                <label for="max-number-input" class="block text-gray-700 text-sm font-semibold mb-2">Maximum Number:</label>
+                <input type="number" id="max-number-input" value="100" 
+                       class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
+            </div>
+
+            <div class="mb-6">
+                <label class="block text-gray-700 text-sm font-semibold mb-2">Secret Number Mode:</label>
+                <div class="flex flex-col space-y-2">
+                    <label class="inline-flex items-center">
+                        <input type="radio" name="secret-number-mode" value="random" class="form-radio text-blue-600" checked>
+                        <span class="ml-2 text-gray-700">Random Number</span>
+                    </label>
+                    <label class="inline-flex items-center">
+                        <input type="radio" name="secret-number-mode" value="manual" class="form-radio text-blue-600">
+                        <span class="ml-2 text-gray-700">Set Specific Number</span>
+                    </label>
+                </div>
+            </div>
+
+            <div id="manual-secret-number-input-group" class="mb-6 hidden">
+                <label for="manual-secret-number-input" class="block text-gray-700 text-sm font-semibold mb-2">Set Secret Number:</label>
+                <input type="number" id="manual-secret-number-input" placeholder="Enter secret number" 
+                       class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
+            </div>
+
+
+            <div class="mb-4">
+                <label for="very-close-diff-input" class="block text-gray-700 text-sm font-semibold mb-2">"Very Close" Difference (e.g., 5):</label>
+                <input type="number" id="very-close-diff-input" value="5" min="0"
+                       class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
+            </div>
+
+            <div class="mb-6">
+                <label for="close-diff-input" class="block text-gray-700 text-sm font-semibold mb-2">"Close" Difference (e.g., 15):</label>
+                <input type="number" id="close-diff-input" value="15" min="0"
+                       class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
+            </div>
+
+            <button id="save-game-settings-btn" 
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-all duration-300 shadow-lg">Save Game Settings</button>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const setupModal = document.getElementById('setup-modal');
-            const mainContent = document.getElementById('main-content');
-            const userNameInput = document.getElementById('user-name-input');
-            const websiteTitleInput = document.getElementById('website-title-input');
-            const numPeopleInput = document.getElementById('num-people-input');
-            const numPeopleError = document.getElementById('num-people-error');
-            const counterNamesSection = document.getElementById('counter-names-section');
-            const doneSetupBtn = document.getElementById('done-setup-btn');
-            const userNameDisplay = document.getElementById('user-name-display');
-            const websiteTitleDisplay = document.getElementById('website-title-display');
-            const countersList = document.getElementById('counters-list');
-            const editSettingsBtn = document.getElementById('edit-settings-btn');
-            const setupTitle = document.getElementById('setup-title');
+            // DOM Elements
             const goHomeBtn = document.getElementById('go-home-btn');
+            const userNameDisplay = document.getElementById('user-name-display');
+            const editNameBtn = document.getElementById('edit-name-btn');
+            const gameSettingsBtn = document.getElementById('game-settings-btn'); 
 
-            const MAX_COUNTERS = 5;
+            const nameEditModal = document.getElementById('name-edit-modal');
+            const nameEditUserInput = document.getElementById('name-edit-user-input');
+            const saveNameOnlyBtn = document.getElementById('save-name-only-btn');
 
+            const gameSettingsModal = document.getElementById('game-settings-modal');
+            const minNumberInput = document.getElementById('min-number-input');
+            const maxNumberInput = document.getElementById('max-number-input');
+            const secretNumberModeRadios = document.querySelectorAll('input[name="secret-number-mode"]');
+            const manualSecretNumberInputGroup = document.getElementById('manual-secret-number-input-group');
+            const manualSecretNumberInput = document.getElementById('manual-secret-number-input');
+            const veryCloseDiffInput = document.getElementById('very-close-diff-input');
+            const closeDiffInput = document.getElementById('close-diff-input');
+            const saveGameSettingsBtn = document.getElementById('save-game-settings-btn');
+
+            const guessInput = document.getElementById('guess-input');
+            const redoGameBtn = document.getElementById('redo-game-btn');
+            const gameMessage = document.getElementById('game-message');
+
+            // Game State Variables
+            let secretNumber;
+            let attempts = 0;
+            let gameOver = false;
+
+            // Shared App State (for cookies)
             let appState = {
                 userName: '',
-                websiteTitle: '',
-                counters: []
+                minNumber: 1,
+                maxNumber: 100,
+                guessMode: 'random',
+                manualSecretNumber: null,
+                veryCloseDiff: 5,  
+                closeDiff: 15     
             };
 
+            // Cookie Management Functions (consistent across apps)
             const setCookie = (name, value, days) => {
                 let expires = '';
                 if (days) {
@@ -134,252 +201,242 @@
                 document.cookie = name + '=; Max-Age=-99999999; path=/; SameSite=Lax';
             };
 
-            const generateUUID = () => {
-                return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-                    const r = Math.random() * 16 | 0,
-                        v = c === 'x' ? r : (r & 0x3 | 0x8);
-                    return v.toString(16);
-                });
-            };
-
-            const generateCounterNameInputs = () => {
-                let numPeople = parseInt(numPeopleInput.value, 10);
-
-                if (isNaN(numPeople) || numPeople < 1) { 
-                    numPeople = 1;
-                }
-
-                if (numPeople > MAX_COUNTERS) {
-                    numPeopleInput.classList.add('input-error');
-                    numPeopleError.classList.remove('hidden'); 
-                    doneSetupBtn.disabled = true;
-                    numPeople = MAX_COUNTERS; 
-                } else {
-                    numPeopleInput.classList.remove('input-error');
-                    numPeopleError.classList.add('hidden'); 
-                    doneSetupBtn.disabled = false;
-                }
-                
-                counterNamesSection.innerHTML = ''; 
-                counterNamesSection.classList.add('space-y-4');
-
-                for (let i = 0; i < numPeople; i++) {
-                    const div = document.createElement('div');
-                    div.className = 'flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-2';
-
-                    const label = document.createElement('label');
-                    label.htmlFor = `counter-name-${i}`;
-                    label.className = 'block text-gray-700 text-sm font-semibold w-full sm:w-1/4';
-                    label.textContent = `Name ${i + 1}:`;
-
-                    const input = document.createElement('input');
-                    input.type = 'text';
-                    input.id = `counter-name-${i}`;
-                    input.placeholder = `Enter name for person ${i + 1}`;
-                    input.className = 'shadow-sm appearance-none border rounded-xl w-full sm:w-3/4 py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200';
-
-                    if (appState.counters[i] && appState.counters[i].name) {
-                        input.value = appState.counters[i].name;
-                    }
-
-                    div.appendChild(label);
-                    div.appendChild(input);
-                    counterNamesSection.appendChild(div);
-                }
-            };
-
-            const renderMainContent = () => {
+            // User Name & Settings Modal Management
+            const renderUserName = () => {
                 userNameDisplay.textContent = appState.userName || 'Guest';
-                document.title = appState.websiteTitle || '';
-                websiteTitleDisplay.textContent = appState.websiteTitle || '';
+                // Only show name edit modal on first load if name is not set
+                if (!appState.userName && !sessionStorage.getItem('nameEditModalShownOnce')) {
+                    nameEditUserInput.value = appState.userName; // Pre-fill if any
+                    nameEditModal.classList.remove('hidden');
+                    sessionStorage.setItem('nameEditModalShownOnce', 'true'); // Mark as shown
+                } else if (appState.userName) {
+                    nameEditModal.classList.add('hidden'); // Ensure hidden if name exists
+                }
+            };
 
-                countersList.innerHTML = '';
-
-                if (appState.counters && appState.counters.length > 0) {
-                    appState.counters.forEach(counter => {
-                        const counterDiv = document.createElement('div');
-                        
-                        let baseCardClasses = 'bg-blue-50 p-6 rounded-xl shadow-md flex flex-col items-center justify-between transition-all duration-300 hover:scale-105 transform';
-                        let baseNameClasses = 'text-2xl font-semibold cursor-pointer hover:underline mb-2';
-                        let baseValueClasses = 'text-5xl font-extrabold mb-4 transition-transform duration-150 ease-out transform';
-
-                        counterDiv.className = baseCardClasses;
-
-                        counterDiv.setAttribute('data-id', counter.id);
-
-                        const nameHeading = document.createElement('h3');
-                        nameHeading.textContent = counter.name;
-
-                        const valueSpan = document.createElement('span');
-                        valueSpan.textContent = counter.value;
-
-                        const buttonContainer = document.createElement('div');
-                        buttonContainer.className = 'flex space-x-3 mt-auto';
-
-                        const minusBtn = document.createElement('button');
-                        minusBtn.className = 'p-3 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors duration-200 shadow-md focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75';
-                        minusBtn.innerHTML = '<i class="fas fa-minus"></i>';
-                        minusBtn.onclick = () => decrementCounter(counter.id);
-
-                        const plusBtn = document.createElement('button');
-                        plusBtn.className = 'p-3 bg-green-500 text-white rounded-full hover:bg-green-600 transition-colors duration-200 shadow-md focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75';
-                        plusBtn.innerHTML = '<i class="fas fa-plus"></i>';
-                        plusBtn.onclick = () => incrementCounter(counter.id);
-
-                        buttonContainer.appendChild(minusBtn);
-                        buttonContainer.appendChild(plusBtn);
-
-                        nameHeading.className = `text-blue-700 ${baseNameClasses}`;
-                        valueSpan.className = `text-blue-900 ${baseValueClasses}`;
-                        nameHeading.onclick = () => incrementCounter(counter.id);
-
-                        counterDiv.appendChild(nameHeading);
-                        counterDiv.appendChild(valueSpan);
-                        counterDiv.appendChild(buttonContainer);
-
-                        countersList.appendChild(counterDiv);
-                    });
+            // Game Logic Functions
+            const startGame = () => {
+                if (appState.guessMode === 'random') {
+                    secretNumber = Math.floor(Math.random() * (appState.maxNumber - appState.minNumber + 1)) + appState.minNumber;
                 } else {
-                    countersList.innerHTML = '<p class="text-center text-gray-500 text-lg col-span-full">No counters configured. Click "Edit" to add some!</p>';
+                    secretNumber = appState.manualSecretNumber;
                 }
+
+                attempts = 0;
+                gameOver = false;
+                gameMessage.textContent = `Guess a number between ${appState.minNumber} and ${appState.maxNumber}!`;
+                gameMessage.className = 'text-lg text-gray-600 mb-8';
+                guessInput.value = '';
+                guessInput.min = appState.minNumber;
+                guessInput.max = appState.maxNumber;
+                guessInput.disabled = false;
+                redoGameBtn.classList.add('hidden');
             };
 
-            const saveAppState = () => {
-                setCookie('appState', JSON.stringify(appState), 365);
-                console.log('App state saved:', appState);
-            };
+            const checkGuess = () => {
+                const guess = parseInt(guessInput.value);
 
-            const loadAppState = () => {
-                const cookieData = getCookie('appState');
-                if (cookieData) {
-                    try {
-                        const loaded = JSON.parse(cookieData);
-                        if (typeof loaded.websiteTitle === 'undefined' || loaded.websiteTitle === 'My Dynamic Counter') {
-                            loaded.websiteTitle = '';
-                        }
-                        delete loaded.warningThreshold; 
-                        return loaded;
-                    } catch (e) {
-                        console.error('Error parsing appState cookie:', e);
-                        deleteCookie('appState');
-                        return null;
-                    }
-                }
-                return null;
-            };
-
-            const incrementCounter = (id) => {
-                const counterIndex = appState.counters.findIndex(c => c.id === id);
-                if (counterIndex !== -1) {
-                    appState.counters[counterIndex].value++;
-                    saveAppState();
-
-                    const counterElement = countersList.querySelector(`[data-id="${id}"]`);
-                    if (counterElement) {
-                        const valueSpan = counterElement.querySelector('span');
-                        valueSpan.textContent = appState.counters[counterIndex].value;
-                        valueSpan.classList.add('scale-110', 'transition-transform', 'duration-150');
-                        setTimeout(() => {
-                            valueSpan.classList.remove('scale-110');
-                        }, 150);
-                    }
-                }
-            };
-
-            const decrementCounter = (id) => {
-                const counterIndex = appState.counters.findIndex(c => c.id === id);
-                if (counterIndex !== -1 && appState.counters[counterIndex].value > 0) {
-                    appState.counters[counterIndex].value--;
-                    saveAppState();
-
-                    const counterElement = countersList.querySelector(`[data-id="${id}"]`);
-                    if (counterElement) {
-                        const valueSpan = counterElement.querySelector('span');
-                        valueSpan.textContent = appState.counters[counterIndex].value;
-                        valueSpan.classList.add('scale-90', 'transition-transform', 'duration-150');
-                        setTimeout(() => {
-                            valueSpan.classList.remove('scale-90');
-                        }, 150);
-                    }
-                }
-            };
-
-            numPeopleInput.addEventListener('input', generateCounterNameInputs);
-
-            doneSetupBtn.addEventListener('click', () => {
-                if (doneSetupBtn.disabled) {
+                if (isNaN(guess) || guess < appState.minNumber || guess > appState.maxNumber) {
+                    gameMessage.textContent = `Please enter a valid number between ${appState.minNumber} and ${appState.maxNumber}.`;
+                    gameMessage.classList.add('text-lg', 'text-red-600', 'mb-8');
                     return;
                 }
 
-                const newUserName = userNameInput.value.trim();
-                const newWebsiteTitle = websiteTitleInput.value.trim();
-                const numPeople = parseInt(numPeopleInput.value, 10);
-                
-                const newCounters = [];
+                attempts++;
 
-                for (let i = 0; i < numPeople; i++) {
-                    const input = document.getElementById(`counter-name-${i}`);
-                    const counterName = input && input.value.trim() ? input.value.trim() : `Person ${i + 1}`;
+                const difference = Math.abs(guess - secretNumber);
 
-                    if (i < appState.counters.length) {
-                        newCounters.push({
-                            id: appState.counters[i].id,
-                            name: counterName,
-                            value: appState.counters[i].value
-                        });
+                gameMessage.classList.remove('text-green-600', 'text-yellow-600', 'text-orange-600', 'text-red-600', 'text-gray-600');
+                gameMessage.classList.add('text-lg', 'mb-8');
+
+                if (guess === secretNumber) {
+                    gameMessage.textContent = `Congratulations! You guessed the number ${secretNumber} in ${attempts} attempts!`;
+                    gameMessage.classList.add('text-green-600');
+                    gameOver = true;
+                    guessInput.disabled = true;
+                    redoGameBtn.classList.remove('hidden');
+                } else {
+                    if (difference <= appState.veryCloseDiff) {
+                        gameMessage.textContent = 'You\'re very close!';
+                        gameMessage.classList.add('text-yellow-600');
+                    } else if (difference <= appState.closeDiff) {
+                        gameMessage.textContent = 'You\'re close!';
+                        gameMessage.classList.add('text-orange-600');
                     } else {
-                        newCounters.push({
-                            id: generateUUID(),
-                            name: counterName,
-                            value: 0
-                        });
+                        gameMessage.textContent = 'You\'re far off!';
+                        gameMessage.classList.add('text-red-600');
+                    }
+                    if (guess < secretNumber) {
+                        gameMessage.textContent += ' Too low! Try again.';
+                    } else {
+                        gameMessage.textContent += ' Too high! Try again.';
                     }
                 }
+            };
 
-                appState.userName = newUserName || 'Guest';
-                appState.websiteTitle = newWebsiteTitle;
-                appState.counters = newCounters;
-
-                saveAppState();
-                renderMainContent();
-
-                setupModal.classList.add('hidden');
-                mainContent.classList.remove('hidden');
-            });
-
-            editSettingsBtn.addEventListener('click', () => {
-                userNameInput.value = appState.userName;
-                websiteTitleInput.value = appState.websiteTitle;
-                numPeopleInput.value = appState.counters.length.toString();
-
-                setupTitle.textContent = "Edit Your Settings";
-
-                generateCounterNameInputs();
-
-                mainContent.classList.add('hidden');
-                setupModal.classList.remove('hidden');
-            });
-
+            // Event Listeners
             goHomeBtn.addEventListener('click', () => {
                 window.location.href = 'https://vugbigeriuerr3.github.io/github.io/?' + new Date().getTime();
             });
 
-            const init = () => {
-                const loadedState = loadAppState();
+            saveNameOnlyBtn.addEventListener('click', () => {
+                const newUserName = nameEditUserInput.value.trim();
+                if (newUserName) {
+                    const loadedCookieData = getCookie('appState');
+                    let currentAppState = {};
+                    if (loadedCookieData) {
+                        try {
+                            currentAppState = JSON.parse(loadedCookieData);
+                        } catch (e) {
+                            console.error('Error parsing existing appState cookie:', e);
+                        }
+                    }
+                    currentAppState.userName = newUserName; 
+                    appState.userName = newUserName; 
 
-                if (loadedState && loadedState.counters) {
-                    appState = loadedState;
-                    renderMainContent();
-                    setupModal.classList.add('hidden');
-                    mainContent.classList.remove('hidden');
+                    setCookie('appState', JSON.stringify(currentAppState), 365);
+                    renderUserName(); // Update display and hide modal
+                    nameEditModal.classList.add('hidden'); // Ensure modal is explicitly hidden
                 } else {
-                    userNameInput.value = '';
-                    websiteTitleInput.value = '';
-                    numPeopleInput.value = '1';
-                    generateCounterNameInputs();
-                    setupModal.classList.remove('hidden');
-                    mainContent.classList.add('hidden');
+                    let messageElement = saveNameOnlyBtn.parentElement.querySelector('.temp-error-message');
+                    if (!messageElement) {
+                        messageElement = document.createElement('p');
+                        messageElement.className = 'text-red-500 text-sm mt-2 text-center temp-error-message';
+                        saveNameOnlyBtn.parentElement.insertBefore(messageElement, saveNameOnlyBtn);
+                    }
+                    messageElement.textContent = 'Please enter a name.';
+                    setTimeout(() => {
+                        messageElement.remove();
+                    }, 2000);
                 }
+            });
+
+            editNameBtn.addEventListener('click', () => {
+                nameEditUserInput.value = appState.userName; // Pre-fill with current name
+                nameEditModal.classList.remove('hidden');
+                const existingMessage = saveNameOnlyBtn.parentElement.querySelector('.temp-error-message');
+                if (existingMessage) existingMessage.remove();
+            });
+
+            gameSettingsBtn.addEventListener('click', () => {
+                minNumberInput.value = appState.minNumber;
+                maxNumberInput.value = appState.maxNumber;
+
+                secretNumberModeRadios.forEach(radio => {
+                    radio.checked = (radio.value === appState.guessMode);
+                });
+
+                if (appState.guessMode === 'manual') {
+                    manualSecretNumberInputGroup.classList.remove('hidden');
+                    manualSecretNumberInput.value = appState.manualSecretNumber;
+                } else {
+                    manualSecretNumberInputGroup.classList.add('hidden');
+                }
+
+                veryCloseDiffInput.value = appState.veryCloseDiff;
+                closeDiffInput.value = appState.closeDiff;
+                gameSettingsModal.classList.remove('hidden');
+            });
+
+            secretNumberModeRadios.forEach(radio => {
+                radio.addEventListener('change', () => {
+                    if (radio.value === 'manual') {
+                        manualSecretNumberInputGroup.classList.remove('hidden');
+                    } else {
+                        manualSecretNumberInputGroup.classList.add('hidden');
+                    }
+                });
+            });
+
+            saveGameSettingsBtn.addEventListener('click', () => {
+                const newMinNumber = parseInt(minNumberInput.value);
+                const newMaxNumber = parseInt(maxNumberInput.value);
+                const newGuessMode = document.querySelector('input[name="secret-number-mode"]:checked').value;
+                const newVeryCloseDiff = parseInt(veryCloseDiffInput.value);
+                const newCloseDiff = parseInt(closeDiffInput.value);
+                let newManualSecretNumber = appState.manualSecretNumber;
+
+                if (isNaN(newMinNumber) || newMinNumber < 1) {
+                    alert('Please enter a valid minimum number (at least 1).');
+                    return;
+                }
+                if (isNaN(newMaxNumber) || newMaxNumber < newMinNumber) {
+                    alert('Please enter a valid maximum number (greater than or equal to minimum).');
+                    return;
+                }
+                if (isNaN(newVeryCloseDiff) || newVeryCloseDiff < 0) {
+                    alert('Please enter a valid "Very Close" difference (non-negative).');
+                    return;
+                }
+                if (isNaN(newCloseDiff) || newCloseDiff < newVeryCloseDiff) {
+                    alert('Please enter a valid "Close" difference (greater than or equal to "Very Close" difference).');
+                    return;
+                }
+
+                if (newGuessMode === 'manual') {
+                    newManualSecretNumber = parseInt(manualSecretNumberInput.value);
+                    if (isNaN(newManualSecretNumber) || newManualSecretNumber < newMinNumber || newManualSecretNumber > newMaxNumber) {
+                        alert(`Please enter a valid secret number between ${newMinNumber} and ${newMaxNumber}.`);
+                        return;
+                    }
+                }
+                
+                const loadedCookieData = getCookie('appState');
+                let currentAppState = {};
+                if (loadedCookieData) {
+                    try {
+                        currentAppState = JSON.parse(loadedCookieData);
+                    } catch (e) {
+                        console.error('Error parsing existing appState cookie:', e);
+                    }
+                }
+
+                currentAppState.minNumber = newMinNumber;
+                currentAppState.maxNumber = newMaxNumber;
+                currentAppState.guessMode = newGuessMode;
+                currentAppState.manualSecretNumber = newManualSecretNumber;
+                currentAppState.veryCloseDiff = newVeryCloseDiff;
+                currentAppState.closeDiff = newCloseDiff;
+                
+                appState = { ...appState, ...currentAppState };
+
+                setCookie('appState', JSON.stringify(appState), 365);
+                gameSettingsModal.classList.add('hidden');
+                startGame();
+            });
+
+            guessInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !gameOver) {
+                    checkGuess();
+                }
+            });
+            redoGameBtn.addEventListener('click', startGame);
+
+            const init = () => {
+                const loadedCookieData = getCookie('appState');
+                if (loadedCookieData) {
+                    try {
+                        const parsedState = JSON.parse(loadedCookieData);
+                        // Ensure all properties from parsedState are merged into appState
+                        appState = { ...appState, ...parsedState };
+                        
+                        // Set defaults if any new properties are missing in old cookies
+                        appState.userName = parsedState.userName || '';
+                        appState.minNumber = parsedState.minNumber !== undefined ? parsedState.minNumber : 1;
+                        appState.maxNumber = parsedState.maxNumber !== undefined ? parsedState.maxNumber : 100;
+                        appState.guessMode = parsedState.guessMode || 'random';
+                        appState.manualSecretNumber = parsedState.manualSecretNumber !== undefined ? parsedState.manualSecretNumber : null;
+                        appState.veryCloseDiff = parsedState.veryCloseDiff !== undefined ? parsedState.veryCloseDiff : 5;
+                        appState.closeDiff = parsedState.closeDiff !== undefined ? parsedState.closeDiff : 15;
+
+                    } catch (e) {
+                        console.error('Error parsing appState cookie on init:', e);
+                        deleteCookie('appState');
+                        appState.userName = '';
+                    }
+                }
+                renderUserName();
+                startGame();
             };
 
             init();
