@@ -147,10 +147,7 @@
                     class="flex-1 px-8 py-4 bg-green-600 text-white font-bold text-xl rounded-xl hover:bg-green-700 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-75">
                 Add New Counter
             </button>
-            <button id="counter-app-settings-btn" 
-                    class="flex-1 px-8 py-4 bg-purple-600 text-white font-bold text-xl rounded-xl hover:bg-purple-700 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-75">
-                Counter App Settings
-            </button>
+            <!-- Removed Counter App Settings Button -->
         </div>
     </div>
 
@@ -239,30 +236,7 @@
         </div>
     </div>
 
-    <div id="counter-app-settings-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
-        <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md transform transition-all duration-300 scale-100 opacity-100">
-            <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Counter App Settings</h2>
-            
-            <div class="mb-4">
-                <label for="website-title-input" class="block text-gray-700 text-sm font-semibold mb-2">Website Title:</label>
-                <input type="text" id="website-title-input" placeholder="e.g. My Awesome Counters" 
-                       class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
-            </div>
-
-            <div class="mb-6">
-                <label for="counters-per-page-input" class="block text-gray-700 text-sm font-semibold mb-2">Counters Per Page:</label>
-                <input type="number" id="counters-per-page-input" value="6" min="1"
-                       class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
-            </div>
-            
-            <div id="counter-name-settings-container" class="space-y-4 mb-6">
-                <!-- Dynamic counter name inputs will be added here -->
-            </div>
-
-            <button id="save-counter-app-settings-btn" 
-                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-all duration-300 shadow-lg">Save Settings</button>
-        </div>
-    </div>
+    <!-- Removed Counter App Settings Modal -->
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -272,13 +246,13 @@
             const configureDisplayBtn = document.getElementById('configure-display-btn');
             const mainContentCard = document.getElementById('main-content-card');
             const websiteMainTitle = document.getElementById('website-main-title');
-            const pageTitle = document.getElementById('page-title'); // Re-added welcome text element
+            const pageTitle = document.getElementById('page-title');
             const countersGrid = document.getElementById('counters-grid');
             const addCounterBtn = document.getElementById('add-counter-btn');
             const prevPageBtn = document.getElementById('prev-page-btn');
             const nextPageBtn = document.getElementById('next-page-btn');
             const pageInfo = document.getElementById('page-info');
-            const counterAppSettingsBtn = document.getElementById('counter-app-settings-btn');
+            // Removed counterAppSettingsBtn as the button is removed from HTML
 
             const nameEditModal = document.getElementById('name-edit-modal');
             const nameEditUserInput = document.getElementById('name-edit-user-input');
@@ -299,22 +273,23 @@
             const textSizeSelect = document.getElementById('text-size-select');
             const saveDisplaySettingsBtn = document.getElementById('save-display-settings-btn');
 
-            const counterAppSettingsModal = document.getElementById('counter-app-settings-modal');
-            const websiteTitleInput = document.getElementById('website-title-input');
-            const countersPerPageInput = document.getElementById('counters-per-page-input');
-            const counterNameSettingsContainer = document.getElementById('counter-name-settings-container'); // Renamed for clarity
-            const saveCounterAppSettingsBtn = document.getElementById('save-counter-app-settings-btn');
+            // Removed counterAppSettingsModal elements as the modal is removed from HTML
+            // const counterAppSettingsModal = document.getElementById('counter-app-settings-modal');
+            // const websiteTitleInput = document.getElementById('website-title-input');
+            // const countersPerPageInput = document.getElementById('counters-per-page-input');
+            // const counterNameSettingsContainer = document.getElementById('counter-name-settings-container');
+            // const saveCounterAppSettingsBtn = document.getElementById('save-counter-app-settings-btn');
 
             let appState = {
                 userName: '',
-                websiteTitle: 'Dynamic Counter', // Reverted to a single title
+                websiteTitle: 'Dynamic Counter',
                 displaySettings: {
                     theme: 'light',
                     customBodyBg: '#f3f4f6',
                     customCardBg: '#ffffff',
                     textSize: 'text-custom-base'
                 },
-                counters: [], // Reverted to a single array for all counters
+                counters: [],
                 currentPage: 1,
                 countersPerPage: 6
             };
@@ -368,7 +343,7 @@
                 mainContentCard.style.backgroundColor = '';
 
                 websiteMainTitle.style.color = '';
-                pageTitle.style.color = ''; // Also reset pageTitle color
+                pageTitle.style.color = '';
                 pageInfo.style.color = '';
 
                 document.querySelectorAll('.counter-card h3').forEach(el => el.style.color = '');
@@ -386,7 +361,7 @@
                     
                     mainContentCard.classList.add('bg-gray-800');
                     websiteMainTitle.style.color = '#e2e8f0';
-                    pageTitle.style.color = '#cbd5e0'; // Set pageTitle color for dark mode
+                    pageTitle.style.color = '#cbd5e0';
                     pageInfo.style.color = '#e2e8f0';
 
                     document.querySelectorAll('.counter-card h3').forEach(el => el.style.color = '#e2e8f0');
@@ -415,14 +390,14 @@
 
                     if (isDark(customBodyBg)) {
                         websiteMainTitle.style.color = '#e2e8f0';
-                        pageTitle.style.color = '#cbd5e0'; // Set pageTitle color for custom dark
+                        pageTitle.style.color = '#cbd5e0';
                         pageInfo.style.color = '#e2e8f0';
                         userNameBox.classList.add('bg-gray-900');
                         userNameBox.querySelector('span').style.color = '#90cdf4';
                         userNameBox.querySelector('button').style.color = '#a0aec0';
                     } else {
                         websiteMainTitle.style.color = '#1a202c';
-                        pageTitle.style.color = '#4a5568'; // Set pageTitle color for custom light
+                        pageTitle.style.color = '#4a5568';
                         pageInfo.style.color = '#4a5568';
                         userNameBox.classList.add('bg-white');
                         userNameBox.querySelector('span').style.color = '#3182ce';
@@ -474,7 +449,7 @@
                 }
 
                 countersToRender.forEach((counter, index) => {
-                    const globalIndex = startIndex + index; // Get actual index in appState.counters
+                    const globalIndex = startIndex + index;
                     const counterCard = document.createElement('div');
                     counterCard.className = 'counter-card';
                     counterCard.innerHTML = `
@@ -525,13 +500,13 @@
                     return;
                 }
 
-                if (currentEditingCounterId === null) { // Adding new counter
+                if (currentEditingCounterId === null) {
                     const totalCountersOnCurrentPage = appState.counters.slice((appState.currentPage - 1) * appState.countersPerPage, appState.currentPage * appState.countersPerPage).length;
                     if (totalCountersOnCurrentPage >= appState.countersPerPage) {
                         appState.currentPage++;
                     }
                     appState.counters.push({ id: Date.now(), name, value });
-                } else { // Updating existing counter
+                } else {
                     const index = appState.counters.findIndex(c => c.id === currentEditingCounterId);
                     if (index !== -1) {
                         appState.counters[index].name = name;
@@ -657,59 +632,8 @@
                 displaySettingsModal.classList.add('hidden');
             });
 
-            counterAppSettingsBtn.addEventListener('click', () => {
-                websiteTitleInput.value = appState.websiteTitle;
-                countersPerPageInput.value = appState.countersPerPage;
-
-                counterNameSettingsContainer.innerHTML = '';
-                appState.counters.forEach((counter, index) => {
-                    const div = document.createElement('div');
-                    div.className = 'flex items-center space-x-2';
-                    div.innerHTML = `
-                        <label for="settings-counter-name-${counter.id}" class="block text-gray-700 text-sm font-semibold w-1/4 text-right">Name ${index + 1}:</label>
-                        <input type="text" id="settings-counter-name-${counter.id}" value="${counter.name}" data-counter-id="${counter.id}"
-                               class="shadow-sm appearance-none border rounded-xl flex-1 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
-                    `;
-                    counterNameSettingsContainer.appendChild(div);
-                });
-                counterAppSettingsModal.classList.remove('hidden');
-            });
-
-            saveCounterAppSettingsBtn.addEventListener('click', () => {
-                const newWebsiteTitle = websiteTitleInput.value.trim();
-                const newCountersPerPage = parseInt(countersPerPageInput.value);
-
-                if (!newWebsiteTitle) {
-                    alert('Website Title cannot be empty.');
-                    return;
-                }
-                if (isNaN(newCountersPerPage) || newCountersPerPage < 1) {
-                    alert('Counters per page must be a positive number.');
-                    return;
-                }
-
-                appState.websiteTitle = newWebsiteTitle;
-                document.title = newWebsiteTitle;
-                websiteMainTitle.textContent = newWebsiteTitle;
-
-                counterNameSettingsContainer.querySelectorAll('input').forEach(input => {
-                    const counterId = parseInt(input.dataset.counterId);
-                    const newName = input.value.trim();
-                    const counter = appState.counters.find(c => c.id === counterId);
-                    if (counter) {
-                        counter.name = newName;
-                    }
-                });
-
-                appState.countersPerPage = newCountersPerPage;
-                const totalPages = Math.max(1, Math.ceil(appState.counters.length / appState.countersPerPage));
-                if (appState.currentPage > totalPages) {
-                    appState.currentPage = totalPages;
-                }
-                saveAppState();
-                renderCounters();
-                counterAppSettingsModal.classList.add('hidden');
-            });
+            // Removed counterAppSettingsBtn.addEventListener block
+            // Removed saveCounterAppSettingsBtn.addEventListener block
 
             addCounterBtn.addEventListener('click', () => {
                 counterNameInput.value = '';
@@ -725,18 +649,17 @@
                 let targetButton = e.target.closest('button');
                 if (!targetButton) return;
 
-                const id = parseInt(targetButton.dataset.id);
-                const index = appState.counters.findIndex(c => c.id === id); // Find by ID, then use index
-
-                if (index === -1) return; // Counter not found
+                const globalIndex = parseInt(targetButton.dataset.index);
+                // Since `currentEditingCounterId` is used for editing, we need to map globalIndex to id for that.
+                // For increment/decrement, we can use globalIndex directly.
 
                 if (targetButton.classList.contains('increment-btn')) {
-                    incrementCounter(index); // Pass index directly
+                    incrementCounter(globalIndex);
                 } else if (targetButton.classList.contains('decrement-btn')) {
-                    decrementCounter(index); // Pass index directly
+                    decrementCounter(globalIndex);
                 } else if (targetButton.classList.contains('edit-counter-btn')) {
-                    currentEditingCounterId = id; // Still use ID for editing reference
-                    const counter = appState.counters[index];
+                    currentEditingCounterId = appState.counters[globalIndex].id; // Set ID for editing reference
+                    const counter = appState.counters[globalIndex];
                     counterNameInput.value = counter.name;
                     counterValueInput.value = counter.value;
                     configureCounterModalTitle.textContent = 'Edit Counter';
@@ -764,7 +687,6 @@
                     saveAppState();
                     renderCounters();
                 } else {
-                    // If at last page, and it's full, allow adding to a new implicit page
                     const countersOnLastPage = appState.counters.length % appState.countersPerPage;
                     if (countersOnLastPage === 0 && appState.counters.length > 0) {
                          appState.currentPage++;
@@ -780,18 +702,17 @@
                     try {
                         const parsedState = JSON.parse(loadedCookieData);
                         
-                        // Handle migration back from 'pages' to 'counters' array
+                        // Handle migration back from 'pages' to 'counters' array if it exists in old cookie
                         if (parsedState.pages && !parsedState.counters) {
-                            appState.counters = Object.values(parsedState.pages).flat(); // Flatten all counters from all pages
-                            delete parsedState.pages; // Clean up old property
+                            appState.counters = Object.values(parsedState.pages).flat();
+                            delete parsedState.pages;
                         } else {
                              appState.counters = parsedState.counters || [];
                         }
 
-                        appState = { ...appState, ...parsedState };
-                        
                         appState.userName = parsedState.userName || '';
-                        appState.websiteTitle = parsedState.websiteTitle || 'Dynamic Counter'; // Revert to default if not set
+                        // Revert websiteTitle to static default if it was saved dynamically
+                        appState.websiteTitle = 'Dynamic Counter'; 
                         if (parsedState.displaySettings) {
                             appState.displaySettings.theme = parsedState.displaySettings.theme || 'light';
                             appState.displaySettings.customBodyBg = parsedState.displaySettings.customBodyBg || '#f3f4f6';
@@ -807,7 +728,6 @@
                     }
                 }
                 
-                // Ensure the currentPage is valid after loading/migration
                 const totalPages = Math.max(1, Math.ceil(appState.counters.length / appState.countersPerPage));
                 if (appState.currentPage > totalPages) {
                     appState.currentPage = totalPages;
