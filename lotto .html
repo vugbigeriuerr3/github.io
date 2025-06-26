@@ -1,191 +1,346 @@
-
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lotto Number Picker</title>
+    <title>Lotto Number Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
             margin: 0;
-            padding: 0;
-            overflow: hidden; /* Prevent scrollbars */
-            background-color: #fff; /* White background */
-        }
-        .window {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 644px; /* Width adjusted for image space */
-            height: 200px; /* Increase height to be twice as deep */
-            border: 2px solid #000;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-            cursor: default; /* Remove move cursor */
-            display: flex;
+            padding: 20px;
             box-sizing: border-box;
-            background-color: #f1f1f1; /* Gray background for content area */
+            background-image: url('https://placehold.co/1920x1080/e5e7eb/e5e7eb?text=');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
         }
-        .image-container {
-            width: 288px; /* Width of the image space */
-            background: url('https://cdn.discordapp.com/attachments/1278733982657413174/1282626321599565879/image0.png?ex=6710d1d9&is=670f8059&hm=08877e3820ed380085a5f3891e7d50ab41b02ed740a336b3e5cb4daa729a37e4&') no-repeat center center;
-            background-size: cover; /* Ensure image fits its container */
-            height: 100%; /* Full height of the window */
-            display: flex;
-            flex-direction: column;
+        .modal {
+            max-height: 90vh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
-        .window-header {
-            height: 30px; /* Height of the top bar */
-            background-color: #fff; /* White background */
-            border-bottom: 2px solid #000; /* Border at the bottom */
-            display: flex;
-            align-items: center;
-            padding-left: 10px; /* Space between image and left edge */
-            box-sizing: border-box;
-            font-weight: normal; /* Remove bold */
-        }
-        .window-header img {
-            height: 20px; /* Adjust height of the image */
-            margin-right: 10px; /* Space between image and text */
-        }
-        .content {
-            flex: 1; /* Take up remaining space */
-            text-align: right; /* Align content to the right */
-            padding: 10px;
-            background-color: #f1f1f1; /* Gray background for content area */
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            box-sizing: border-box;
-        }
-        .number-label {
-            display: inline-block;
-            width: 30px; /* Adjust width */
-            height: 30px; /* Adjust height */
-            line-height: 30px;
-            border: 2px solid #000;
-            margin: 0 5px;
-            text-align: center;
-            font-size: 14px; /* Adjust font size */
-            font-weight: normal; /* Remove bold */
-            background: #fff;
-        }
-        .button-container {
-            display: flex;
-            justify-content: flex-end; /* Align buttons to the right */
-            align-items: center;
-            gap: 10px; /* Space between buttons */
-        }
-        .button {
-            margin: 5px;
-            padding: 5px 10px;
-            font-size: 12px;
-            cursor: pointer;
-        }
-        .header {
-            background-color: grey;
-            padding: 10px;
+        .lotto-number-bubble {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 60px; /* Adjust as needed */
-        }
-
-        .header h1 {
+            width: 60px;
+            height: 60px;
+            background-color: #3b82f6; /* blue-500 */
             color: white;
-            margin: 0;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease-out;
         }
-
-        .nav-bar {
-            display: flex;
-            justify-content: center;
-            padding: 10px;
-        }
-
-        .nav-bar .nav-link {
-            background-color: black;
-            color: white;
-            text-decoration: none;
-            padding: 10px 20px;
-            font-size: 16px;
-            border-radius: 5px; /* Optional: Adds rounded corners */
-        }
-
-        .nav-bar .nav-link:hover {
-            background-color: #333; /* Optional: Adds a hover effect */
+        .lotto-number-bubble:hover {
+            transform: translateY(-3px);
         }
     </style>
 </head>
-<body>
-    <div class="window" id="appWindow">
-        <div class="image-container">
-            <div class="window-header">
-                <img src="https://cdn.discordapp.com/attachments/1278733982657413174/1282626321599565879/image0.png?ex=6710d1d9&is=670f8059&hm=08877e3820ed380085a5f3891e7d50ab41b02ed740a336b3e5cb4daa729a37e4&" alt="Icon">
-                Lotto Number Picker
-            </div>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+    <div class="fixed top-4 left-4 z-50">
+        <button id="go-home-btn" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors duration-300 shadow-md focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75 text-sm md:text-base">
+            Go back to home
+        </button>
+    </div>
+
+    <div class="fixed top-4 right-4 z-50 flex items-center space-x-2 bg-white rounded-full py-2 px-4 shadow-md">
+        <span id="user-name-display" class="text-lg font-medium text-blue-600">Guest</span>
+        <button id="edit-name-btn" class="text-gray-500 hover:text-gray-700 transition-colors duration-200 focus:outline-none">
+            <i class="fas fa-pencil-alt text-base"></i>
+        </button>
+    </div>
+
+    <div id="app" class="relative w-full max-w-lg bg-white shadow-lg rounded-2xl p-8 text-center">
+        <h1 class="text-4xl font-bold text-gray-800 mb-6">Lotto Number Generator</h1>
+        <p class="text-lg text-gray-600 mb-8" id="generator-message">Click "Generate Numbers" to get your lucky draw!</p>
+        
+        <div id="lotto-numbers-display" class="flex flex-wrap justify-center gap-4 mb-8 min-h-[80px] items-center">
         </div>
-        <div class="content">
-            <div>
-                <span id="label1" class="number-label">...</span>
-                <span id="label2" class="number-label">...</span>
-                <span id="label3" class="number-label">...</span>
-                <span id="label4" class="number-label">...</span>
-                <span id="label5" class="number-label">...</span>
-                <span id="label6" class="number-label">...</span>
-            </div>
-            <div class="button-container">
-                <button id="getBtn" class="button">Get My Lucky Numbers</button>
-                <button id="resetBtn" class="button">Reset</button>
-            </div>
+        
+        <div class="space-y-4">
+            <button id="generate-numbers-btn" 
+                    class="inline-block w-full px-8 py-4 bg-blue-600 text-white font-bold text-xl rounded-xl hover:bg-blue-700 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75">
+                Generate Numbers
+            </button>
+
+            <button id="lotto-settings-btn" 
+                    class="inline-block w-full px-8 py-4 bg-gray-500 text-white font-bold text-xl rounded-xl hover:bg-gray-600 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75">
+                Lotto Settings
+            </button>
         </div>
     </div>
-    <div class="header">
-        <h1>Lotto Number Generator</h1>
+
+    <div id="name-edit-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md transform transition-all duration-300 scale-100 opacity-100">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Change Your Name</h2>
+            <div class="mb-6">
+                <label for="name-edit-user-input" class="block text-gray-700 text-sm font-semibold mb-2">Your Name:</label>
+                <input type="text" id="name-edit-user-input" placeholder="Enter your name" 
+                       class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
+            </div>
+            <button id="save-name-only-btn" 
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-all duration-300 shadow-lg">Save Name</button>
+        </div>
     </div>
-    <div class="nav-bar">
-        <a href="https://vugbigeriuerr3.github.io/github.io/" class="nav-link">Back to Main Website</a>
+
+    <div id="lotto-settings-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md transform transition-all duration-300 scale-100 opacity-100">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Lotto Settings</h2>
+            
+            <div class="mb-4">
+                <label for="settings-min-number-input" class="block text-gray-700 text-sm font-semibold mb-2">Minimum Number (e.g., 1):</label>
+                <input type="number" id="settings-min-number-input" value="1" 
+                       class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
+            </div>
+
+            <div class="mb-6">
+                <label for="settings-max-number-input" class="block text-gray-700 text-sm font-semibold mb-2">Maximum Number (e.g., 49):</label>
+                <input type="number" id="settings-max-number-input" value="49" 
+                       class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
+            </div>
+
+            <div class="mb-6">
+                <label for="settings-num-to-generate-input" class="block text-gray-700 text-sm font-semibold mb-2">Numbers to Generate (e.g., 6):</label>
+                <input type="number" id="settings-num-to-generate-input" value="6" min="1"
+                       class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
+            </div>
+
+            <div class="mb-6 flex items-center">
+                <input type="checkbox" id="settings-allow-duplicates-checkbox" class="form-checkbox h-5 w-5 text-blue-600 rounded-md">
+                <label for="settings-allow-duplicates-checkbox" class="ml-2 text-gray-700 text-sm font-semibold">Allow Duplicate Numbers</label>
+            </div>
+
+            <button id="save-lotto-settings-btn" 
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-all duration-300 shadow-lg">Save Lotto Settings</button>
+        </div>
     </div>
+
     <script>
-        // Button functionality
-        document.getElementById('getBtn').addEventListener('click', function() {
-            const labels = [
-                document.getElementById('label1'),
-                document.getElementById('label2'),
-                document.getElementById('label3'),
-                document.getElementById('label4'),
-                document.getElementById('label5'),
-                document.getElementById('label6')
-            ];
-            const nums = Array.from({length: 48}, (_, i) => i + 1);
-            shuffle(nums);
-            for (let i = 0; i < labels.length; i++) {
-                labels[i].textContent = nums[i];
-            }
-            document.getElementById('resetBtn').style.display = 'inline'; // Show Reset button
-        });
+        document.addEventListener('DOMContentLoaded', () => {
+            const goHomeBtn = document.getElementById('go-home-btn');
+            const userNameDisplay = document.getElementById('user-name-display');
+            const editNameBtn = document.getElementById('edit-name-btn');
+            const lottoSettingsBtn = document.getElementById('lotto-settings-btn');
+            const generateNumbersBtn = document.getElementById('generate-numbers-btn');
+            const lottoNumbersDisplay = document.getElementById('lotto-numbers-display');
+            const generatorMessage = document.getElementById('generator-message');
 
-        document.getElementById('resetBtn').addEventListener('click', function() {
-            const labels = [
-                document.getElementById('label1'),
-                document.getElementById('label2'),
-                document.getElementById('label3'),
-                document.getElementById('label4'),
-                document.getElementById('label5'),
-                document.getElementById('label6')
-            ];
-            labels.forEach(label => label.textContent = '...');
-            // Removed line to keep Reset button visible
-        });
+            const nameEditModal = document.getElementById('name-edit-modal');
+            const nameEditUserInput = document.getElementById('name-edit-user-input');
+            const saveNameOnlyBtn = document.getElementById('save-name-only-btn');
 
-        function shuffle(array) {
-            let currentIndex = array.length, randomIndex;
-            while (currentIndex !== 0) {
-                randomIndex = Math.floor(Math.random() * currentIndex);
-                currentIndex--;
-                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
-            }
-            return array;
-        }
+            const lottoSettingsModal = document.getElementById('lotto-settings-modal');
+            const settingsMinNumberInput = document.getElementById('settings-min-number-input');
+            const settingsMaxNumberInput = document.getElementById('settings-max-number-input');
+            const settingsNumToGenerateInput = document.getElementById('settings-num-to-generate-input');
+            const settingsAllowDuplicatesCheckbox = document.getElementById('settings-allow-duplicates-checkbox');
+            const saveLottoSettingsBtn = document.getElementById('save-lotto-settings-btn');
+
+            let appState = {
+                userName: '',
+                lottoSettings: {
+                    minNumber: 1,
+                    maxNumber: 49,
+                    numToGenerate: 6,
+                    allowDuplicates: false
+                }
+            };
+
+            const setCookie = (name, value, days) => {
+                let expires = '';
+                if (days) {
+                    const date = new Date();
+                    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                    expires = '; expires=' + date.toUTCString();
+                }
+                document.cookie = name + '=' + (value || '') + expires + '; path=/; SameSite=Lax';
+            };
+
+            const getCookie = (name) => {
+                const nameEQ = name + '=';
+                const ca = document.cookie.split(';');
+                for (let i = 0; i < ca.length; i++) {
+                    let c = ca[i];
+                    while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+                }
+                return null;
+            };
+
+            const deleteCookie = (name) => {
+                document.cookie = name + '=; Max-Age=-99999999; path=/; SameSite=Lax';
+            };
+
+            const renderUserName = () => {
+                userNameDisplay.textContent = appState.userName || 'Guest';
+                if (!appState.userName && !sessionStorage.getItem('nameEditModalShown')) {
+                    nameEditModal.classList.remove('hidden');
+                    sessionStorage.setItem('nameEditModalShown', 'true');
+                } else if (appState.userName) {
+                    nameEditModal.classList.add('hidden');
+                }
+            };
+
+            const generateLottoNumbers = () => {
+                const { minNumber, maxNumber, numToGenerate, allowDuplicates } = appState.lottoSettings;
+                let numbers = new Set();
+                let generated = [];
+
+                if (!allowDuplicates) {
+                    if ((maxNumber - minNumber + 1) < numToGenerate) {
+                        generatorMessage.textContent = `Error: Cannot generate ${numToGenerate} unique numbers in the range ${minNumber}-${maxNumber}. Adjust settings.`;
+                        generatorMessage.classList.add('text-red-600');
+                        lottoNumbersDisplay.innerHTML = '';
+                        return;
+                    }
+                    while (numbers.size < numToGenerate) {
+                        numbers.add(Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber);
+                    }
+                    generated = Array.from(numbers).sort((a, b) => a - b);
+                } else {
+                    for (let i = 0; i < numToGenerate; i++) {
+                        generated.push(Math.floor(Math.random() * (maxNumber - minNumber + 1)) + minNumber);
+                    }
+                    generated.sort((a, b) => a - b);
+                }
+
+                lottoNumbersDisplay.innerHTML = '';
+                generated.forEach(num => {
+                    const bubble = document.createElement('div');
+                    bubble.className = 'lotto-number-bubble';
+                    bubble.textContent = num;
+                    lottoNumbersDisplay.appendChild(bubble);
+                });
+                generatorMessage.textContent = `Here are your ${numToGenerate} lucky numbers!`;
+                generatorMessage.classList.remove('text-red-600');
+                generatorMessage.classList.add('text-gray-600');
+            };
+
+            goHomeBtn.addEventListener('click', () => {
+                window.location.href = 'https://vugbigeriuerr3.github.io/github.io/?' + new Date().getTime();
+            });
+
+            saveNameOnlyBtn.addEventListener('click', () => {
+                const newUserName = nameEditUserInput.value.trim();
+                if (newUserName) {
+                    const loadedCookieData = getCookie('appState');
+                    let currentAppState = {};
+                    if (loadedCookieData) {
+                        try {
+                            currentAppState = JSON.parse(loadedCookieData);
+                        } catch (e) {
+                            console.error('Error parsing existing appState cookie:', e);
+                        }
+                    }
+                    currentAppState.userName = newUserName; 
+                    appState.userName = newUserName; 
+
+                    setCookie('appState', JSON.stringify(currentAppState), 365);
+                    renderUserName();
+                    nameEditModal.classList.add('hidden');
+                } else {
+                    let messageElement = saveNameOnlyBtn.parentElement.querySelector('.temp-error-message');
+                    if (!messageElement) {
+                        messageElement = document.createElement('p');
+                        messageElement.className = 'text-red-500 text-sm mt-2 text-center temp-error-message';
+                        saveNameOnlyBtn.parentElement.insertBefore(messageElement, saveNameOnlyBtn);
+                    }
+                    messageElement.textContent = 'Please enter a name.';
+                    setTimeout(() => {
+                        messageElement.remove();
+                    }, 2000);
+                }
+            });
+
+            editNameBtn.addEventListener('click', () => {
+                nameEditUserInput.value = appState.userName;
+                nameEditModal.classList.remove('hidden');
+                const existingMessage = saveNameOnlyBtn.parentElement.querySelector('.temp-error-message');
+                if (existingMessage) existingMessage.remove();
+            });
+
+            lottoSettingsBtn.addEventListener('click', () => {
+                settingsMinNumberInput.value = appState.lottoSettings.minNumber;
+                settingsMaxNumberInput.value = appState.lottoSettings.maxNumber;
+                settingsNumToGenerateInput.value = appState.lottoSettings.numToGenerate;
+                settingsAllowDuplicatesCheckbox.checked = appState.lottoSettings.allowDuplicates;
+                lottoSettingsModal.classList.remove('hidden');
+            });
+
+            saveLottoSettingsBtn.addEventListener('click', () => {
+                const newMin = parseInt(settingsMinNumberInput.value);
+                const newMax = parseInt(settingsMaxNumberInput.value);
+                const newCount = parseInt(settingsNumToGenerateInput.value);
+                const newAllowDuplicates = settingsAllowDuplicatesCheckbox.checked;
+
+                if (isNaN(newMin) || newMin < 1 || isNaN(newMax) || newMax < newMin || isNaN(newCount) || newCount < 1) {
+                    alert('Please enter valid numbers for range and count.');
+                    return;
+                }
+                if (!newAllowDuplicates && (newMax - newMin + 1) < newCount) {
+                    alert('Cannot generate unique numbers: range is too small for the count specified.');
+                    return;
+                }
+
+                const loadedCookieData = getCookie('appState');
+                let currentAppState = {};
+                if (loadedCookieData) {
+                    try {
+                        currentAppState = JSON.parse(loadedCookieData);
+                    } catch (e) {
+                        console.error('Error parsing existing appState cookie:', e);
+                    }
+                }
+
+                currentAppState.lottoSettings = {
+                    minNumber: newMin,
+                    maxNumber: newMax,
+                    numToGenerate: newCount,
+                    allowDuplicates: newAllowDuplicates
+                };
+                
+                appState.lottoSettings = currentAppState.lottoSettings;
+
+                setCookie('appState', JSON.stringify(currentAppState), 365);
+                lottoSettingsModal.classList.add('hidden');
+                generateLottoNumbers(); // Generate numbers with new settings immediately
+            });
+
+            generateNumbersBtn.addEventListener('click', generateLottoNumbers);
+
+            const init = () => {
+                const loadedCookieData = getCookie('appState');
+                if (loadedCookieData) {
+                    try {
+                        const parsedState = JSON.parse(loadedCookieData);
+                        appState.userName = parsedState.userName || '';
+                        if (parsedState.lottoSettings) {
+                            appState.lottoSettings = { ...appState.lottoSettings, ...parsedState.lottoSettings };
+                        }
+                        appState = { ...parsedState, ...appState }; // Merge to preserve other app data
+                    } catch (e) {
+                        console.error('Error parsing appState cookie on init:', e);
+                        deleteCookie('appState');
+                        appState.userName = '';
+                    }
+                }
+                renderUserName();
+                generateLottoNumbers(); // Generate initial numbers on load
+            };
+
+            init();
+        });
     </script>
 </body>
 </html>
