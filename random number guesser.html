@@ -3,175 +3,269 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Main Menu and Number Guessing Game</title>
+    <title>Random Number Guesser</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f0f0f0;
-        }
-        .header {
-            background-color: #333;
-            color: white;
-            text-align: center;
-            padding: 15px 0;
-        }
-        .header h1 {
-            margin: 0;
-        }
-        .nav-bar {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
             display: flex;
             justify-content: center;
-            margin: 20px 0;
-        }
-        .nav-link {
-            background-color: #000;
-            color: #fff;
-            padding: 15px 25px;
-            margin: 0 10px;
-            text-align: center;
-            text-decoration: none;
-            font-size: 18px;
-            border-radius: 5px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            transition: background-color 0.3s, box-shadow 0.3s;
-        }
-        .nav-link:hover {
-            background-color: #555;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-        }
-        .container {
-            text-align: center;
-            border: 1px solid #ccc;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
             padding: 20px;
-            background-color: #fff;
-            border-radius: 5px;
+            box-sizing: border-box;
+            background-image: url('https://placehold.co/1920x1080/e5e7eb/e5e7eb?text=');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
         }
-        .hidden {
-            display: none;
-        }
-        .status {
-            margin-top: 10px;
-            font-weight: bold;
-        }
-        .status.close {
-            color: green;
-        }
-        .status.far {
-            color: red;
-        }
-        .status.invalid {
-            color: orange;
+        .modal {
+            max-height: 90vh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
     </style>
 </head>
-<body>
-    <div class="header">
-        <h1>HTML to Java</h1>
-    </div>
-    <div class="nav-bar">
-        <a href="https://vugbigeriuerr3.github.io/github.io/" class="nav-link">Back to Main Website</a>
-    </div>
-    <div class="container" id="mainMenu">
-        <h1>Main Menu</h1>
-        <label for="gameSelect">Select Game:</label>
-        <select id="gameSelect">
-            <option value="NumberGuessingGame">Number Guessing Game</option>
-        </select>
-        <br><br>
-        <label for="nameSelect">Select Your Name:</label>
-        <select id="nameSelect" disabled>
-            <option value="Rafferty">Rafferty</option>
-            <option value="sam">sam</option>option>
-        </select>
-        <br><br>
-        <button id="applyButton">Apply</button>
-        <button id="loadButton" class="hidden">Load</button>
-        <button id="changeUserButton" class="hidden">Change User</button>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+    <!-- Top-left home button -->
+    <div class="fixed top-4 left-4 z-50">
+        <button id="go-home-btn" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors duration-300 shadow-md focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75 text-sm md:text-base">
+            Go back to home
+        </button>
     </div>
 
-    <div class="container hidden" id="gameContainer">
-        <h1>Number Guessing Game</h1>
-        <p>Guess a number between 1 and 100:</p>
-        <input type="number" id="guessField" min="1" max="100">
-        <br><br>
-        <button id="redoButton" class="hidden">Redo It</button>
-        <button id="swapUserButton">Swap User</button>
-        <p id="statusLabel" class="status">A new number has been selected. Make your guess!</p>
+    <!-- Top-right user name and edit button -->
+    <div class="fixed top-4 right-4 z-50 flex items-center space-x-2 bg-white rounded-full py-2 px-4 shadow-md">
+        <span id="user-name-display" class="text-lg font-medium text-blue-600">Guest</span>
+        <button id="edit-user-name-btn" class="text-gray-500 hover:text-gray-700 transition-colors duration-200 focus:outline-none">
+            <i class="fas fa-pencil-alt text-base"></i>
+        </button>
+    </div>
+
+    <div id="app" class="relative w-full max-w-lg bg-white shadow-lg rounded-2xl p-8 text-center">
+        <h1 class="text-4xl font-bold text-gray-800 mb-6">Number Guesser</h1>
+        <p class="text-lg text-gray-600 mb-8" id="game-message">Guess a number between 1 and 100!</p>
+        
+        <div class="space-y-4">
+            <input type="number" id="guess-input" placeholder="Enter your guess" min="1" max="100" 
+                   class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200 mb-2">
+            
+            <button id="submit-guess-btn" 
+                    class="inline-block w-full px-8 py-4 bg-blue-600 text-white font-bold text-xl rounded-xl hover:bg-blue-700 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75">
+                Submit Guess
+            </button>
+
+            <button id="redo-game-btn" 
+                    class="inline-block w-full px-8 py-4 bg-red-500 text-white font-bold text-xl rounded-xl hover:bg-red-600 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75 hidden">
+                Redo It
+            </button>
+            
+            <button id="swap-user-btn" 
+                    class="inline-block w-full px-8 py-4 bg-gray-500 text-white font-bold text-xl rounded-xl hover:bg-gray-600 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75">
+                Change User
+            </button>
+        </div>
+    </div>
+
+    <!-- Name Setup Modal (hidden by default) -->
+    <div id="name-setup-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md transform transition-all duration-300 scale-100 opacity-100">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">What's your name?</h2>
+            <div class="mb-6">
+                <label for="modal-user-name-input" class="block text-gray-700 text-sm font-semibold mb-2">Your Name:</label>
+                <input type="text" id="modal-user-name-input" placeholder="Enter your name" 
+                       class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
+            </div>
+            <button id="save-name-btn" 
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-all duration-300 shadow-lg">Save Name</button>
+        </div>
     </div>
 
     <script>
-        let targetNumber;
+        document.addEventListener('DOMContentLoaded', () => {
+            // DOM Elements
+            const goHomeBtn = document.getElementById('go-home-btn');
+            const userNameDisplay = document.getElementById('user-name-display');
+            const editUserNameBtn = document.getElementById('edit-user-name-btn');
+            const nameSetupModal = document.getElementById('name-setup-modal');
+            const modalUserNameInput = document.getElementById('modal-user-name-input');
+            const saveNameBtn = document.getElementById('save-name-btn');
 
-        document.getElementById('applyButton').addEventListener('click', () => {
-            document.getElementById('nameSelect').disabled = false;
-            document.getElementById('loadButton').classList.remove('hidden');
-            document.getElementById('changeUserButton').classList.remove('hidden');
+            const guessInput = document.getElementById('guess-input');
+            const submitGuessBtn = document.getElementById('submit-guess-btn');
+            const redoGameBtn = document.getElementById('redo-game-btn');
+            const swapUserBtn = document.getElementById('swap-user-btn'); // This will now open the name edit modal
+            const gameMessage = document.getElementById('game-message');
+
+            // Game State Variables
+            let secretNumber;
+            let attempts = 0;
+            let gameOver = false;
+
+            // Shared App State (for cookies)
+            let appState = {
+                userName: '',
+                // Other properties from other apps like websiteTitle, counters will be preserved
+            };
+
+            // Cookie Management Functions (copied from homepage for consistency)
+            const setCookie = (name, value, days) => {
+                let expires = '';
+                if (days) {
+                    const date = new Date();
+                    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                    expires = '; expires=' + date.toUTCString();
+                }
+                document.cookie = name + '=' + (value || '') + expires + '; path=/; SameSite=Lax';
+            };
+
+            const getCookie = (name) => {
+                const nameEQ = name + '=';
+                const ca = document.cookie.split(';');
+                for (let i = 0; i < ca.length; i++) {
+                    let c = ca[i];
+                    while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+                }
+                return null;
+            };
+
+            const deleteCookie = (name) => {
+                document.cookie = name + '=; Max-Age=-99999999; path=/; SameSite=Lax';
+            };
+
+            // User Name Management Functions
+            const renderUserName = () => {
+                userNameDisplay.textContent = appState.userName || 'Guest';
+                // If userName is empty, show the name setup modal on initial load
+                if (!appState.userName && !sessionStorage.getItem('nameModalShown')) {
+                    nameSetupModal.classList.remove('hidden');
+                    sessionStorage.setItem('nameModalShown', 'true'); // Prevent showing repeatedly on refresh
+                } else if (appState.userName) {
+                    nameSetupModal.classList.add('hidden');
+                }
+            };
+
+            // Game Logic Functions
+            const startGame = () => {
+                secretNumber = Math.floor(Math.random() * 100) + 1;
+                attempts = 0;
+                gameOver = false;
+                gameMessage.textContent = 'Guess a number between 1 and 100!';
+                guessInput.value = '';
+                guessInput.disabled = false;
+                submitGuessBtn.classList.remove('hidden');
+                redoGameBtn.classList.add('hidden');
+            };
+
+            const checkGuess = () => {
+                const guess = parseInt(guessInput.value);
+
+                if (isNaN(guess) || guess < 1 || guess > 100) {
+                    gameMessage.textContent = 'Please enter a valid number between 1 and 100.';
+                    return;
+                }
+
+                attempts++;
+
+                if (guess === secretNumber) {
+                    gameMessage.textContent = `Congratulations! You guessed the number ${secretNumber} in ${attempts} attempts!`;
+                    gameOver = true;
+                    guessInput.disabled = true;
+                    submitGuessBtn.classList.add('hidden');
+                    redoGameBtn.classList.remove('hidden');
+                } else if (guess < secretNumber) {
+                    gameMessage.textContent = 'Too low! Try again.';
+                } else {
+                    gameMessage.textContent = 'Too high! Try again.';
+                }
+            };
+
+            // Event Listeners
+            goHomeBtn.addEventListener('click', () => {
+                window.location.href = 'https://vugbigeriuerr3.github.io/github.io/?' + new Date().getTime();
+            });
+
+            saveNameBtn.addEventListener('click', () => {
+                const newName = modalUserNameInput.value.trim();
+                if (newName) {
+                    // Load the existing cookie, update userName, then save back
+                    const loadedCookieData = getCookie('appState');
+                    let currentAppState = {};
+                    if (loadedCookieData) {
+                        try {
+                            currentAppState = JSON.parse(loadedCookieData);
+                        } catch (e) {
+                            console.error('Error parsing existing appState cookie:', e);
+                        }
+                    }
+                    currentAppState.userName = newName; // Update only the userName
+                    appState.userName = newName; // Update local appState for immediate display
+
+                    setCookie('appState', JSON.stringify(currentAppState), 365);
+                    renderUserName();
+                    nameSetupModal.classList.add('hidden'); // Hide modal after saving
+                } else {
+                    let messageElement = saveNameBtn.parentElement.querySelector('.temp-error-message');
+                    if (!messageElement) {
+                        messageElement = document.createElement('p');
+                        messageElement.className = 'text-red-500 text-sm mt-2 text-center temp-error-message';
+                        saveNameBtn.parentElement.insertBefore(messageElement, saveNameBtn);
+                    }
+                    messageElement.textContent = 'Please enter a name.';
+                    setTimeout(() => {
+                        messageElement.remove();
+                    }, 2000);
+                }
+            });
+
+            editUserNameBtn.addEventListener('click', () => {
+                modalUserNameInput.value = appState.userName;
+                nameSetupModal.classList.remove('hidden');
+                const existingMessage = saveNameBtn.parentElement.querySelector('.temp-error-message');
+                if (existingMessage) existingMessage.remove(); // Clear error on opening modal
+            });
+
+            swapUserBtn.addEventListener('click', () => {
+                editUserNameBtn.click(); // Trigger the edit user name modal
+            });
+
+            submitGuessBtn.addEventListener('click', checkGuess);
+            guessInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    checkGuess();
+                }
+            });
+            redoGameBtn.addEventListener('click', startGame);
+
+            // Initial setup
+            const init = () => {
+                const loadedCookieData = getCookie('appState');
+                if (loadedCookieData) {
+                    try {
+                        const parsedState = JSON.parse(loadedCookieData);
+                        // Merge loaded properties into appState, preserving others
+                        appState = { ...appState, ...parsedState };
+                        // Ensure userName is correctly set, defaulting to empty string if not found
+                        if (typeof appState.userName === 'undefined') {
+                            appState.userName = '';
+                        }
+                    } catch (e) {
+                        console.error('Error parsing appState cookie on init:', e);
+                        deleteCookie('appState'); // Clear corrupted cookie
+                        appState.userName = ''; // Reset username if cookie was bad
+                    }
+                }
+                renderUserName(); // Display user name or show modal
+                startGame(); // Start the game
+            };
+
+            init();
         });
-
-        document.getElementById('loadButton').addEventListener('click', () => {
-            const selectedName = document.getElementById('nameSelect').value;
-            if (confirm('Do you want to load in?')) {
-                alert(`Welcome, ${selectedName}!`);
-                document.getElementById('mainMenu').classList.add('hidden');
-                document.getElementById('gameContainer').classList.remove('hidden');
-                generateNewNumber();
-            }
-        });
-
-        document.getElementById('changeUserButton').addEventListener('click', () => {
-            document.getElementById('gameContainer').classList.add('hidden');
-            document.getElementById('mainMenu').classList.remove('hidden');
-        });
-
-        document.getElementById('redoButton').addEventListener('click', generateNewNumber);
-
-        document.getElementById('guessField').addEventListener('input', evaluateGuess);
-
-        document.getElementById('swapUserButton').addEventListener('click', () => {
-            document.getElementById('gameContainer').classList.add('hidden');
-            document.getElementById('mainMenu').classList.remove('hidden');
-        });
-
-        function generateNewNumber() {
-            targetNumber = Math.floor(Math.random() * 100) + 1;
-            document.getElementById('statusLabel').textContent = 'A new number has been selected. Make your guess!';
-            document.getElementById('guessField').value = '';
-            document.getElementById('redoButton').classList.add('hidden');
-            document.getElementById('statusLabel').className = 'status';
-        }
-
-        function evaluateGuess() {
-            const guessField = document.getElementById('guessField');
-            const guessText = guessField.value;
-            const statusLabel = document.getElementById('statusLabel');
-
-            if (guessText === '') {
-                statusLabel.textContent = 'Please enter a number.';
-                statusLabel.className = 'status invalid';
-                return;
-            }
-
-            const guess = parseInt(guessText, 10);
-            if (isNaN(guess) || guess < 1 || guess > 100) {
-                statusLabel.textContent = 'Invalid input. Please enter a number between 1 and 100.';
-                statusLabel.className = 'status invalid';
-                return;
-            }
-
-            if (guess === targetNumber) {
-                statusLabel.textContent = 'You got it!';
-                statusLabel.className = 'status close';
-                document.getElementById('redoButton').classList.remove('hidden');
-            } else if (Math.abs(targetNumber - guess) <= 10) {
-                statusLabel.textContent = 'Close';
-                statusLabel.className = 'status close';
-            } else {
-                statusLabel.textContent = 'Far';
-                statusLabel.className = 'status far';
-            }
-        }
     </script>
 </body>
 </html>
