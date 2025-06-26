@@ -147,6 +147,10 @@
                     class="flex-1 px-8 py-4 bg-green-600 text-white font-bold text-xl rounded-xl hover:bg-green-700 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-75">
                 Add New Counter
             </button>
+            <button id="counter-app-settings-btn" 
+                    class="flex-1 px-8 py-4 bg-purple-600 text-white font-bold text-xl rounded-xl hover:bg-purple-700 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-75">
+                Counter App Settings
+            </button>
         </div>
     </div>
 
@@ -235,6 +239,21 @@
         </div>
     </div>
 
+    <div id="counter-app-settings-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md transform transition-all duration-300 scale-100 opacity-100">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Counter App Settings</h2>
+            
+            <div class="mb-6">
+                <label for="counters-per-page-input" class="block text-gray-700 text-sm font-semibold mb-2">Counters Per Page:</label>
+                <input type="number" id="counters-per-page-input" value="6" min="1"
+                       class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
+            </div>
+
+            <button id="save-counter-app-settings-btn" 
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-all duration-300 shadow-lg">Save Settings</button>
+        </div>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const goHomeBtn = document.getElementById('go-home-btn');
@@ -249,6 +268,7 @@
             const prevPageBtn = document.getElementById('prev-page-btn');
             const nextPageBtn = document.getElementById('next-page-btn');
             const pageInfo = document.getElementById('page-info');
+            const counterAppSettingsBtn = document.getElementById('counter-app-settings-btn');
 
             const nameEditModal = document.getElementById('name-edit-modal');
             const nameEditUserInput = document.getElementById('name-edit-user-input');
@@ -268,6 +288,10 @@
             const customCardBgColorInput = document.getElementById('custom-card-bg-color');
             const textSizeSelect = document.getElementById('text-size-select');
             const saveDisplaySettingsBtn = document.getElementById('save-display-settings-btn');
+
+            const counterAppSettingsModal = document.getElementById('counter-app-settings-modal');
+            const countersPerPageInput = document.getElementById('counters-per-page-input');
+            const saveCounterAppSettingsBtn = document.getElementById('save-counter-app-settings-btn');
 
             let appState = {
                 userName: '',
@@ -626,6 +650,29 @@
                 displaySettingsModal.classList.add('hidden');
             });
 
+            counterAppSettingsBtn.addEventListener('click', () => {
+                countersPerPageInput.value = appState.countersPerPage;
+                counterAppSettingsModal.classList.remove('hidden');
+            });
+
+            saveCounterAppSettingsBtn.addEventListener('click', () => {
+                const newCountersPerPage = parseInt(countersPerPageInput.value);
+
+                if (isNaN(newCountersPerPage) || newCountersPerPage < 1) {
+                    alert('Counters per page must be a positive number.');
+                    return;
+                }
+
+                appState.countersPerPage = newCountersPerPage;
+                const totalPages = Math.max(1, Math.ceil(appState.counters.length / appState.countersPerPage));
+                if (appState.currentPage > totalPages) {
+                    appState.currentPage = totalPages;
+                }
+                saveAppState();
+                renderCounters();
+                counterAppSettingsModal.classList.add('hidden');
+            });
+
             addCounterBtn.addEventListener('click', () => {
                 counterNameInput.value = '';
                 counterValueInput.value = 0;
@@ -636,7 +683,6 @@
                 configureCounterModal.classList.remove('hidden');
             });
 
-            // Using event delegation for counter buttons to handle dynamically added elements
             countersGrid.addEventListener('click', (e) => {
                 let targetButton = e.target.closest('button');
                 if (!targetButton) return;
@@ -694,7 +740,6 @@
                     try {
                         const parsedState = JSON.parse(loadedCookieData);
                         
-                        // Handle migration back from 'pages' to 'counters' array if it exists in old cookie
                         if (parsedState.pages && !parsedState.counters) {
                             appState.counters = Object.values(parsedState.pages).flat();
                             delete parsedState.pages;
@@ -703,7 +748,7 @@
                         }
 
                         appState.userName = parsedState.userName || '';
-                        appState.websiteTitle = parsedState.websiteTitle || 'Dynamic Counter'; // Ensure default if not set
+                        appState.websiteTitle = parsedState.websiteTitle || 'Dynamic Counter';
                         if (parsedState.displaySettings) {
                             appState.displaySettings.theme = parsedState.displaySettings.theme || 'light';
                             appState.displaySettings.customBodyBg = parsedState.displaySettings.customBodyBg || '#f3f4f6';
