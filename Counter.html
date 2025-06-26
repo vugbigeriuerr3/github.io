@@ -42,29 +42,39 @@
         </div>
     </div>
     <script type="module">
+ 
         const evarardCountElement = document.getElementById('evarardCount');
         const MuburuCountElement = document.getElementById('MuburuCount');
         const evarardButton = document.getElementById('evarardButton');
-        const MuburuButton = document.getElementById('MuburuButton');
+        const MuburuButton = document.getElementById('MuburuButton'); 
         const userIdDisplay = document.getElementById('userIdDisplay');
         const messageBox = document.getElementById('messageBox');
         const messageText = document.getElementById('messageText');
         const messageCloseButton = document.getElementById('messageCloseButton');
-
-        const userId = 'rafferty';
+        const userId = 'Counter';
         function showMessageBox(message) {
             messageText.textContent = message;
             messageBox.classList.remove('hidden');
         }
+
+      
         messageCloseButton.addEventListener('click', () => {
-            messageBox.classList.add('hidden');
+            messageBox.classList.add('hidden'); 
         });
+res.
+         */
         function setCookie(name, value, days) {
             const date = new Date();
             date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
             const expires = "expires=" + date.toUTCString();
             document.cookie = name + "=" + value + ";" + expires + ";path=/";
         }
+
+        /**
+         * Retrieves the value of a cookie by its name.
+         * @param {string} name - The name of the cookie to retrieve.
+         * @returns {string} The value of the cookie, or an empty string if not found.
+         */
         function getCookie(name) {
             const nameEQ = name + "=";
             const ca = document.cookie.split(';');
@@ -76,25 +86,26 @@
             return "";
         }
         function initializeCounters() {
-            userIdDisplay.textContent = userId;
+            userIdDisplay.textContent = userId; 
             const evarardCount = parseInt(getCookie('evarardCount')) || 0;
-            const MuburuCount = parseInt(getCookie('MuburuCount')) || 0;
+            const MuburuCount = parseInt(getCookie('MuburuCount')) || 0;   
 
             evarardCountElement.textContent = evarardCount;
-            MuburuCountElement.textContent = MuburuCount;
+            MuburuCountElement.textContent = MuburuCount; 
         }
         function incrementCounter(type) {
-            let currentCount = parseInt(getCookie(`${type}Count`)) || 0;
-            currentCount++;
+            let currentCount = parseInt(getCookie(`${type}Count`)) || 0; 
+            currentCount++; 
             if (type === 'evarard') {
-                evarardCountElement.textContent = currentCount;
-            } else if (type === 'Muburu') {
-                MuburuCountElement.textContent = currentCount;
+                evarardCountElement.textContent = currentCount; 
+            } else if (type === 'Muburu') { 
+                MuburuCountElement.textContent = currentCount; 
             }
-            setCookie(`${type}Count`, currentCount, 365);
+            setCookie(`${type}Count`, currentCount, 365); 
         }
+
         evarardButton.addEventListener('click', () => incrementCounter('evarard'));
-        MuburuButton.addEventListener('click', () => incrementCounter('buburu'));
+        MuburuButton.addEventListener('click', () => incrementCounter('Muburu'));
         window.onload = initializeCounters;
     </script>
 </body>
