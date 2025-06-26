@@ -22,6 +22,8 @@
 
         .main-card {
             transition: background-color 0.3s ease, color 0.3s ease;
+            position: relative; /* Ensure main card is above the overlay */
+            z-index: 20; /* Higher than overlay */
         }
 
         /* --- Specific CSS to hide GitHub Pages default elements --- */
@@ -32,34 +34,19 @@
             height: 0 !important;
             overflow: hidden !important;
         }
-        /* This attempts to hide the github.io text or similar direct content injected at the body level */
-        body > *:first-child:not(#github-pages-overlay):not(.fixed):not(.w-full) {
-            display: none !important;
-            visibility: hidden !important;
-            height: 0 !important;
-            overflow: hidden !important;
-        }
-        /* If a bare <div> or <p> with "github.io" content is injected before your actual content */
-        body > div:first-of-type:not(.fixed),
-        body > p:first-of-type:not(.fixed),
-        body > span:first-of-type:not(.fixed) {
-            display: none !important;
-            visibility: hidden !important;
-            height: 0 !important;
-            overflow: hidden !important;
-        }
 
-        /* Full-screen overlay - use only if other hiding methods fail */
+        /* Full-screen overlay to cover unexpected GitHub Pages elements */
         #github-pages-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background-color: var(--overlay-bg-color, #f3f4f6); /* Use custom body bg color or default */
-            z-index: 9999; /* Ensure it's on top */
+            /* background-color will be set by JS */
+            z-index: 10; /* Lower than fixed elements (z-50) and main-card (z-20) */
             pointer-events: none; /* Allows clicks to pass through to elements beneath */
-            display: none; /* Hidden by default, enable via JS if needed */
+            display: block; /* Always visible to cover content */
+            transition: background-color 0.3s ease; /* Smooth transition for overlay color */
         }
 
         .modal {
@@ -67,10 +54,17 @@
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
         }
+
+        /* Ensure fixed elements are on top of the overlay */
+        .fixed {
+            z-index: 50; 
+            position: fixed; /* Explicitly fixed position as Tailwind fixed applies it */
+        }
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4">
-    <!-- Optional: Full-screen overlay to cover unexpected GitHub Pages elements -->
+    <!-- Full-screen overlay to cover unexpected GitHub Pages elements -->
+    <!-- Its background color will be dynamically set by JavaScript -->
     <div id="github-pages-overlay"></div>
 
     <div class="fixed top-4 right-4 z-50 flex items-center space-x-2 bg-white rounded-full py-2 px-4 shadow-md transition-colors duration-300">
@@ -172,7 +166,7 @@
             const editNameBtn = document.getElementById('edit-name-btn');
             const configureDisplayBtn = document.getElementById('configure-display-btn');
             const mainContentCard = document.getElementById('main-content-card');
-            const githubPagesOverlay = document.getElementById('github-pages-overlay'); // Get the overlay element
+            const githubPagesOverlay = document.getElementById('github-pages-overlay');
 
             const nameEditModal = document.getElementById('name-edit-modal');
             const nameEditUserInput = document.getElementById('name-edit-user-input');
@@ -222,6 +216,7 @@
             const applyDisplaySettings = () => {
                 const { theme, customBodyBg, customCardBg } = appState.displaySettings;
 
+                // Clear body classes and inline styles first to ensure proper application
                 document.body.classList.remove('bg-gray-100', 'dark-mode');
                 document.body.style.backgroundColor = '';
                 document.body.style.backgroundImage = '';
@@ -237,13 +232,12 @@
                 userNameBox.querySelector('span').style.color = '';
                 userNameBox.querySelector('button').style.color = '';
 
-                // Set overlay color and display based on theme
-                githubPagesOverlay.style.display = 'block'; // Always try to display overlay
+                // Apply theme styles
                 if (theme === 'dark') {
                     document.body.classList.add('dark-mode');
                     document.body.style.backgroundImage = 'url("https://placehold.co/1920x1080/2d3748/2d3748?text=")';
                     document.body.style.backgroundColor = '#1a202c';
-                    githubPagesOverlay.style.backgroundColor = '#1a202c'; // Overlay dark
+                    githubPagesOverlay.style.backgroundColor = '#1a202c'; // Overlay matches dark theme
                     
                     mainContentCard.classList.add('bg-gray-800');
                     mainContentCard.querySelector('h1').style.color = '#e2e8f0';
@@ -256,7 +250,7 @@
                 } else if (theme === 'custom') {
                     document.body.style.backgroundColor = customBodyBg;
                     document.body.style.backgroundImage = 'none';
-                    githubPagesOverlay.style.backgroundColor = customBodyBg; // Overlay custom
+                    githubPagesOverlay.style.backgroundColor = customBodyBg; // Overlay matches custom body color
                     
                     mainContentCard.style.backgroundColor = customCardBg;
                     
@@ -290,10 +284,10 @@
                         mainContentCard.querySelector('p').style.color = '#4a5568';
                     }
 
-                } else { // 'light' theme
+                } else { // 'light' theme (default)
                     document.body.classList.add('bg-gray-100');
                     document.body.style.backgroundImage = 'url("https://placehold.co/1920x1080/e5e7eb/e5e7eb?text=")';
-                    githubPagesOverlay.style.backgroundColor = '#f3f4f6'; // Overlay light
+                    githubPagesOverlay.style.backgroundColor = '#f3f4f6'; // Overlay matches light theme
                     mainContentCard.classList.add('bg-white');
                     userNameBox.classList.add('bg-white');
                 }
