@@ -17,6 +17,11 @@
             margin: 0;
             padding: 20px;
             box-sizing: border-box;
+            /* Background image styles */
+            background-image: url('https://placehold.co/1920x1080/e5e7eb/e5e7eb?text='); /* Light gray placeholder image */
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed; /* Ensures the background covers the whole page even with scrolling */
         }
         header.site-header {
             display: none;
