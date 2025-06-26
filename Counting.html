@@ -47,7 +47,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            position: relative;
+            position: relative; /* Needed for absolute positioning of pencils */
         }
         .counter-item.green { /* For specific green background */
             background-color: #e6ffe6;
@@ -74,8 +74,11 @@
             font-size: 2.5em;
             font-weight: bold;
             color: #333;
+            position: relative; /* To position the count edit pencil */
+            padding-right: 25px; /* Make space for the pencil */
         }
-        .edit-counter-name { /* New class for the pencil next to counter name */
+        /* Pencil icon next to counter name */
+        .edit-counter-name {
             position: absolute;
             top: 10px;
             right: 10px;
@@ -84,6 +87,20 @@
             font-size: 1.2em;
             cursor: pointer;
             color: #555;
+            z-index: 1; /* Ensure it's clickable */
+        }
+        /* Pencil icon next to counter count */
+        .edit-counter-count {
+            position: absolute;
+            top: 50%;
+            right: 0px; /* Adjust as needed */
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            color: #555;
+            z-index: 1; /* Ensure it's clickable */
         }
         .initial-setup {
             text-align: left;
@@ -271,7 +288,10 @@
 
                 counterDiv.innerHTML = `
                     <button class="${buttonClass}" data-index="${index}">${counter.name}</button>
-                    <div class="count-display" id="countDisplay${index}">${counter.count}</div>
+                    <div class="count-display" id="countDisplay${index}">
+                        ${counter.count}
+                        <span class="edit-counter-count" data-index="${index}">✏️</span>
+                    </div>
                     <span class="edit-counter-name" data-index="${index}">✏️</span>
                 `;
                 countersDisplayDiv.appendChild(counterDiv);
@@ -287,32 +307,34 @@
                 });
             });
 
+            // Event listener for editing counter NAME
             document.querySelectorAll('.edit-counter-name').forEach(pencil => {
                 pencil.addEventListener('click', (event) => {
                     const index = parseInt(event.target.dataset.index);
-                    const action = prompt(`What do you want to edit for "${counters[index].name}"?\n1. Change Name\n2. Change Count`, '');
+                    const newName = prompt(`Edit name for counter ${counters[index].name}:`, counters[index].name);
+                    if (newName !== null && newName.trim() !== '') {
+                        counters[index].name = newName.trim();
+                        // Re-render to update the button name immediately
+                        renderCounters();
+                        saveData();
+                    } else if (newName !== null) {
+                        alert('Name cannot be empty.');
+                    }
+                });
+            });
 
-                    if (action === '1') {
-                        const newName = prompt(`Edit name for counter ${counters[index].name}:`, counters[index].name);
-                        if (newName !== null && newName.trim() !== '') {
-                            counters[index].name = newName.trim();
-                            // Re-render to update the button name immediately
-                            renderCounters();
-                            saveData();
-                        } else if (newName !== null) {
-                            alert('Name cannot be empty.');
-                        }
-                    } else if (action === '2') {
-                        const newCount = prompt(`Edit count for ${counters[index].name}:`, counters[index].count);
-                        if (newCount !== null && !isNaN(parseInt(newCount))) {
-                            counters[index].count = parseInt(newCount);
-                            document.getElementById(`countDisplay${index}`).textContent = counters[index].count;
-                            saveData();
-                        } else if (newCount !== null) {
-                            alert('Invalid input. Please enter a number.');
-                        }
-                    } else if (action !== null) {
-                        alert('Invalid option. Please enter 1 or 2.');
+            // Event listener for editing counter COUNT
+            document.querySelectorAll('.edit-counter-count').forEach(pencil => {
+                pencil.addEventListener('click', (event) => {
+                    const index = parseInt(event.target.dataset.index);
+                    const newCount = prompt(`Edit count for ${counters[index].name}:`, counters[index].count);
+                    if (newCount !== null && !isNaN(parseInt(newCount))) {
+                        counters[index].count = parseInt(newCount);
+                        // Update only the text content to avoid re-rendering entire section
+                        document.getElementById(`countDisplay${index}`).firstChild.nodeValue = counters[index].count;
+                        saveData();
+                    } else if (newCount !== null) {
+                        alert('Invalid input. Please enter a number.');
                     }
                 });
             });
