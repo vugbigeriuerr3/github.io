@@ -144,10 +144,16 @@
             </button>
         </div>
 
-        <button id="add-counter-btn" 
-                class="inline-block w-full px-8 py-4 bg-green-600 text-white font-bold text-xl rounded-xl hover:bg-green-700 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-75">
-            Add New Counter
-        </button>
+        <div class="flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-4">
+            <button id="add-counter-btn" 
+                    class="flex-1 px-8 py-4 bg-green-600 text-white font-bold text-xl rounded-xl hover:bg-green-700 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-75">
+                Add New Counter
+            </button>
+            <button id="counter-app-settings-btn" 
+                    class="flex-1 px-8 py-4 bg-purple-600 text-white font-bold text-xl rounded-xl hover:bg-purple-700 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-75">
+                Counter App Settings
+            </button>
+        </div>
     </div>
 
     <!-- Name Edit Modal -->
@@ -238,6 +244,22 @@
         </div>
     </div>
 
+    <!-- New Counter App Settings Modal -->
+    <div id="counter-app-settings-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md transform transition-all duration-300 scale-100 opacity-100">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Counter App Settings</h2>
+            
+            <div class="mb-6">
+                <label for="counters-per-page-input" class="block text-gray-700 text-sm font-semibold mb-2">Counters Per Page:</label>
+                <input type="number" id="counters-per-page-input" value="6" min="1"
+                       class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
+            </div>
+
+            <button id="save-counter-app-settings-btn" 
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-all duration-300 shadow-lg">Save Settings</button>
+        </div>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // Main App Elements
@@ -252,6 +274,7 @@
             const prevPageBtn = document.getElementById('prev-page-btn');
             const nextPageBtn = document.getElementById('next-page-btn');
             const pageInfo = document.getElementById('page-info');
+            const counterAppSettingsBtn = document.getElementById('counter-app-settings-btn'); // New button
 
             // Name Edit Modal Elements
             const nameEditModal = document.getElementById('name-edit-modal');
@@ -274,6 +297,11 @@
             const customCardBgColorInput = document.getElementById('custom-card-bg-color');
             const textSizeSelect = document.getElementById('text-size-select');
             const saveDisplaySettingsBtn = document.getElementById('save-display-settings-btn');
+
+            // Counter App Settings Modal Elements (New)
+            const counterAppSettingsModal = document.getElementById('counter-app-settings-modal');
+            const countersPerPageInput = document.getElementById('counters-per-page-input');
+            const saveCounterAppSettingsBtn = document.getElementById('save-counter-app-settings-btn');
 
             // App State
             let appState = {
@@ -506,8 +534,9 @@
                 }
 
                 if (currentEditingCounterIndex === -1) { // Adding new counter
-                    if (appState.counters.length >= (appState.currentPage * appState.countersPerPage)) {
-                        // If current page is full, move to next page
+                    // If adding a new counter and current page is full, automatically advance to next page
+                    const totalCountersOnCurrentPage = appState.counters.slice((appState.currentPage - 1) * appState.countersPerPage, appState.currentPage * appState.countersPerPage).length;
+                    if (totalCountersOnCurrentPage >= appState.countersPerPage) {
                         appState.currentPage++;
                     }
                     appState.counters.push({ id: Date.now(), name, value });
@@ -634,14 +663,34 @@
                 displaySettingsModal.classList.add('hidden');
             });
 
+            // Counter App Settings Listeners (New)
+            counterAppSettingsBtn.addEventListener('click', () => {
+                countersPerPageInput.value = appState.countersPerPage;
+                counterAppSettingsModal.classList.remove('hidden');
+            });
+
+            saveCounterAppSettingsBtn.addEventListener('click', () => {
+                const newCountersPerPage = parseInt(countersPerPageInput.value);
+
+                if (isNaN(newCountersPerPage) || newCountersPerPage < 1) {
+                    alert('Counters per page must be a positive number.');
+                    return;
+                }
+
+                appState.countersPerPage = newCountersPerPage;
+                // Adjust currentPage if it's now out of bounds
+                const totalPagesAfterChange = Math.max(1, Math.ceil(appState.counters.length / appState.countersPerPage));
+                if (appState.currentPage > totalPagesAfterChange) {
+                    appState.currentPage = totalPagesAfterChange;
+                }
+                saveAppState();
+                renderCounters();
+                counterAppSettingsModal.classList.add('hidden');
+            });
+
+
             // Counter Specific Event Listeners
             addCounterBtn.addEventListener('click', () => {
-                if (appState.counters.length >= (appState.currentPage * appState.countersPerPage) + appState.countersPerPage) {
-                    // This logic prevents adding if next page is also full.
-                    // Instead, let's just make sure it respects the countersPerPage limit for the *current* page for direct adds.
-                    // If the current page is full, the add action should implicitly move to the next page.
-                }
-                
                 // Clear inputs for new counter
                 counterNameInput.value = '';
                 counterValueInput.value = 0;
@@ -712,7 +761,7 @@
                         }
                         appState.counters = parsedState.counters || [];
                         appState.currentPage = parsedState.currentPage || 1;
-                        appState.countersPerPage = parsedState.countersPerPage || 6; // Ensure this default is set
+                        appState.countersPerPage = parsedState.countersPerPage !== undefined ? parsedState.countersPerPage : 6; // Ensure this default is set
 
                     } catch (e) {
                         console.error('Error parsing appState cookie on init:', e);
