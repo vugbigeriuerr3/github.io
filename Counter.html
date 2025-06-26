@@ -28,11 +28,6 @@
             border-color: #ef4444;
             box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.5);
         }
-        #counter-names-section {
-            max-height: 300px;
-            overflow-y: auto;
-            padding-right: 10px;
-        }
     </style>
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
@@ -48,21 +43,6 @@
 
             <div id="counters-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             </div>
-
-            <div class="flex justify-between items-center mt-6 pt-4 border-t border-gray-200">
-                <button id="prev-page-btn" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-md">
-                    <i class="fas fa-arrow-left"></i> Previous Page
-                </button>
-                <span id="page-indicator" class="text-lg font-medium text-gray-700">Page 1 of 1</span>
-                <button id="next-page-btn" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-md">
-                    Next Page <i class="fas fa-arrow-right"></i>
-                </button>
-            </div>
-            <div class="flex justify-center mt-4">
-                <button id="add-page-btn" class="px-6 py-3 bg-green-500 text-white font-bold rounded-lg hover:bg-green-600 transition-all duration-300 shadow-md focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75">
-                    Add New Page
-                </button>
-            </div>
         </div>
 
         <div id="setup-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -75,14 +55,14 @@
                 </div>
 
                 <div class="mb-6">
-                    <label for="page-title-input" class="block text-gray-700 text-sm font-semibold mb-2">Page Title:</label>
-                    <input type="text" id="page-title-input" placeholder="Enter title for this page" class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
+                    <label for="website-title-input" class="block text-gray-700 text-sm font-semibold mb-2">Website Title:</label>
+                    <input type="text" id="website-title-input" placeholder="Enter website title" class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
                 </div>
 
                 <div class="mb-6">
-                    <label for="num-people-input" class="block text-gray-700 text-sm font-semibold mb-2">How many people to counter on this page? (Max 5)</label>
-                    <input type="number" id="num-people-input" min="1" max="5" value="1" class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
-                    <p id="num-people-error" class="text-red-500 text-sm mt-1 hidden">Number of people cannot exceed 5 per page.</p>
+                    <label for="num-people-input" class="block text-gray-700 text-sm font-semibold mb-2">How many people to counter? (Max 10)</label>
+                    <input type="number" id="num-people-input" min="1" max="10" value="1" class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
+                    <p id="num-people-error" class="text-red-500 text-sm mt-1 hidden">Number of people cannot exceed 10.</p>
                 </div>
                 
                 <div id="counter-names-section" class="mb-6">
@@ -98,7 +78,7 @@
             const setupModal = document.getElementById('setup-modal');
             const mainContent = document.getElementById('main-content');
             const userNameInput = document.getElementById('user-name-input');
-            const pageTitleInput = document.getElementById('page-title-input');
+            const websiteTitleInput = document.getElementById('website-title-input');
             const numPeopleInput = document.getElementById('num-people-input');
             const numPeopleError = document.getElementById('num-people-error');
             const counterNamesSection = document.getElementById('counter-names-section');
@@ -109,23 +89,12 @@
             const editSettingsBtn = document.getElementById('edit-settings-btn');
             const setupTitle = document.getElementById('setup-title');
 
-            const prevPageBtn = document.getElementById('prev-page-btn');
-            const nextPageBtn = document.getElementById('next-page-btn');
-            const pageIndicator = document.getElementById('page-indicator');
-            const addPageBtn = document.getElementById('add-page-btn');
-
-            const MAX_COUNTERS_PER_PAGE = 5;
+            const MAX_COUNTERS = 10;
 
             let appState = {
                 userName: '',
-                currentPageIndex: 0,
-                pages: [
-                    {
-                        id: generateUUID(),
-                        title: 'My First Page',
-                        counters: []
-                    }
-                ]
+                websiteTitle: '',
+                counters: []
             };
 
             const setCookie = (name, value, days) => {
@@ -168,11 +137,11 @@
                     numPeople = 1;
                 }
 
-                if (numPeople > MAX_COUNTERS_PER_PAGE) {
+                if (numPeople > MAX_COUNTERS) {
                     numPeopleInput.classList.add('input-error');
                     numPeopleError.classList.remove('hidden');
                     doneSetupBtn.disabled = true;
-                    numPeople = MAX_COUNTERS_PER_PAGE;
+                    numPeople = MAX_COUNTERS;
                 } else {
                     numPeopleInput.classList.remove('input-error');
                     numPeopleError.classList.add('hidden');
@@ -181,8 +150,6 @@
                 
                 counterNamesSection.innerHTML = '';
                 counterNamesSection.classList.add('space-y-4');
-
-                const currentPage = appState.pages[appState.currentPageIndex];
 
                 for (let i = 0; i < numPeople; i++) {
                     const div = document.createElement('div');
@@ -199,8 +166,8 @@
                     input.placeholder = `Enter name for person ${i + 1}`;
                     input.className = 'shadow-sm appearance-none border rounded-xl w-full sm:w-3/4 py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200';
 
-                    if (currentPage.counters[i] && currentPage.counters[i].name) {
-                        input.value = currentPage.counters[i].name;
+                    if (appState.counters[i] && appState.counters[i].name) {
+                        input.value = appState.counters[i].name;
                     }
 
                     div.appendChild(label);
@@ -210,16 +177,14 @@
             };
 
             const renderMainContent = () => {
-                const currentPage = appState.pages[appState.currentPageIndex];
-
                 userNameDisplay.textContent = appState.userName || 'Guest';
-                document.title = currentPage.title || '';
-                websiteTitleDisplay.textContent = currentPage.title || '';
+                document.title = appState.websiteTitle || '';
+                websiteTitleDisplay.textContent = appState.websiteTitle || '';
 
                 countersList.innerHTML = '';
 
-                if (currentPage.counters && currentPage.counters.length > 0) {
-                    currentPage.counters.forEach(counter => {
+                if (appState.counters && appState.counters.length > 0) {
+                    appState.counters.forEach(counter => {
                         const counterDiv = document.createElement('div');
                         
                         let baseCardClasses = 'bg-blue-50 p-6 rounded-xl shadow-md flex flex-col items-center justify-between transition-all duration-300 hover:scale-105 transform';
@@ -263,12 +228,8 @@
                         countersList.appendChild(counterDiv);
                     });
                 } else {
-                    countersList.innerHTML = '<p class="text-center text-gray-500 text-lg col-span-full">No counters configured for this page. Click "Edit" to add some!</p>';
+                    countersList.innerHTML = '<p class="text-center text-gray-500 text-lg col-span-full">No counters configured. Click "Edit" to add some!</p>';
                 }
-
-                pageIndicator.textContent = `Page ${appState.currentPageIndex + 1} of ${appState.pages.length}`;
-                prevPageBtn.disabled = appState.currentPageIndex === 0;
-                nextPageBtn.disabled = appState.currentPageIndex === appState.pages.length - 1;
             };
 
             const saveAppState = () => {
@@ -279,7 +240,18 @@
                 const cookieData = getCookie('appState');
                 if (cookieData) {
                     try {
-                        return JSON.parse(cookieData);
+                        const loaded = JSON.parse(cookieData);
+                        // Convert old 'pages' structure to new single-level 'counters' if needed
+                        if (loaded.pages && loaded.pages.length > 0) {
+                            loaded.counters = loaded.pages[loaded.currentPageIndex || 0].counters;
+                            if (loaded.pages[loaded.currentPageIndex || 0].title) {
+                                loaded.websiteTitle = loaded.pages[loaded.currentPageIndex || 0].title;
+                            }
+                        }
+                        // Remove page-related properties from loaded state if they exist
+                        delete loaded.pages;
+                        delete loaded.currentPageIndex;
+                        return loaded;
                     } catch (e) {
                         console.error('Error parsing appState cookie:', e);
                         deleteCookie('appState');
@@ -290,16 +262,15 @@
             };
 
             const incrementCounter = (id) => {
-                const currentPage = appState.pages[appState.currentPageIndex];
-                const counterIndex = currentPage.counters.findIndex(c => c.id === id);
+                const counterIndex = appState.counters.findIndex(c => c.id === id);
                 if (counterIndex !== -1) {
-                    currentPage.counters[counterIndex].value++;
+                    appState.counters[counterIndex].value++;
                     saveAppState();
 
                     const counterElement = countersList.querySelector(`[data-id="${id}"]`);
                     if (counterElement) {
                         const valueSpan = counterElement.querySelector('span');
-                        valueSpan.textContent = currentPage.counters[counterIndex].value;
+                        valueSpan.textContent = appState.counters[counterIndex].value;
                         valueSpan.classList.add('scale-110', 'transition-transform', 'duration-150');
                         setTimeout(() => {
                             valueSpan.classList.remove('scale-110');
@@ -309,29 +280,20 @@
             };
 
             const decrementCounter = (id) => {
-                const currentPage = appState.pages[appState.currentPageIndex];
-                const counterIndex = currentPage.counters.findIndex(c => c.id === id);
-                if (counterIndex !== -1 && currentPage.counters[counterIndex].value > 0) {
-                    currentPage.counters[counterIndex].value--;
+                const counterIndex = appState.counters.findIndex(c => c.id === id);
+                if (counterIndex !== -1 && appState.counters[counterIndex].value > 0) {
+                    appState.counters[counterIndex].value--;
                     saveAppState();
 
                     const counterElement = countersList.querySelector(`[data-id="${id}"]`);
                     if (counterElement) {
                         const valueSpan = counterElement.querySelector('span');
-                        valueSpan.textContent = currentPage.counters[counterIndex].value;
+                        valueSpan.textContent = appState.counters[counterIndex].value;
                         valueSpan.classList.add('scale-90', 'transition-transform', 'duration-150');
                         setTimeout(() => {
                             valueSpan.classList.remove('scale-90');
                         }, 150);
                     }
-                }
-            };
-
-            const goToPage = (index) => {
-                if (index >= 0 && index < appState.pages.length) {
-                    appState.currentPageIndex = index;
-                    saveAppState();
-                    renderMainContent();
                 }
             };
 
@@ -343,21 +305,20 @@
                 }
 
                 const newUserName = userNameInput.value.trim();
-                const newPageTitle = pageTitleInput.value.trim();
+                const newWebsiteTitle = websiteTitleInput.value.trim();
                 const numPeople = parseInt(numPeopleInput.value, 10);
 
-                const currentPage = appState.pages[appState.currentPageIndex];
                 const newCounters = [];
 
                 for (let i = 0; i < numPeople; i++) {
                     const input = document.getElementById(`counter-name-${i}`);
                     const counterName = input && input.value.trim() ? input.value.trim() : `Person ${i + 1}`;
 
-                    if (i < currentPage.counters.length) {
+                    if (i < appState.counters.length) {
                         newCounters.push({
-                            id: currentPage.counters[i].id,
+                            id: appState.counters[i].id,
                             name: counterName,
-                            value: currentPage.counters[i].value
+                            value: appState.counters[i].value
                         });
                     } else {
                         newCounters.push({
@@ -369,8 +330,8 @@
                 }
 
                 appState.userName = newUserName || 'Guest';
-                currentPage.title = newPageTitle;
-                currentPage.counters = newCounters;
+                appState.websiteTitle = newWebsiteTitle;
+                appState.counters = newCounters;
 
                 saveAppState();
                 renderMainContent();
@@ -380,12 +341,11 @@
             });
 
             editSettingsBtn.addEventListener('click', () => {
-                const currentPage = appState.pages[appState.currentPageIndex];
                 userNameInput.value = appState.userName;
-                pageTitleInput.value = currentPage.title;
-                numPeopleInput.value = currentPage.counters.length.toString();
+                websiteTitleInput.value = appState.websiteTitle;
+                numPeopleInput.value = appState.counters.length.toString();
 
-                setupTitle.textContent = "Edit Current Page Settings";
+                setupTitle.textContent = "Edit Your Settings";
 
                 generateCounterNameInputs();
 
@@ -393,48 +353,20 @@
                 setupModal.classList.remove('hidden');
             });
 
-            prevPageBtn.addEventListener('click', () => goToPage(appState.currentPageIndex - 1));
-            nextPageBtn.addEventListener('click', () => goToPage(appState.currentPageIndex + 1));
-            addPageBtn.addEventListener('click', () => {
-                const newPage = {
-                    id: generateUUID(),
-                    title: `New Page ${appState.pages.length + 1}`,
-                    counters: []
-                };
-                appState.pages.push(newPage);
-                appState.currentPageIndex = appState.pages.length - 1;
-                saveAppState();
-                renderMainContent();
-                editSettingsBtn.click();
-                setupTitle.textContent = "Configure New Page";
-            });
-
             const init = () => {
                 const loadedState = loadAppState();
 
-                if (loadedState && loadedState.pages && loadedState.pages.length > 0) {
+                if (loadedState && loadedState.counters) {
                     appState = loadedState;
-                    if (appState.currentPageIndex >= appState.pages.length) {
-                        appState.currentPageIndex = appState.pages.length - 1;
+                    if (typeof appState.websiteTitle === 'undefined' || appState.websiteTitle === 'My Dynamic Counter') {
+                        appState.websiteTitle = '';
                     }
-                    if (appState.currentPageIndex < 0) {
-                        appState.currentPageIndex = 0;
-                    }
-                    if (appState.pages.length === 0) {
-                         appState.pages.push({
-                            id: generateUUID(),
-                            title: 'My First Page',
-                            counters: []
-                        });
-                        appState.currentPageIndex = 0;
-                    }
-
                     renderMainContent();
                     setupModal.classList.add('hidden');
                     mainContent.classList.remove('hidden');
                 } else {
                     userNameInput.value = '';
-                    pageTitleInput.value = appState.pages[0].title;
+                    websiteTitleInput.value = '';
                     numPeopleInput.value = '1';
                     generateCounterNameInputs();
                     setupModal.classList.remove('hidden');
