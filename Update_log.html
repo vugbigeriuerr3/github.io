@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Website Update Log</title>
+    <title>My Projects Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -19,88 +19,22 @@
             box-sizing: border-box;
             transition: background-color 0.3s ease;
         }
+
         .main-card {
             transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        header.site-header {
+            display: none;
         }
         .modal {
             max-height: 90vh;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
         }
-        /* Accordion specific styles */
-        .accordion-item {
-            background-color: #f9fafb; /* Light background for items */
-            border-radius: 0.5rem;
-            margin-bottom: 0.75rem;
-            overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.3s ease, box-shadow 0.3s ease;
-        }
-        .accordion-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 1.5rem;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 1.125rem;
-            color: #374151; /* Dark gray text */
-            transition: background-color 0.2s ease, color 0.3s ease;
-        }
-        .accordion-header:hover {
-            background-color: #e5e7eb; /* Lighter gray on hover */
-        }
-        .accordion-icon {
-            transition: transform 0.2s ease-out;
-        }
-        .accordion-item.active .accordion-icon {
-            transform: rotate(90deg);
-        }
-        .accordion-content {
-            padding: 0 1.5rem;
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out, padding 0.3s ease-out;
-            color: #4b5563; /* Medium gray text */
-        }
-        .accordion-item.active .accordion-content {
-            max-height: 500px; /* Adjust as needed, ensure it's larger than max content */
-            padding-bottom: 1.5rem;
-        }
-        /* Dark mode overrides for accordion */
-        body.dark-mode .accordion-item {
-            background-color: #4a5568;
-            box-shadow: 0 1px 3px rgba(255, 255, 255, 0.1);
-        }
-        body.dark-mode .accordion-header {
-            color: #e2e8f0;
-        }
-        body.dark-mode .accordion-header:hover {
-            background-color: #616e80;
-        }
-        body.dark-mode .accordion-content {
-            color: #cbd5e0;
-        }
-
-        /* Custom text sizes */
-        .text-custom-sm .accordion-header { font-size: 1rem; }
-        .text-custom-sm .accordion-content { font-size: 0.875rem; }
-        .text-custom-base .accordion-header { font-size: 1.125rem; }
-        .text-custom-base .accordion-content { font-size: 1rem; }
-        .text-custom-lg .accordion-header { font-size: 1.25rem; }
-        .text-custom-lg .accordion-content { font-size: 1.125rem; }
-        .text-custom-xl .accordion-header { font-size: 1.5rem; }
-        .text-custom-xl .accordion-content { font-size: 1.25rem; }
-
     </style>
 </head>
-<body>
-    <div class="fixed top-4 left-4 z-50">
-        <button id="go-home-btn" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors duration-300 shadow-md focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75 text-sm md:text-base">
-            Go back to home
-        </button>
-    </div>
-
+<body class="flex items-center justify-center min-h-screen p-4">
     <div class="fixed top-4 right-4 z-50 flex items-center space-x-2 bg-white rounded-full py-2 px-4 shadow-md transition-colors duration-300">
         <span id="user-name-display" class="text-lg font-medium text-blue-600">Guest</span>
         <button id="edit-name-btn" class="text-gray-500 hover:text-gray-700 transition-colors duration-200 focus:outline-none">
@@ -108,21 +42,40 @@
         </button>
     </div>
 
-    <div class="fixed top-16 left-4 z-50">
+    <div class="fixed top-4 left-4 z-50">
         <button id="configure-display-btn" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors duration-300 shadow-md focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75 text-sm md:text-base">
             <i class="fas fa-palette mr-2"></i>Configure Display
         </button>
     </div>
 
-    <div id="main-content-card" class="w-full max-w-2xl shadow-lg rounded-2xl p-8 main-card">
-        <h1 class="text-4xl font-bold mb-6 text-center">Website Update Log</h1>
+    <div id="main-content-card" class="w-full max-w-lg shadow-lg rounded-2xl p-8 text-center main-card">
+        <h1 class="text-4xl font-bold mb-6">My Projects Hub</h1>
+        <p class="text-lg mb-8">Explore my various applications.</p>
         
-        <div id="updates-list" class="space-y-3">
-            <!-- Updates will be dynamically inserted here -->
+        <div class="space-y-4">
+            <a href="https://vugbigeriuerr3.github.io/github.io/random%20number%20guesser.html" 
+               class="inline-block w-full px-8 py-4 bg-blue-600 text-white font-bold text-xl rounded-xl hover:bg-blue-700 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75">
+                Random Number Guesser
+            </a>
+
+            <a href="https://vugbigeriuerr3.github.io/github.io/lotto%20.html" 
+               class="inline-block w-full px-8 py-4 bg-blue-600 text-white font-bold text-xl rounded-xl hover:bg-blue-700 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75">
+                Lotto Number Generator
+            </a>
+
+            <a href="https://vugbigeriuerr3.github.io/github.io/Counter" 
+               class="inline-block w-full px-8 py-4 bg-blue-600 text-white font-bold text-xl rounded-xl hover:bg-blue-700 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75">
+                Dynamic Counter Application
+            </a>
+
+            <!-- New button for Update Log -->
+            <a href="https://vugbigeriuerr3.github.io/github.io/update_log.html" 
+               class="inline-block w-full px-8 py-4 bg-blue-600 text-white font-bold text-xl rounded-xl hover:bg-blue-700 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75">
+                Website Update Log
+            </a>
         </div>
     </div>
 
-    <!-- Name Edit Modal -->
     <div id="name-edit-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md transform transition-all duration-300 scale-100 opacity-100">
             <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Change Your Name</h2>
@@ -136,7 +89,6 @@
         </div>
     </div>
 
-    <!-- Display Settings Modal -->
     <div id="display-settings-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md transform transition-all duration-300 scale-100 opacity-100">
             <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Display Settings</h2>
@@ -172,16 +124,6 @@
                 </div>
             </div>
 
-            <div class="mb-6">
-                <label for="text-size-select" class="block text-gray-700 text-sm font-semibold mb-2">Text Size:</label>
-                <select id="text-size-select" class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
-                    <option value="text-custom-sm">Small</option>
-                    <option value="text-custom-base" selected>Normal</option>
-                    <option value="text-custom-lg">Large</option>
-                    <option value="text-custom-xl">Extra Large</option>
-                </select>
-            </div>
-
             <button id="save-display-settings-btn" 
                     class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-all duration-300 shadow-lg">Save Display Settings</button>
         </div>
@@ -189,12 +131,10 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const goHomeBtn = document.getElementById('go-home-btn');
             const userNameDisplay = document.getElementById('user-name-display');
             const editNameBtn = document.getElementById('edit-name-btn');
             const configureDisplayBtn = document.getElementById('configure-display-btn');
             const mainContentCard = document.getElementById('main-content-card');
-            const updatesList = document.getElementById('updates-list');
 
             const nameEditModal = document.getElementById('name-edit-modal');
             const nameEditUserInput = document.getElementById('name-edit-user-input');
@@ -205,7 +145,6 @@
             const customColorInputsDiv = document.getElementById('custom-color-inputs');
             const customBodyBgColorInput = document.getElementById('custom-body-bg-color');
             const customCardBgColorInput = document.getElementById('custom-card-bg-color');
-            const textSizeSelect = document.getElementById('text-size-select');
             const saveDisplaySettingsBtn = document.getElementById('save-display-settings-btn');
 
             let appState = {
@@ -213,8 +152,7 @@
                 displaySettings: {
                     theme: 'light',
                     customBodyBg: '#f3f4f6',
-                    customCardBg: '#ffffff',
-                    textSize: 'text-custom-base'
+                    customCardBg: '#ffffff'
                 },
             };
 
@@ -244,14 +182,8 @@
             };
 
             const applyDisplaySettings = () => {
-                const { theme, customBodyBg, customCardBg, textSize } = appState.displaySettings;
+                const { theme, customBodyBg, customCardBg } = appState.displaySettings;
 
-                // Apply text size to the main content card
-                const textSizes = ['text-custom-sm', 'text-custom-base', 'text-custom-lg', 'text-custom-xl'];
-                textSizes.forEach(cls => mainContentCard.classList.remove(cls));
-                mainContentCard.classList.add(textSize);
-
-                // Reset all dynamic styling for colors/background first
                 document.body.classList.remove('bg-gray-100', 'dark-mode');
                 document.body.style.backgroundColor = '';
                 document.body.style.backgroundImage = '';
@@ -260,7 +192,7 @@
                 mainContentCard.style.backgroundColor = '';
 
                 mainContentCard.querySelector('h1').style.color = '';
-                mainContentCard.querySelectorAll('.accordion-header, .accordion-content, p, li, h3, a:not(.bg-blue-600)').forEach(el => el.style.color = '');
+                mainContentCard.querySelector('p').style.color = '';
 
                 const userNameBox = document.querySelector('.fixed.top-4.right-4');
                 userNameBox.classList.remove('bg-white', 'bg-gray-900');
@@ -274,7 +206,7 @@
                     
                     mainContentCard.classList.add('bg-gray-800');
                     mainContentCard.querySelector('h1').style.color = '#e2e8f0';
-                    mainContentCard.querySelectorAll('.accordion-header, .accordion-content, p, li, h3, a:not(.bg-blue-600)').forEach(el => el.style.color = '#cbd5e0');
+                    mainContentCard.querySelector('p').style.color = '#cbd5e0';
 
                     userNameBox.classList.add('bg-gray-900');
                     userNameBox.querySelector('span').style.color = '#90cdf4';
@@ -297,23 +229,23 @@
 
                     if (isDark(customBodyBg)) {
                         mainContentCard.querySelector('h1').style.color = '#e2e8f0';
-                        mainContentCard.querySelectorAll('.accordion-header, .accordion-content, p, li, h3, a:not(.bg-blue-600)').forEach(el => el.style.color = '#cbd5e0');
+                        mainContentCard.querySelector('p').style.color = '#cbd5e0';
                         userNameBox.classList.add('bg-gray-900');
                         userNameBox.querySelector('span').style.color = '#90cdf4';
                         userNameBox.querySelector('button').style.color = '#a0aec0';
                     } else {
                         mainContentCard.querySelector('h1').style.color = '#1a202c';
-                        mainContentCard.querySelectorAll('.accordion-header, .accordion-content, p, li, h3, a:not(.bg-blue-600)').forEach(el => el.style.color = '#4a5568');
+                        mainContentCard.querySelector('p').style.color = '#4a5568';
                         userNameBox.classList.add('bg-white');
                         userNameBox.querySelector('span').style.color = '#3182ce';
                         userNameBox.querySelector('button').style.color = '#a0aec0';
                     }
                     if (isDark(customCardBg)) {
                          mainContentCard.querySelector('h1').style.color = '#e2e8f0';
-                         mainContentCard.querySelectorAll('.accordion-header, .accordion-content, p, li, h3, a:not(.bg-blue-600)').forEach(el => el.style.color = '#cbd5e0');
+                         mainContentCard.querySelector('p').style.color = '#cbd5e0';
                     } else {
                         mainContentCard.querySelector('h1').style.color = '#1a202c';
-                        mainContentCard.querySelectorAll('.accordion-header, .accordion-content, p, li, h3, a:not(.bg-blue-600)').forEach(el => el.style.color = '#4a5568');
+                        mainContentCard.querySelector('p').style.color = '#4a5568';
                     }
 
                 } else { // 'light' theme
@@ -324,6 +256,7 @@
                 }
             };
 
+
             const renderUserName = () => {
                 userNameDisplay.textContent = appState.userName || 'Guest';
                 if (!appState.userName && !sessionStorage.getItem('nameEditModalShown')) {
@@ -333,84 +266,6 @@
                     nameEditModal.classList.add('hidden');
                 }
             };
-
-            // Updates content data
-            const updates = [
-                {
-                    date: 'June 20, 2025',
-                    title: 'Initial Website Setup & Basic Counter',
-                    description: 'The very first version of the website with a simple counter application was created.'
-                },
-                {
-                    date: 'June 22, 2025',
-                    title: 'Counter App Enhancements (Pagination & Max 5)',
-                    description: 'Introduced pagination for the counter application, limiting counters to 5 per page with individual page titles. Enabled navigation with arrow buttons. (This update was later reverted for a different approach).'
-                },
-                {
-                    date: 'June 23, 2025',
-                    title: 'Counter App Refinement: No Warning Threshold, Strict Max 5',
-                    description: 'Removed the "Warning Threshold" feature from the Counter app and strictly enforced a maximum of 5 counters per page with visual feedback for invalid input. This was a revised approach after initial pagination ideas.'
-                },
-                {
-                    date: 'June 24, 2025',
-                    title: 'Homepage Revamp & Navigation',
-                    description: 'Completely redesigned the homepage with a modern, consistent look. Added a prominent "Go to Dynamic Counter Application" button and ensured the default GitHub Pages text was hidden.'
-                },
-                {
-                    date: 'June 25, 2025',
-                    title: 'Random Number Guesser: Revamped & Cookie Integration',
-                    description: 'Overhauled the Random Number Guesser app with a new design, user name persistence via cookies, automatic guess submission on Enter, and message color changes based on guess closeness. The "Change User" button was also removed and replaced by the top-right edit icon.'
-                },
-                {
-                    date: 'June 26, 2025',
-                    title: 'Random Number Guesser: Configurable Settings',
-                    description: 'Added comprehensive configurable settings for the Number Guesser: min/max range, and closeness thresholds for the feedback message colors. These settings are stored in cookies and don\'t interfere with other app data.'
-                },
-                {
-                    date: 'June 26, 2025',
-                    title: 'Lotto Number Generator: Initial Revamp',
-                    description: 'Revamped the Lotto Number Generator app to align with the website\'s new design, introduced configurable settings (min/max numbers, count, duplicates), and integrated cookie-based user name persistence. Initial version included a background image for numbers, which was later removed.'
-                },
-                 {
-                    date: 'June 26, 2025',
-                    title: 'Homepage & Update Log: Display Theme Customization',
-                    description: 'Implemented comprehensive display settings across the homepage and new Update Log page. Users can now choose between Light Mode, Dark Mode, and Custom Colors for body and card backgrounds, as well as adjusting general text size (Small, Normal, Large, XL).'
-                },
-            ];
-
-            const renderUpdates = () => {
-                updatesList.innerHTML = '';
-                updates.sort((a, b) => new Date(b.date) - new Date(a.date)); // Sort by most recent first
-                updates.forEach((update, index) => {
-                    const accordionItem = document.createElement('div');
-                    accordionItem.className = 'accordion-item';
-
-                    const accordionHeader = document.createElement('div');
-                    accordionHeader.className = 'accordion-header';
-                    accordionHeader.innerHTML = `
-                        <div>
-                            <h3 class="font-semibold text-lg">${update.title}</h3>
-                            <p class="text-sm text-gray-500">${update.date}</p>
-                        </div>
-                        <i class="fas fa-chevron-right accordion-icon ml-4"></i>
-                    `;
-                    accordionHeader.addEventListener('click', () => {
-                        accordionItem.classList.toggle('active');
-                    });
-
-                    const accordionContent = document.createElement('div');
-                    accordionContent.className = 'accordion-content';
-                    accordionContent.innerHTML = `<p>${update.description}</p>`;
-
-                    accordionItem.appendChild(accordionHeader);
-                    accordionItem.appendChild(accordionContent);
-                    updatesList.appendChild(accordionItem);
-                });
-            };
-
-            goHomeBtn.addEventListener('click', () => {
-                window.location.href = 'https://vugbigeriuerr3.github.io/github.io/?' + new Date().getTime();
-            });
 
             saveNameOnlyBtn.addEventListener('click', () => {
                 const newUserName = nameEditUserInput.value.trim();
@@ -463,7 +318,6 @@
                 } else {
                     customColorInputsDiv.classList.add('hidden');
                 }
-                textSizeSelect.value = appState.displaySettings.textSize;
 
                 displaySettingsModal.classList.remove('hidden');
             });
@@ -482,7 +336,6 @@
                 const selectedTheme = document.querySelector('input[name="theme"]:checked').value;
                 const newCustomBodyBg = customBodyBgColorInput.value;
                 const newCustomCardBg = customCardBgColorInput.value;
-                const newTextSize = textSizeSelect.value;
 
                 const loadedCookieData = getCookie('appState');
                 let currentAppState = {};
@@ -497,8 +350,7 @@
                 currentAppState.displaySettings = {
                     theme: selectedTheme,
                     customBodyBg: newCustomBodyBg,
-                    customCardBg: newCustomCardBg,
-                    textSize: newTextSize
+                    customCardBg: newCustomCardBg
                 };
                 
                 appState.displaySettings = currentAppState.displaySettings;
@@ -518,7 +370,6 @@
                             appState.displaySettings.theme = parsedState.displaySettings.theme || 'light';
                             appState.displaySettings.customBodyBg = parsedState.displaySettings.customBodyBg || '#f3f4f6';
                             appState.displaySettings.customCardBg = parsedState.displaySettings.customCardBg || '#ffffff';
-                            appState.displaySettings.textSize = parsedState.displaySettings.textSize || 'text-custom-base';
                         }
                         appState = { ...parsedState, ...appState };
                     } catch (e) {
@@ -528,7 +379,6 @@
                 }
                 renderUserName();
                 applyDisplaySettings();
-                renderUpdates();
             };
 
             init();
@@ -536,4 +386,3 @@
     </script>
 </body>
 </html>
-
