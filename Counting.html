@@ -24,6 +24,7 @@
                 </button>
                 <p class="text-3xl font-extrabold text-blue-800" id="evarardCount">0</p>
             </div>
+
             <div class="flex flex-col items-center p-4 bg-green-50 rounded-xl border border-green-200 shadow-md">
                 <button id="MuburuButton" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 mb-4 focus:outline-none focus:ring-4 focus:ring-green-300">
                     Muburu
@@ -31,9 +32,11 @@
                 <p class="text-3xl font-extrabold text-green-800" id="MuburuCount">0</p>
             </div>
         </div>
+
         <div class="mt-8 text-center text-sm text-gray-600">
-            <p>Your User ID: <span id="userIdDisplay" class="font-mono bg-gray-100 px-2 py-1 rounded-md text-gray-700 break-all">rafferty</span></p>
+            <p>Your User ID: <span id="userIdDisplay" class="font-mono bg-gray-100 px-2 py-1 rounded-md text-gray-700 break-all"></span></p>
         </div>
+
         <div id="messageBox" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-50 hidden">
             <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
                 <p id="messageText" class="text-lg font-semibold text-gray-800 mb-4"></p>
@@ -41,28 +44,28 @@
             </div>
         </div>
     </div>
+
     <script type="module">
- 
         const evarardCountElement = document.getElementById('evarardCount');
         const MuburuCountElement = document.getElementById('MuburuCount');
         const evarardButton = document.getElementById('evarardButton');
-        const MuburuButton = document.getElementById('MuburuButton'); 
+        const MuburuButton = document.getElementById('MuburuButton');
         const userIdDisplay = document.getElementById('userIdDisplay');
         const messageBox = document.getElementById('messageBox');
         const messageText = document.getElementById('messageText');
         const messageCloseButton = document.getElementById('messageCloseButton');
+
         const userId = 'Counter';
+
         function showMessageBox(message) {
             messageText.textContent = message;
             messageBox.classList.remove('hidden');
         }
 
-      
         messageCloseButton.addEventListener('click', () => {
-            messageBox.classList.add('hidden'); 
+            messageBox.classList.add('hidden');
         });
-res.
-         */
+
         function setCookie(name, value, days) {
             const date = new Date();
             date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
@@ -70,11 +73,6 @@ res.
             document.cookie = name + "=" + value + ";" + expires + ";path=/";
         }
 
-        /**
-         * Retrieves the value of a cookie by its name.
-         * @param {string} name - The name of the cookie to retrieve.
-         * @returns {string} The value of the cookie, or an empty string if not found.
-         */
         function getCookie(name) {
             const nameEQ = name + "=";
             const ca = document.cookie.split(';');
@@ -85,27 +83,30 @@ res.
             }
             return "";
         }
+
         function initializeCounters() {
-            userIdDisplay.textContent = userId; 
+            userIdDisplay.textContent = userId;
             const evarardCount = parseInt(getCookie('evarardCount')) || 0;
-            const MuburuCount = parseInt(getCookie('MuburuCount')) || 0;   
+            const MuburuCount = parseInt(getCookie('MuburuCount')) || 0;
 
             evarardCountElement.textContent = evarardCount;
-            MuburuCountElement.textContent = MuburuCount; 
+            MuburuCountElement.textContent = MuburuCount;
         }
+
         function incrementCounter(type) {
-            let currentCount = parseInt(getCookie(`${type}Count`)) || 0; 
-            currentCount++; 
+            let currentCount = parseInt(getCookie(`${type}Count`)) || 0;
+            currentCount++;
             if (type === 'evarard') {
-                evarardCountElement.textContent = currentCount; 
-            } else if (type === 'Muburu') { 
-                MuburuCountElement.textContent = currentCount; 
+                evarardCountElement.textContent = currentCount;
+            } else if (type === 'Muburu') {
+                MuburuCountElement.textContent = currentCount;
             }
-            setCookie(`${type}Count`, currentCount, 365); 
+            setCookie(`${type}Count`, currentCount, 365);
         }
 
         evarardButton.addEventListener('click', () => incrementCounter('evarard'));
         MuburuButton.addEventListener('click', () => incrementCounter('Muburu'));
+
         window.onload = initializeCounters;
     </script>
 </body>
