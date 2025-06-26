@@ -128,7 +128,6 @@
         <h1 class="text-4xl font-bold text-gray-800 mb-6" id="website-main-title">Dynamic Counter</h1>
         <p class="text-lg text-gray-600 mb-8" id="page-title">Welcome!</p>
 
-
         <div id="counters-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         </div>
 
@@ -143,11 +142,11 @@
         </div>
 
         <div class="flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-4">
-            <button id="add-counter-btn" 
+            <button id="add-counter-btn"
                     class="flex-1 px-8 py-4 bg-green-600 text-white font-bold text-xl rounded-xl hover:bg-green-700 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-75">
                 Add New Counter
             </button>
-            <button id="counter-app-settings-btn" 
+            <button id="counter-app-settings-btn"
                     class="flex-1 px-8 py-4 bg-purple-600 text-white font-bold text-xl rounded-xl hover:bg-purple-700 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-75">
                 Counter App Settings
             </button>
@@ -159,10 +158,10 @@
             <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Change Your Name</h2>
             <div class="mb-6">
                 <label for="name-edit-user-input" class="block text-gray-700 text-sm font-semibold mb-2">Your Name:</label>
-                <input type="text" id="name-edit-user-input" placeholder="Enter your name" 
+                <input type="text" id="name-edit-user-input" placeholder="Enter your name"
                        class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
             </div>
-            <button id="save-name-only-btn" 
+            <button id="save-name-only-btn"
                     class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-all duration-300 shadow-lg">Save Name</button>
         </div>
     </div>
@@ -172,19 +171,19 @@
             <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center" id="configure-counter-modal-title">Configure Counter</h2>
             <div class="mb-4">
                 <label for="counter-name-input" class="block text-gray-700 text-sm font-semibold mb-2">Counter Name:</label>
-                <input type="text" id="counter-name-input" placeholder="e.g. My Daily Steps" 
+                <input type="text" id="counter-name-input" placeholder="e.g. My Daily Steps"
                        class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
             </div>
             <div class="mb-6">
                 <label for="counter-value-input" class="block text-gray-700 text-sm font-semibold mb-2">Initial Value:</label>
-                <input type="number" id="counter-value-input" value="0" 
+                <input type="number" id="counter-value-input" value="0"
                        class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
             </div>
             <div class="flex justify-between space-x-4">
-                <button id="save-counter-btn" 
-                        class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-all duration-300 shadow-lg">Save Counter</button>
-                <button id="delete-counter-btn" 
-                        class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-75 transition-all duration-300 shadow-lg hidden">Delete Counter</button>
+                <button id="save-counter-btn"
+                         class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-all duration-300 shadow-lg">Save Counter</button>
+                <button id="delete-counter-btn"
+                         class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-75 transition-all duration-300 shadow-lg hidden">Delete Counter</button>
             </div>
         </div>
     </div>
@@ -192,7 +191,7 @@
     <div id="display-settings-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md transform transition-all duration-300 scale-100 opacity-100">
             <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Display Settings</h2>
-            
+
             <div class="mb-6">
                 <label class="block text-gray-700 text-sm font-semibold mb-2">Theme:</label>
                 <div class="flex flex-col space-y-2">
@@ -234,7 +233,7 @@
                 </select>
             </div>
 
-            <button id="save-display-settings-btn" 
+            <button id="save-display-settings-btn"
                     class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-all duration-300 shadow-lg">Save Display Settings</button>
         </div>
     </div>
@@ -242,14 +241,26 @@
     <div id="counter-app-settings-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md transform transition-all duration-300 scale-100 opacity-100">
             <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Counter App Settings</h2>
-            
+
             <div class="mb-6">
                 <label for="counters-per-page-input" class="block text-gray-700 text-sm font-semibold mb-2">Counters Per Page:</label>
                 <input type="number" id="counters-per-page-input" value="6" min="1"
                        class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
             </div>
 
-            <button id="save-counter-app-settings-btn" 
+            <div class="mb-6">
+                <label for="website-title-input" class="block text-gray-700 text-sm font-semibold mb-2">Website Tab Title:</label>
+                <input type="text" id="website-title-input" placeholder="e.g. My Cool App"
+                       class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
+            </div>
+
+            <div class="mb-6">
+                <label for="website-main-title-input" class="block text-gray-700 text-sm font-semibold mb-2">Main Display Title:</label>
+                <input type="text" id="website-main-title-input" placeholder="e.g. My Counter Dashboard"
+                       class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
+            </div>
+
+            <button id="save-counter-app-settings-btn"
                     class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-all duration-300 shadow-lg">Save Settings</button>
         </div>
     </div>
@@ -291,11 +302,16 @@
 
             const counterAppSettingsModal = document.getElementById('counter-app-settings-modal');
             const countersPerPageInput = document.getElementById('counters-per-page-input');
+            const websiteTitleInput = document.getElementById('website-title-input');
+            const websiteMainTitleInput = document.getElementById('website-main-title-input');
             const saveCounterAppSettingsBtn = document.getElementById('save-counter-app-settings-btn');
+            const websiteTitleTag = document.getElementById('website-title-tag');
+
 
             let appState = {
                 userName: '',
-                websiteTitle: 'Dynamic Counter',
+                websiteTitle: 'Dynamic Counter Application',
+                websiteMainTitleText: 'Dynamic Counter',
                 displaySettings: {
                     theme: 'light',
                     customBodyBg: '#f3f4f6',
@@ -347,11 +363,11 @@
                     countersGrid.classList.remove(cls);
                 });
                 mainContentCard.classList.add(textSize);
-                
+
                 document.body.classList.remove('bg-gray-100', 'dark-mode');
                 document.body.style.backgroundColor = '';
                 document.body.style.backgroundImage = '';
-                
+
                 mainContentCard.classList.remove('bg-white', 'bg-gray-800');
                 mainContentCard.style.backgroundColor = '';
 
@@ -371,7 +387,7 @@
                     document.body.classList.add('dark-mode');
                     document.body.style.backgroundImage = 'url("https://placehold.co/1920x1080/2d3748/2d3748?text=")';
                     document.body.style.backgroundColor = '#1a202c';
-                    
+
                     mainContentCard.classList.add('bg-gray-800');
                     websiteMainTitle.style.color = '#e2e8f0';
                     pageTitle.style.color = '#cbd5e0';
@@ -389,9 +405,9 @@
                 } else if (theme === 'custom') {
                     document.body.style.backgroundColor = customBodyBg;
                     document.body.style.backgroundImage = 'none';
-                    
+
                     mainContentCard.style.backgroundColor = customCardBg;
-                    
+
                     const isDark = (color) => {
                         if (!color) return false;
                         const rgb = parseInt(color.replace('#', ''), 16);
@@ -417,10 +433,10 @@
                         userNameBox.querySelector('button').style.color = '#a0aec0';
                     }
                     if (isDark(customCardBg)) {
-                         websiteMainTitle.style.color = '#e2e8f0';
-                         document.querySelectorAll('.counter-card h3').forEach(el => el.style.color = '#e2e8f0');
-                         document.querySelectorAll('.counter-value').forEach(el => el.style.color = '#e2e8f0');
-                         document.querySelectorAll('.counter-card').forEach(card => card.style.backgroundColor = '#4a5568');
+                            websiteMainTitle.style.color = '#e2e8f0';
+                            document.querySelectorAll('.counter-card h3').forEach(el => el.style.color = '#e2e8f0');
+                            document.querySelectorAll('.counter-value').forEach(el => el.style.color = '#e2e8f0');
+                            document.querySelectorAll('.counter-card').forEach(card => card.style.backgroundColor = '#4a5568');
                     } else {
                         websiteMainTitle.style.color = '#1a202c';
                         document.querySelectorAll('.counter-card h3').forEach(el => el.style.color = '#1f2937');
@@ -451,7 +467,7 @@
                 countersGrid.innerHTML = '';
                 const startIndex = (appState.currentPage - 1) * appState.countersPerPage;
                 const endIndex = Math.min(startIndex + appState.countersPerPage, appState.counters.length);
-                
+
                 const countersToRender = appState.counters.slice(startIndex, endIndex);
 
                 if (countersToRender.length === 0 && appState.currentPage > 1) {
@@ -564,8 +580,8 @@
                             console.error('Error parsing existing appState cookie:', e);
                         }
                     }
-                    currentAppState.userName = newUserName; 
-                    appState.userName = newUserName; 
+                    currentAppState.userName = newUserName;
+                    appState.userName = newUserName;
 
                     setCookie('appState', JSON.stringify(currentAppState), 365);
                     renderUserName();
@@ -587,120 +603,36 @@
             editNameBtn.addEventListener('click', () => {
                 nameEditUserInput.value = appState.userName;
                 nameEditModal.classList.remove('hidden');
-                const existingMessage = saveNameOnlyBtn.parentElement.querySelector('.temp-error-message');
-                if (existingMessage) existingMessage.remove();
             });
 
-            configureDisplayBtn.addEventListener('click', () => {
-                themeRadios.forEach(radio => {
-                    radio.checked = (radio.value === appState.displaySettings.theme);
-                });
-
-                if (appState.displaySettings.theme === 'custom') {
-                    customColorInputsDiv.classList.remove('hidden');
-                    customBodyBgColorInput.value = appState.displaySettings.customBodyBg;
-                    customCardBgColorInput.value = appState.displaySettings.customCardBg;
-                } else {
-                    customColorInputsDiv.classList.add('hidden');
+            nameEditModal.addEventListener('click', (e) => {
+                if (e.target === nameEditModal) {
+                    nameEditModal.classList.add('hidden');
                 }
-                textSizeSelect.value = appState.displaySettings.textSize;
-
-                displaySettingsModal.classList.remove('hidden');
-            });
-
-            themeRadios.forEach(radio => {
-                radio.addEventListener('change', () => {
-                    if (radio.value === 'custom') {
-                        customColorInputsDiv.classList.remove('hidden');
-                    } else {
-                        customColorInputsDiv.classList.add('hidden');
-                    }
-                });
-            });
-
-            saveDisplaySettingsBtn.addEventListener('click', () => {
-                const selectedTheme = document.querySelector('input[name="theme"]:checked').value;
-                const newCustomBodyBg = customBodyBgColorInput.value;
-                const newCustomCardBg = customCardBgColorInput.value;
-                const newTextSize = textSizeSelect.value;
-
-                const loadedCookieData = getCookie('appState');
-                let currentAppState = {};
-                if (loadedCookieData) {
-                    try {
-                        currentAppState = JSON.parse(loadedCookieData);
-                        if (!currentAppState.displaySettings) {
-                            currentAppState.displaySettings = {};
-                        }
-                    } catch (e) {
-                        console.error('Error parsing existing appState cookie:', e);
-                    }
-                }
-
-                currentAppState.displaySettings.theme = selectedTheme;
-                currentAppState.displaySettings.customBodyBg = newCustomBodyBg;
-                currentAppState.displaySettings.customCardBg = newCustomCardBg;
-                currentAppState.displaySettings.textSize = newTextSize;
-                
-                appState.displaySettings = currentAppState.displaySettings;
-
-                setCookie('appState', JSON.stringify(currentAppState), 365);
-                applyDisplaySettings();
-                renderCounters();
-                displaySettingsModal.classList.add('hidden');
-            });
-
-            counterAppSettingsBtn.addEventListener('click', () => {
-                countersPerPageInput.value = appState.countersPerPage;
-                counterAppSettingsModal.classList.remove('hidden');
-            });
-
-            saveCounterAppSettingsBtn.addEventListener('click', () => {
-                const newCountersPerPage = parseInt(countersPerPageInput.value);
-
-                if (isNaN(newCountersPerPage) || newCountersPerPage < 1) {
-                    alert('Counters per page must be a positive number.');
-                    return;
-                }
-
-                appState.countersPerPage = newCountersPerPage;
-                const totalPages = Math.max(1, Math.ceil(appState.counters.length / appState.countersPerPage));
-                if (appState.currentPage > totalPages) {
-                    appState.currentPage = totalPages;
-                }
-                saveAppState();
-                renderCounters();
-                counterAppSettingsModal.classList.add('hidden');
             });
 
             addCounterBtn.addEventListener('click', () => {
+                currentEditingCounterId = null;
+                configureCounterModalTitle.textContent = 'Add New Counter';
                 counterNameInput.value = '';
                 counterValueInput.value = 0;
-                configureCounterModalTitle.textContent = 'Add New Counter';
-                saveCounterBtn.textContent = 'Add Counter';
                 deleteCounterBtn.classList.add('hidden');
-                currentEditingCounterId = null;
                 configureCounterModal.classList.remove('hidden');
             });
 
             countersGrid.addEventListener('click', (e) => {
-                let targetButton = e.target.closest('button');
-                if (!targetButton) return;
-
-                const id = parseInt(targetButton.dataset.id);
-                
-                if (targetButton.classList.contains('increment-btn')) {
-                    incrementCounter(id);
-                } else if (targetButton.classList.contains('decrement-btn')) {
-                    decrementCounter(id);
-                } else if (targetButton.classList.contains('edit-counter-btn')) {
+                if (e.target.classList.contains('increment-btn')) {
+                    incrementCounter(parseInt(e.target.dataset.id));
+                } else if (e.target.classList.contains('decrement-btn')) {
+                    decrementCounter(parseInt(e.target.dataset.id));
+                } else if (e.target.classList.contains('edit-counter-btn') || e.target.closest('.edit-counter-btn')) {
+                    const id = parseInt(e.target.dataset.id || e.target.closest('.edit-counter-btn').dataset.id);
                     const counter = appState.counters.find(c => c.id === id);
                     if (counter) {
                         currentEditingCounterId = id;
+                        configureCounterModalTitle.textContent = 'Configure Counter';
                         counterNameInput.value = counter.name;
                         counterValueInput.value = counter.value;
-                        configureCounterModalTitle.textContent = 'Edit Counter';
-                        saveCounterBtn.textContent = 'Save Changes';
                         deleteCounterBtn.classList.remove('hidden');
                         configureCounterModal.classList.remove('hidden');
                     }
@@ -709,6 +641,12 @@
 
             saveCounterBtn.addEventListener('click', addOrUpdateCounter);
             deleteCounterBtn.addEventListener('click', deleteCounter);
+
+            configureCounterModal.addEventListener('click', (e) => {
+                if (e.target === configureCounterModal) {
+                    configureCounterModal.classList.add('hidden');
+                }
+            });
 
             prevPageBtn.addEventListener('click', () => {
                 if (appState.currentPage > 1) {
@@ -719,66 +657,111 @@
             });
 
             nextPageBtn.addEventListener('click', () => {
-                const totalPages = Math.ceil(appState.counters.length / appState.countersPerPage);
+                const totalPages = Math.max(1, Math.ceil(appState.counters.length / appState.countersPerPage));
                 if (appState.currentPage < totalPages) {
                     appState.currentPage++;
                     saveAppState();
                     renderCounters();
-                } else {
-                    const countersOnLastPage = appState.counters.length % appState.countersPerPage;
-                    if (countersOnLastPage === 0 && appState.counters.length > 0) {
-                         appState.currentPage++;
-                         saveAppState();
-                         renderCounters();
-                    }
                 }
             });
 
-            const init = () => {
-                const loadedCookieData = getCookie('appState');
-                if (loadedCookieData) {
+            configureDisplayBtn.addEventListener('click', () => {
+                themeRadios.forEach(radio => {
+                    radio.checked = (radio.value === appState.displaySettings.theme);
+                });
+                if (appState.displaySettings.theme === 'custom') {
+                    customColorInputsDiv.classList.remove('hidden');
+                    customBodyBgColorInput.value = appState.displaySettings.customBodyBg;
+                    customCardBgColorInput.value = appState.displaySettings.customCardBg;
+                } else {
+                    customColorInputsDiv.classList.add('hidden');
+                }
+                textSizeSelect.value = appState.displaySettings.textSize;
+                displaySettingsModal.classList.remove('hidden');
+            });
+
+            themeRadios.forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    if (e.target.value === 'custom') {
+                        customColorInputsDiv.classList.remove('hidden');
+                    } else {
+                        customColorInputsDiv.classList.add('hidden');
+                    }
+                });
+            });
+
+            saveDisplaySettingsBtn.addEventListener('click', () => {
+                appState.displaySettings.theme = document.querySelector('input[name="theme"]:checked').value;
+                appState.displaySettings.customBodyBg = customBodyBgColorInput.value;
+                appState.displaySettings.customCardBg = customCardBgColorInput.value;
+                appState.displaySettings.textSize = textSizeSelect.value;
+                saveAppState();
+                applyDisplaySettings();
+                displaySettingsModal.classList.add('hidden');
+            });
+
+            displaySettingsModal.addEventListener('click', (e) => {
+                if (e.target === displaySettingsModal) {
+                    displaySettingsModal.classList.add('hidden');
+                }
+            });
+
+            counterAppSettingsBtn.addEventListener('click', () => {
+                countersPerPageInput.value = appState.countersPerPage;
+                websiteTitleInput.value = appState.websiteTitle;
+                websiteMainTitleInput.value = appState.websiteMainTitleText;
+                counterAppSettingsModal.classList.remove('hidden');
+            });
+
+            saveCounterAppSettingsBtn.addEventListener('click', () => {
+                const newCountersPerPage = parseInt(countersPerPageInput.value);
+                const newWebsiteTitle = websiteTitleInput.value.trim();
+                const newWebsiteMainTitleText = websiteMainTitleInput.value.trim();
+
+                if (isNaN(newCountersPerPage) || newCountersPerPage < 1) {
+                    alert('Counters per page must be a positive number.');
+                    return;
+                }
+
+                appState.countersPerPage = newCountersPerPage;
+                appState.websiteTitle = newWebsiteTitle;
+                appState.websiteMainTitleText = newWebsiteMainTitleText;
+
+                document.title = appState.websiteTitle;
+                websiteTitleTag.textContent = appState.websiteTitle;
+                websiteMainTitle.textContent = appState.websiteMainTitleText;
+
+                saveAppState();
+                renderCounters();
+                counterAppSettingsModal.classList.add('hidden');
+            });
+
+            counterAppSettingsModal.addEventListener('click', (e) => {
+                if (e.target === counterAppSettingsModal) {
+                    counterAppSettingsModal.classList.add('hidden');
+                }
+            });
+
+            const loadAppState = () => {
+                const storedState = getCookie('appState');
+                if (storedState) {
                     try {
-                        const parsedState = JSON.parse(loadedCookieData);
-                        
-                        if (parsedState.pages && !parsedState.counters) {
-                            appState.counters = Object.values(parsedState.pages).flat();
-                            delete parsedState.pages;
-                        } else {
-                             appState.counters = parsedState.counters || [];
-                        }
-
-                        appState.userName = parsedState.userName || '';
-                        appState.websiteTitle = parsedState.websiteTitle || 'Dynamic Counter';
-                        if (parsedState.displaySettings) {
-                            appState.displaySettings.theme = parsedState.displaySettings.theme || 'light';
-                            appState.displaySettings.customBodyBg = parsedState.displaySettings.customBodyBg || '#f3f4f6';
-                            appState.displaySettings.customCardBg = parsedState.displaySettings.customCardBg || '#ffffff';
-                            appState.displaySettings.textSize = parsedState.displaySettings.textSize || 'text-custom-base';
-                        }
-                        appState.currentPage = parsedState.currentPage || 1;
-                        appState.countersPerPage = parsedState.countersPerPage !== undefined ? parsedState.countersPerPage : 6;
-
+                        const parsedState = JSON.parse(storedState);
+                        appState = { ...appState, ...parsedState };
                     } catch (e) {
-                        console.error('Error parsing appState cookie on init:', e);
+                        console.error('Error parsing appState from cookie:', e);
                         deleteCookie('appState');
                     }
                 }
-                
-                const totalPages = Math.max(1, Math.ceil(appState.counters.length / appState.countersPerPage));
-                if (appState.currentPage > totalPages) {
-                    appState.currentPage = totalPages;
-                } else if (appState.currentPage < 1) {
-                    appState.currentPage = 1;
-                }
-
                 document.title = appState.websiteTitle;
-                websiteMainTitle.textContent = appState.websiteTitle;
+                websiteTitleTag.textContent = appState.websiteTitle;
+                websiteMainTitle.textContent = appState.websiteMainTitleText;
                 renderUserName();
                 applyDisplaySettings();
                 renderCounters();
             };
 
-            init();
+            loadAppState();
         });
     </script>
 </body>
