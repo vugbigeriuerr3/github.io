@@ -3,90 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title> <!-- Website title is now empty by default -->
-    <!-- Tailwind CSS CDN for modern styling -->
+    <title></title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome for Plus/Minus icons (ensures a clean, scalable look) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* Import the 'Inter' font for a clean, modern typography */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6; /* Light gray background for the entire page */
+            background-color: #f3f4f6;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh; /* Ensure body takes full viewport height */
+            min-height: 100vh;
             margin: 0;
-            padding: 20px; /* Add some padding around the main app container */
-            box-sizing: border-box; /* Include padding in element's total width and height */
+            padding: 20px;
+            box-sizing: border-box;
         }
-        /* Styles for the modal to ensure it's scrollable if content overflows on small screens */
         .modal {
-            max-height: 90vh; /* Limit modal height to 90% of viewport height */
-            overflow-y: auto; /* Enable vertical scrolling if content exceeds max-height */
-            -webkit-overflow-scrolling: touch; /* Enhance scrolling on iOS devices */
+            max-height: 90vh;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
     </style>
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
-    <!-- Main application container -->
     <div id="app" class="relative w-full max-w-4xl bg-white shadow-lg rounded-2xl p-6 md:p-8">
-        <!-- Main Content Area (hidden initially until setup is complete or loaded from cookies) -->
         <div id="main-content" class="hidden">
             <header class="flex flex-col md:flex-row justify-between items-center pb-4 border-b border-gray-200 mb-6">
-                <!-- Website Title Display -->
                 <h1 id="website-title-display" class="text-3xl font-bold text-gray-800 mb-4 md:mb-0 text-center md:text-left"></h1>
                 <div class="flex items-center space-x-4">
-                    <!-- User Name Display -->
                     <span id="user-name-display" class="text-xl font-medium text-blue-600">Guest</span>
-                    <!-- Edit Settings Button -->
                     <button id="edit-settings-btn" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-300 shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75">Edit</button>
                 </div>
             </header>
 
-            <!-- Container for the dynamically generated counter items -->
             <div id="counters-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Counter items will be dynamically inserted here by JavaScript -->
             </div>
         </div>
 
-        <!-- Setup/Welcome Modal (shown initially or when editing settings) -->
         <div id="setup-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
             <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md transform transition-all duration-300 scale-100 opacity-100">
                 <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center" id="setup-title">Welcome! Let's get started.</h2>
 
-                <!-- Input for User Name -->
                 <div class="mb-4">
                     <label for="user-name-input" class="block text-gray-700 text-sm font-semibold mb-2">Your Name:</label>
                     <input type="text" id="user-name-input" placeholder="Enter your name" class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
                 </div>
 
-                <!-- Input for Website Title -->
                 <div class="mb-6">
                     <label for="website-title-input" class="block text-gray-700 text-sm font-semibold mb-2">Website Title:</label>
                     <input type="text" id="website-title-input" placeholder="Enter website title" class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
                 </div>
 
-                <!-- Input for Number of People/Counters (changed from select to number input) -->
                 <div class="mb-6">
                     <label for="num-people-input" class="block text-gray-700 text-sm font-semibold mb-2">How many people to counter?</label>
                     <input type="number" id="num-people-input" min="1" value="1" class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
                 </div>
-
-                <!-- Input for Warning Threshold -->
-                <div class="mb-6">
-                    <label for="warning-threshold-input" class="block text-gray-700 text-sm font-semibold mb-2">Warning Threshold (value turns red if exceeded):</label>
-                    <input type="number" id="warning-threshold-input" min="0" value="100" class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
-                </div>
-
-                <!-- Section where individual counter name inputs will be generated -->
+                
                 <div id="counter-names-section" class="mb-6">
-                    <!-- Counter name inputs will be generated here by JavaScript -->
                 </div>
 
-                <!-- Done/Save Setup Button -->
                 <button id="done-setup-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-all duration-300 shadow-lg">Done</button>
             </div>
         </div>
@@ -94,39 +70,25 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // --- DOM Element References ---
             const setupModal = document.getElementById('setup-modal');
             const mainContent = document.getElementById('main-content');
             const userNameInput = document.getElementById('user-name-input');
             const websiteTitleInput = document.getElementById('website-title-input');
             const numPeopleInput = document.getElementById('num-people-input');
-            const warningThresholdInput = document.getElementById('warning-threshold-input'); // New reference for warning threshold input
             const counterNamesSection = document.getElementById('counter-names-section');
             const doneSetupBtn = document.getElementById('done-setup-btn');
             const userNameDisplay = document.getElementById('user-name-display');
             const websiteTitleDisplay = document.getElementById('website-title-display');
             const countersList = document.getElementById('counters-list');
             const editSettingsBtn = document.getElementById('edit-settings-btn');
-            const setupTitle = document.getElementById('setup-title'); // Reference to the setup modal title
+            const setupTitle = document.getElementById('setup-title');
 
-            // --- Global Application State ---
-            // This object holds all the dynamic data of the application.
-            // It will be saved to and loaded from cookies.
             let appState = {
                 userName: '',
-                websiteTitle: '', // Default title is now empty
-                warningThreshold: 100, // Default warning threshold
-                counters: [] // Array of counter objects: { id: string (UUID), name: string, value: number }
+                websiteTitle: '',
+                counters: []
             };
 
-            // --- Cookie Management Functions ---
-
-            /**
-             * Sets a cookie with the given name, value, and expiration days.
-             * @param {string} name - The name of the cookie.
-             * @param {string} value - The value to store in the cookie.
-             * @param {number} days - The number of days until the cookie expires.
-             */
             const setCookie = (name, value, days) => {
                 let expires = '';
                 if (days) {
@@ -134,45 +96,24 @@
                     date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
                     expires = '; expires=' + date.toUTCString();
                 }
-                // 'path=/' makes the cookie available across the entire website.
-                // 'SameSite=Lax' is a good default for security.
                 document.cookie = name + '=' + (value || '') + expires + '; path=/; SameSite=Lax';
             };
 
-            /**
-             * Gets the value of a cookie by its name.
-             * @param {string} name - The name of the cookie to retrieve.
-             * @returns {string|null} The cookie's value, or null if not found.
-             */
             const getCookie = (name) => {
                 const nameEQ = name + '=';
-                // Split document.cookie into individual cookie strings
                 const ca = document.cookie.split(';');
                 for (let i = 0; i < ca.length; i++) {
                     let c = ca[i];
-                    // Trim leading whitespace
                     while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-                    // If this cookie string begins with the name we want, return its value
                     if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
                 }
                 return null;
             };
 
-            /**
-             * Deletes a cookie by its name.
-             * This is achieved by setting its expiration date to a past date.
-             * @param {string} name - The name of the cookie to delete.
-             */
             const deleteCookie = (name) => {
                 document.cookie = name + '=; Max-Age=-99999999; path=/; SameSite=Lax';
             };
 
-            // --- UUID Generator (for unique counter IDs) ---
-            /**
-             * Generates a universally unique identifier (UUID) string.
-             * Used to give each counter a unique ID for robust tracking,
-             * especially important when names might not be unique or can change.
-             */
             const generateUUID = () => {
                 return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
                     const r = Math.random() * 16 | 0,
@@ -181,20 +122,12 @@
                 });
             };
 
-            // --- UI Rendering Functions ---
-
-            /**
-             * Dynamically generates input fields for counter names based on the selected number of people.
-             * It pre-fills these inputs if the appState already contains existing counter names
-             * (useful when loading from cookies or during an edit operation).
-             */
             const generateCounterNameInputs = () => {
-                // Ensure numPeople is at least 0 (even though input min is 1, defensive check)
                 const numPeople = Math.max(0, parseInt(numPeopleInput.value, 10) || 0);
-                counterNamesSection.innerHTML = ''; // Clear any previously generated inputs
+                counterNamesSection.innerHTML = '';
 
                 if (numPeople > 0) {
-                    counterNamesSection.classList.add('space-y-4'); // Add vertical spacing between inputs
+                    counterNamesSection.classList.add('space-y-4');
                     for (let i = 0; i < numPeople; i++) {
                         const div = document.createElement('div');
                         div.className = 'flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-2';
@@ -210,7 +143,6 @@
                         input.placeholder = `Enter name for person ${i + 1}`;
                         input.className = 'shadow-sm appearance-none border rounded-xl w-full sm:w-3/4 py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200';
 
-                        // Pre-fill input value if an existing counter at this index has a name
                         if (appState.counters[i] && appState.counters[i].name) {
                             input.value = appState.counters[i].name;
                         }
@@ -220,115 +152,71 @@
                         counterNamesSection.appendChild(div);
                     }
                 } else {
-                    counterNamesSection.classList.remove('space-y-4'); // Remove spacing if no inputs
+                    counterNamesSection.classList.remove('space-y-4');
                 }
             };
 
-            /**
-             * Renders the main content of the application. This includes:
-             * - Displaying the user's name and website title in the header.
-             * - Clearing and re-generating the list of counter cards.
-             */
             const renderMainContent = () => {
-                // Update header displays
                 userNameDisplay.textContent = appState.userName || 'Guest';
-                // Set the document title and header display title based on appState.websiteTitle
                 document.title = appState.websiteTitle || '';
-                websiteTitleDisplay.textContent = appState.websiteTitle || ''; // If empty, display nothing
+                websiteTitleDisplay.textContent = appState.websiteTitle || '';
 
-                countersList.innerHTML = ''; // Clear existing counter cards before re-rendering
+                countersList.innerHTML = '';
 
-                // Check if there are any counters to display
                 if (appState.counters && appState.counters.length > 0) {
                     appState.counters.forEach(counter => {
-                        // Create the main container for each counter card
                         const counterDiv = document.createElement('div');
                         
-                        // Determine base classes for styling
-                        let baseCardClasses = 'p-6 rounded-xl shadow-md flex flex-col items-center justify-between transition-all duration-300 hover:scale-105 transform';
+                        let baseCardClasses = 'bg-blue-50 p-6 rounded-xl shadow-md flex flex-col items-center justify-between transition-all duration-300 hover:scale-105 transform';
                         let baseNameClasses = 'text-2xl font-semibold cursor-pointer hover:underline mb-2';
                         let baseValueClasses = 'text-5xl font-extrabold mb-4 transition-transform duration-150 ease-out transform';
 
-                        // Apply warning styles if value is over threshold
-                        if (counter.value > appState.warningThreshold) {
-                            counterDiv.className = `bg-red-100 ${baseCardClasses}`; // Red background for warning
-                            // These classes will be applied after element creation for direct control
-                        } else {
-                            counterDiv.className = `bg-blue-50 ${baseCardClasses}`; // Default blue background
-                        }
+                        counterDiv.className = baseCardClasses;
 
-                        // Store the counter's unique ID as a data attribute for easy lookup
                         counterDiv.setAttribute('data-id', counter.id);
 
-                        // Counter Name (clickable to increment)
                         const nameHeading = document.createElement('h3');
                         nameHeading.textContent = counter.name;
 
-                        // Counter Value Display
                         const valueSpan = document.createElement('span');
                         valueSpan.textContent = counter.value;
 
-                        // Container for Plus/Minus buttons
                         const buttonContainer = document.createElement('div');
-                        buttonContainer.className = 'flex space-x-3 mt-auto'; // mt-auto pushes buttons to bottom if flex-col
+                        buttonContainer.className = 'flex space-x-3 mt-auto';
 
-                        // Minus Button
                         const minusBtn = document.createElement('button');
                         minusBtn.className = 'p-3 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors duration-200 shadow-md focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75';
-                        minusBtn.innerHTML = '<i class="fas fa-minus"></i>'; // Font Awesome minus icon
+                        minusBtn.innerHTML = '<i class="fas fa-minus"></i>';
                         minusBtn.onclick = () => decrementCounter(counter.id);
 
-                        // Plus Button
                         const plusBtn = document.createElement('button');
                         plusBtn.className = 'p-3 bg-green-500 text-white rounded-full hover:bg-green-600 transition-colors duration-200 shadow-md focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-opacity-75';
-                        plusBtn.innerHTML = '<i class="fas fa-plus"></i>'; // Font Awesome plus icon
+                        plusBtn.innerHTML = '<i class="fas fa-plus"></i>';
                         plusBtn.onclick = () => incrementCounter(counter.id);
 
-                        // Append buttons to their container
                         buttonContainer.appendChild(minusBtn);
                         buttonContainer.appendChild(plusBtn);
 
-                        // Apply text colors based on warning state
-                        if (counter.value > appState.warningThreshold) {
-                            nameHeading.className = `text-red-700 ${baseNameClasses}`; // Red text for name
-                            valueSpan.className = `text-red-900 ${baseValueClasses}`; // Darker red for value
-                        } else {
-                            nameHeading.className = `text-blue-700 ${baseNameClasses}`; // Default blue text for name
-                            valueSpan.className = `text-blue-900 ${baseValueClasses}`; // Default blue for value
-                        }
-                        nameHeading.onclick = () => incrementCounter(counter.id); // Attach click listener
+                        nameHeading.className = `text-blue-700 ${baseNameClasses}`;
+                        valueSpan.className = `text-blue-900 ${baseValueClasses}`;
+                        nameHeading.onclick = () => incrementCounter(counter.id);
 
-                        // Append all elements to the counter card
                         counterDiv.appendChild(nameHeading);
                         counterDiv.appendChild(valueSpan);
                         counterDiv.appendChild(buttonContainer);
 
-                        // Append the complete counter card to the main counters list
                         countersList.appendChild(counterDiv);
                     });
                 } else {
-                    // Display a message if no counters are configured
                     countersList.innerHTML = '<p class="text-center text-gray-500 text-lg col-span-full">No counters configured. Click "Edit" to add some!</p>';
                 }
             };
 
-            // --- Data Management & Persistence ---
-
-            /**
-             * Saves the current `appState` object to a cookie named 'appState'.
-             * The state is stringified into JSON before saving.
-             */
             const saveAppState = () => {
-                setCookie('appState', JSON.stringify(appState), 365); // Save for 1 year
-                console.log('App state saved:', appState); // Log for debugging purposes
+                setCookie('appState', JSON.stringify(appState), 365);
+                console.log('App state saved:', appState);
             };
 
-            /**
-             * Loads the `appState` from the 'appState' cookie.
-             * Parses the JSON string back into an object.
-             * Includes error handling for corrupted cookie data.
-             * @returns {object|null} The parsed app state object, or null if not found or corrupted.
-             */
             const loadAppState = () => {
                 const cookieData = getCookie('appState');
                 if (cookieData) {
@@ -336,138 +224,69 @@
                         return JSON.parse(cookieData);
                     } catch (e) {
                         console.error('Error parsing appState cookie:', e);
-                        deleteCookie('appState'); // Clear corrupted cookie to prevent future errors
+                        deleteCookie('appState');
                         return null;
                     }
                 }
                 return null;
             };
 
-            // --- Counter Logic ---
-
-            /**
-             * Increments the value of a specific counter identified by its ID.
-             * Updates the `appState`, saves it to cookies, and refreshes the UI for that counter.
-             * @param {string} id - The unique ID of the counter to increment.
-             */
             const incrementCounter = (id) => {
-                // Find the index of the counter in the appState.counters array
                 const counterIndex = appState.counters.findIndex(c => c.id === id);
                 if (counterIndex !== -1) {
-                    appState.counters[counterIndex].value++; // Increment the value
-                    saveAppState(); // Persist the updated state
+                    appState.counters[counterIndex].value++;
+                    saveAppState();
 
-                    // Find the specific DOM element for this counter and update its displayed value
                     const counterElement = countersList.querySelector(`[data-id="${id}"]`);
                     if (counterElement) {
                         const valueSpan = counterElement.querySelector('span');
-                        const nameHeading = counterElement.querySelector('h3'); // Get name heading for color update
-
                         valueSpan.textContent = appState.counters[counterIndex].value;
-                        // Add a subtle bounce/scale animation for visual feedback
                         valueSpan.classList.add('scale-110', 'transition-transform', 'duration-150');
                         setTimeout(() => {
                             valueSpan.classList.remove('scale-110');
-                        }, 150); // Remove the class after a short delay
-
-                        // Update colors based on new value and threshold
-                        if (appState.counters[counterIndex].value > appState.warningThreshold) {
-                            counterElement.classList.remove('bg-blue-50');
-                            counterElement.classList.add('bg-red-100');
-                            nameHeading.classList.remove('text-blue-700');
-                            nameHeading.classList.add('text-red-700');
-                            valueSpan.classList.remove('text-blue-900');
-                            valueSpan.classList.add('text-red-900');
-                        } else {
-                            counterElement.classList.remove('bg-red-100');
-                            counterElement.classList.add('bg-blue-50');
-                            nameHeading.classList.remove('text-red-700');
-                            nameHeading.classList.add('text-blue-700');
-                            valueSpan.classList.remove('text-red-900');
-                            valueSpan.classList.add('text-blue-900');
-                        }
+                        }, 150);
                     }
                 }
             };
 
-            /**
-             * Decrements the value of a specific counter identified by its ID.
-             * Prevents decrementing below zero. Updates `appState`, saves to cookies, and refreshes UI.
-             * @param {string} id - The unique ID of the counter to decrement.
-             */
             const decrementCounter = (id) => {
                 const counterIndex = appState.counters.findIndex(c => c.id === id);
-                // Ensure counter exists and its value is greater than 0 before decrementing
                 if (counterIndex !== -1 && appState.counters[counterIndex].value > 0) {
-                    appState.counters[counterIndex].value--; // Decrement the value
-                    saveAppState(); // Persist the updated state
+                    appState.counters[counterIndex].value--;
+                    saveAppState();
 
-                    // Find the specific DOM element and update its displayed value
                     const counterElement = countersList.querySelector(`[data-id="${id}"]`);
                     if (counterElement) {
                         const valueSpan = counterElement.querySelector('span');
-                        const nameHeading = counterElement.querySelector('h3'); // Get name heading for color update
-
                         valueSpan.textContent = appState.counters[counterIndex].value;
-                        // Add a subtle animation for visual feedback
                         valueSpan.classList.add('scale-90', 'transition-transform', 'duration-150');
                         setTimeout(() => {
                             valueSpan.classList.remove('scale-90');
                         }, 150);
-
-                        // Update colors based on new value and threshold
-                        if (appState.counters[counterIndex].value > appState.warningThreshold) {
-                            counterElement.classList.remove('bg-blue-50');
-                            counterElement.classList.add('bg-red-100');
-                            nameHeading.classList.remove('text-blue-700');
-                            nameHeading.classList.add('text-red-700');
-                            valueSpan.classList.remove('text-blue-900');
-                            valueSpan.classList.add('text-red-900');
-                        } else {
-                            counterElement.classList.remove('bg-red-100');
-                            counterElement.classList.add('bg-blue-50');
-                            nameHeading.classList.remove('text-red-700');
-                            nameHeading.classList.add('text-blue-700');
-                            valueSpan.classList.remove('text-red-900');
-                            valueSpan.classList.add('text-blue-900');
-                        }
                     }
                 }
             };
 
-            // --- Event Listeners ---
+            numPeopleInput.addEventListener('input', generateCounterNameInputs);
 
-            // Listener for when the number of people input changes in the setup modal.
-            // This triggers the re-generation of counter name input fields.
-            numPeopleInput.addEventListener('input', generateCounterNameInputs); // Changed to 'input' for real-time updates
-
-            // Listener for the "Done" button in the setup modal.
-            // This collects all initial/edited settings, updates appState, saves, and shows main content.
             doneSetupBtn.addEventListener('click', () => {
                 const newUserName = userNameInput.value.trim();
                 const newWebsiteTitle = websiteTitleInput.value.trim();
-                const numPeople = Math.max(0, parseInt(numPeopleInput.value, 10) || 0); // Ensure non-negative number
-                const newWarningThreshold = parseInt(warningThresholdInput.value, 10);
+                const numPeople = Math.max(0, parseInt(numPeopleInput.value, 10) || 0);
                 
-                // Validate threshold to be a non-negative number, default if invalid
-                appState.warningThreshold = (isNaN(newWarningThreshold) || newWarningThreshold < 0) ? 100 : newWarningThreshold;
-
                 const newCounters = [];
 
-                // Iterate through the generated counter name input fields based on the new numPeople
                 for (let i = 0; i < numPeople; i++) {
                     const input = document.getElementById(`counter-name-${i}`);
-                    const counterName = input && input.value.trim() ? input.value.trim() : `Person ${i + 1}`; // Use default if empty
+                    const counterName = input && input.value.trim() ? input.value.trim() : `Person ${i + 1}`;
 
-                    // If an existing counter at this index exists in the old appState, preserve its ID and value
                     if (i < appState.counters.length) {
                         newCounters.push({
-                            id: appState.counters[i].id, // Preserve the original ID
-                            name: counterName, // Use the new (potentially updated) name
-                            value: appState.counters[i].value // Preserve the original value
+                            id: appState.counters[i].id,
+                            name: counterName,
+                            value: appState.counters[i].value
                         });
                     } else {
-                        // Otherwise, it's a new counter, so generate a new ID and set value to 0
                         newCounters.push({
                             id: generateUUID(),
                             name: counterName,
@@ -476,74 +295,51 @@
                     }
                 }
 
-                // Update the global appState with the newly collected data
-                appState.userName = newUserName || 'Guest'; // Default to 'Guest' if name is empty
-                appState.websiteTitle = newWebsiteTitle; // Now directly use the input, can be empty
-                appState.counters = newCounters; // This handles both truncation and expansion correctly
+                appState.userName = newUserName || 'Guest';
+                appState.websiteTitle = newWebsiteTitle;
+                appState.counters = newCounters;
 
-                saveAppState(); // Persist the updated state to cookies
-                renderMainContent(); // Re-render the main UI with the new data
+                saveAppState();
+                renderMainContent();
 
-                // Hide the setup modal and show the main content area
                 setupModal.classList.add('hidden');
                 mainContent.classList.remove('hidden');
             });
 
-            // Listener for the "Edit" button in the main header.
-            // This re-opens the setup modal, pre-populating it with current data for editing.
             editSettingsBtn.addEventListener('click', () => {
-                // Pre-populate input fields in the setup modal with current appState values
                 userNameInput.value = appState.userName;
                 websiteTitleInput.value = appState.websiteTitle;
-                numPeopleInput.value = appState.counters.length.toString(); // Set number input to current counter count
-                warningThresholdInput.value = appState.warningThreshold.toString(); // Set warning threshold input
+                numPeopleInput.value = appState.counters.length.toString();
 
-                setupTitle.textContent = "Edit Your Settings"; // Change modal title to reflect editing
+                setupTitle.textContent = "Edit Your Settings";
 
-                // Generate counter name inputs based on the current number, pre-filling them
                 generateCounterNameInputs();
 
-                // Hide the main content and show the setup modal
                 mainContent.classList.add('hidden');
                 setupModal.classList.remove('hidden');
             });
 
-            // --- Initialization Function ---
-
-            /**
-             * This function is called once when the page loads.
-             * It attempts to load saved application state from cookies.
-             * If successful, it renders the main content; otherwise, it shows the setup modal.
-             */
             const init = () => {
-                const loadedState = loadAppState(); // Try to load state from cookie
+                const loadedState = loadAppState();
 
-                if (loadedState && loadedState.counters) { // Check for counters array existence, it can be empty
+                if (loadedState && loadedState.counters) {
                     appState = loadedState;
-                    // Ensure warningThreshold is set if it wasn't in older cookie versions
-                    if (typeof appState.warningThreshold === 'undefined' || isNaN(appState.warningThreshold)) {
-                        appState.warningThreshold = 100;
-                    }
-                    // Ensure websiteTitle is initialized correctly, even if it was "My Dynamic Counter" from old cookie
                     if (typeof appState.websiteTitle === 'undefined' || appState.websiteTitle === 'My Dynamic Counter') {
                         appState.websiteTitle = '';
                     }
-                    renderMainContent(); // Render the main application UI
-                    setupModal.classList.add('hidden'); // Hide the setup modal
-                    mainContent.classList.remove('hidden'); // Show the main content
+                    renderMainContent();
+                    setupModal.classList.add('hidden');
+                    mainContent.classList.remove('hidden');
                 } else {
-                    // If no valid state is found (first visit or corrupted cookie), show the setup
-                    userNameInput.value = ''; // Ensure user name input is empty for a fresh start
-                    websiteTitleInput.value = ''; // Website title input is now empty by default
-                    numPeopleInput.value = '1'; // Default to 1 person
-                    warningThresholdInput.value = appState.warningThreshold.toString(); // Set default warning threshold
-                    generateCounterNameInputs(); // Generate initial input for 1 person
-                    setupModal.classList.remove('hidden'); // Show the setup modal
-                    mainContent.classList.add('hidden'); // Hide the main content
+                    userNameInput.value = '';
+                    websiteTitleInput.value = '';
+                    numPeopleInput.value = '1';
+                    generateCounterNameInputs();
+                    setupModal.classList.remove('hidden');
+                    mainContent.classList.add('hidden');
                 }
             };
 
-            // Call the initialization function when the DOM is fully loaded
             init();
         });
     </script>
