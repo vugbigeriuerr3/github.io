@@ -69,21 +69,16 @@
                     <input type="text" id="website-title-input" placeholder="e.g., My Team Counters" class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
                 </div>
 
-                <!-- Dropdown for Number of People/Counters -->
+                <!-- Input for Number of People/Counters (changed from select to number input) -->
                 <div class="mb-6">
                     <label for="num-people-input" class="block text-gray-700 text-sm font-semibold mb-2">How many people to counter?</label>
-                    <select id="num-people-input" class="block appearance-none w-full bg-white border border-gray-300 text-gray-700 py-3 px-4 pr-8 rounded-xl leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6">6</option>
-                        <option value="7">7</option>
-                        <option value="8">8</option>
-                        <option value="9">9</option>
-                        <option value="10">10</option>
-                    </select>
+                    <input type="number" id="num-people-input" min="1" value="1" class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
+                </div>
+
+                <!-- Input for Warning Threshold -->
+                <div class="mb-6">
+                    <label for="warning-threshold-input" class="block text-gray-700 text-sm font-semibold mb-2">Warning Threshold (value turns red if exceeded):</label>
+                    <input type="number" id="warning-threshold-input" min="0" value="100" class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
                 </div>
 
                 <!-- Section where individual counter name inputs will be generated -->
@@ -105,6 +100,7 @@
             const userNameInput = document.getElementById('user-name-input');
             const websiteTitleInput = document.getElementById('website-title-input');
             const numPeopleInput = document.getElementById('num-people-input');
+            const warningThresholdInput = document.getElementById('warning-threshold-input'); // New reference for warning threshold input
             const counterNamesSection = document.getElementById('counter-names-section');
             const doneSetupBtn = document.getElementById('done-setup-btn');
             const userNameDisplay = document.getElementById('user-name-display');
@@ -119,6 +115,7 @@
             let appState = {
                 userName: '',
                 websiteTitle: 'My Dynamic Counter', // Default title
+                warningThreshold: 100, // Default warning threshold
                 counters: [] // Array of counter objects: { id: string (UUID), name: string, value: number }
             };
 
@@ -192,7 +189,8 @@
              * (useful when loading from cookies or during an edit operation).
              */
             const generateCounterNameInputs = () => {
-                const numPeople = parseInt(numPeopleInput.value, 10);
+                // Ensure numPeople is at least 0 (even though input min is 1, defensive check)
+                const numPeople = Math.max(0, parseInt(numPeopleInput.value, 10) || 0);
                 counterNamesSection.innerHTML = ''; // Clear any previously generated inputs
 
                 if (numPeople > 0) {
@@ -242,19 +240,29 @@
                     appState.counters.forEach(counter => {
                         // Create the main container for each counter card
                         const counterDiv = document.createElement('div');
-                        counterDiv.className = 'bg-blue-50 p-6 rounded-xl shadow-md flex flex-col items-center justify-between transition-all duration-300 hover:scale-105 transform';
+                        
+                        // Determine base classes for styling
+                        let baseCardClasses = 'p-6 rounded-xl shadow-md flex flex-col items-center justify-between transition-all duration-300 hover:scale-105 transform';
+                        let baseNameClasses = 'text-2xl font-semibold cursor-pointer hover:underline mb-2';
+                        let baseValueClasses = 'text-5xl font-extrabold mb-4 transition-transform duration-150 ease-out transform';
+
+                        // Apply warning styles if value is over threshold
+                        if (counter.value > appState.warningThreshold) {
+                            counterDiv.className = `bg-red-100 ${baseCardClasses}`; // Red background for warning
+                            // These classes will be applied after element creation for direct control
+                        } else {
+                            counterDiv.className = `bg-blue-50 ${baseCardClasses}`; // Default blue background
+                        }
+
                         // Store the counter's unique ID as a data attribute for easy lookup
                         counterDiv.setAttribute('data-id', counter.id);
 
                         // Counter Name (clickable to increment)
                         const nameHeading = document.createElement('h3');
-                        nameHeading.className = 'text-2xl font-semibold text-blue-700 cursor-pointer hover:underline mb-2';
                         nameHeading.textContent = counter.name;
-                        nameHeading.onclick = () => incrementCounter(counter.id); // Attach click listener
 
                         // Counter Value Display
                         const valueSpan = document.createElement('span');
-                        valueSpan.className = 'text-5xl font-extrabold text-blue-900 mb-4 transition-transform duration-150 ease-out transform';
                         valueSpan.textContent = counter.value;
 
                         // Container for Plus/Minus buttons
@@ -276,6 +284,16 @@
                         // Append buttons to their container
                         buttonContainer.appendChild(minusBtn);
                         buttonContainer.appendChild(plusBtn);
+
+                        // Apply text colors based on warning state
+                        if (counter.value > appState.warningThreshold) {
+                            nameHeading.className = `text-red-700 ${baseNameClasses}`; // Red text for name
+                            valueSpan.className = `text-red-900 ${baseValueClasses}`; // Darker red for value
+                        } else {
+                            nameHeading.className = `text-blue-700 ${baseNameClasses}`; // Default blue text for name
+                            valueSpan.className = `text-blue-900 ${baseValueClasses}`; // Default blue for value
+                        }
+                        nameHeading.onclick = () => incrementCounter(counter.id); // Attach click listener
 
                         // Append all elements to the counter card
                         counterDiv.appendChild(nameHeading);
@@ -340,12 +358,31 @@
                     const counterElement = countersList.querySelector(`[data-id="${id}"]`);
                     if (counterElement) {
                         const valueSpan = counterElement.querySelector('span');
+                        const nameHeading = counterElement.querySelector('h3'); // Get name heading for color update
+
                         valueSpan.textContent = appState.counters[counterIndex].value;
                         // Add a subtle bounce/scale animation for visual feedback
                         valueSpan.classList.add('scale-110', 'transition-transform', 'duration-150');
                         setTimeout(() => {
                             valueSpan.classList.remove('scale-110');
                         }, 150); // Remove the class after a short delay
+
+                        // Update colors based on new value and threshold
+                        if (appState.counters[counterIndex].value > appState.warningThreshold) {
+                            counterElement.classList.remove('bg-blue-50');
+                            counterElement.classList.add('bg-red-100');
+                            nameHeading.classList.remove('text-blue-700');
+                            nameHeading.classList.add('text-red-700');
+                            valueSpan.classList.remove('text-blue-900');
+                            valueSpan.classList.add('text-red-900');
+                        } else {
+                            counterElement.classList.remove('bg-red-100');
+                            counterElement.classList.add('bg-blue-50');
+                            nameHeading.classList.remove('text-red-700');
+                            nameHeading.classList.add('text-blue-700');
+                            valueSpan.classList.remove('text-red-900');
+                            valueSpan.classList.add('text-blue-900');
+                        }
                     }
                 }
             };
@@ -366,48 +403,68 @@
                     const counterElement = countersList.querySelector(`[data-id="${id}"]`);
                     if (counterElement) {
                         const valueSpan = counterElement.querySelector('span');
+                        const nameHeading = counterElement.querySelector('h3'); // Get name heading for color update
+
                         valueSpan.textContent = appState.counters[counterIndex].value;
                         // Add a subtle animation for visual feedback
                         valueSpan.classList.add('scale-90', 'transition-transform', 'duration-150');
                         setTimeout(() => {
                             valueSpan.classList.remove('scale-90');
                         }, 150);
+
+                        // Update colors based on new value and threshold
+                        if (appState.counters[counterIndex].value > appState.warningThreshold) {
+                            counterElement.classList.remove('bg-blue-50');
+                            counterElement.classList.add('bg-red-100');
+                            nameHeading.classList.remove('text-blue-700');
+                            nameHeading.classList.add('text-red-700');
+                            valueSpan.classList.remove('text-blue-900');
+                            valueSpan.classList.add('text-red-900');
+                        } else {
+                            counterElement.classList.remove('bg-red-100');
+                            counterElement.classList.add('bg-blue-50');
+                            nameHeading.classList.remove('text-red-700');
+                            nameHeading.classList.add('text-blue-700');
+                            valueSpan.classList.remove('text-red-900');
+                            valueSpan.classList.add('text-blue-900');
+                        }
                     }
                 }
             };
 
             // --- Event Listeners ---
 
-            // Listener for when the number of people dropdown changes in the setup modal.
+            // Listener for when the number of people input changes in the setup modal.
             // This triggers the re-generation of counter name input fields.
-            numPeopleInput.addEventListener('change', generateCounterNameInputs);
+            numPeopleInput.addEventListener('input', generateCounterNameInputs); // Changed to 'input' for real-time updates
 
             // Listener for the "Done" button in the setup modal.
             // This collects all initial/edited settings, updates appState, saves, and shows main content.
             doneSetupBtn.addEventListener('click', () => {
                 const newUserName = userNameInput.value.trim();
                 const newWebsiteTitle = websiteTitleInput.value.trim();
-                const numPeople = parseInt(numPeopleInput.value, 10);
+                const numPeople = Math.max(0, parseInt(numPeopleInput.value, 10) || 0); // Ensure non-negative number
+                const newWarningThreshold = parseInt(warningThresholdInput.value, 10);
+                
+                // Validate threshold to be a non-negative number, default if invalid
+                appState.warningThreshold = (isNaN(newWarningThreshold) || newWarningThreshold < 0) ? 100 : newWarningThreshold;
+
                 const newCounters = [];
 
-                // Iterate through the generated counter name input fields
+                // Iterate through the generated counter name input fields based on the new numPeople
                 for (let i = 0; i < numPeople; i++) {
                     const input = document.getElementById(`counter-name-${i}`);
                     const counterName = input && input.value.trim() ? input.value.trim() : `Person ${i + 1}`; // Use default if empty
 
-                    // Try to find if a counter with this name already exists in the current appState.
-                    // This handles re-naming scenarios and ensures values persist if names are re-used.
-                    const existingCounter = appState.counters.find(c => c.name === counterName);
-
-                    if (existingCounter) {
-                        // If the name exists (and thus it's an existing counter), reuse its ID and current value.
+                    // If an existing counter at this index exists in the old appState, preserve its ID and value
+                    if (i < appState.counters.length) {
                         newCounters.push({
-                            id: existingCounter.id,
-                            name: counterName,
-                            value: existingCounter.value
+                            id: appState.counters[i].id, // Preserve the original ID
+                            name: counterName, // Use the new (potentially updated) name
+                            value: appState.counters[i].value // Preserve the original value
                         });
                     } else {
-                        // If it's a new name or a new counter entirely, create a new entry with a UUID and value 0.
+                        // Otherwise, it's a new counter, so generate a new ID and set value to 0
                         newCounters.push({
                             id: generateUUID(),
                             name: counterName,
@@ -419,7 +476,7 @@
                 // Update the global appState with the newly collected data
                 appState.userName = newUserName || 'Guest'; // Default to 'Guest' if name is empty
                 appState.websiteTitle = newWebsiteTitle || 'My Dynamic Counter'; // Default title if empty
-                appState.counters = newCounters; // Replace old counters with the new list
+                appState.counters = newCounters; // This handles both truncation and expansion correctly
 
                 saveAppState(); // Persist the updated state to cookies
                 renderMainContent(); // Re-render the main UI with the new data
@@ -435,8 +492,9 @@
                 // Pre-populate input fields in the setup modal with current appState values
                 userNameInput.value = appState.userName;
                 websiteTitleInput.value = appState.websiteTitle;
-                // Set the dropdown to the current number of counters
-                numPeopleInput.value = appState.counters.length.toString();
+                numPeopleInput.value = appState.counters.length.toString(); // Set number input to current counter count
+                warningThresholdInput.value = appState.warningThreshold.toString(); // Set warning threshold input
+
                 setupTitle.textContent = "Edit Your Settings"; // Change modal title to reflect editing
 
                 // Generate counter name inputs based on the current number, pre-filling them
@@ -457,9 +515,12 @@
             const init = () => {
                 const loadedState = loadAppState(); // Try to load state from cookie
 
-                if (loadedState && loadedState.counters && loadedState.counters.length > 0) {
-                    // If a valid state is loaded and there are counters, use it
+                if (loadedState && loadedState.counters) { // Check for counters array existence, it can be empty
                     appState = loadedState;
+                    // Ensure warningThreshold is set if it wasn't in older cookie versions
+                    if (typeof appState.warningThreshold === 'undefined' || isNaN(appState.warningThreshold)) {
+                        appState.warningThreshold = 100;
+                    }
                     renderMainContent(); // Render the main application UI
                     setupModal.classList.add('hidden'); // Hide the setup modal
                     mainContent.classList.remove('hidden'); // Show the main content
@@ -468,6 +529,7 @@
                     userNameInput.value = ''; // Ensure user name input is empty for a fresh start
                     websiteTitleInput.value = appState.websiteTitle; // Use default website title
                     numPeopleInput.value = '1'; // Default to 1 person
+                    warningThresholdInput.value = appState.warningThreshold.toString(); // Set default warning threshold
                     generateCounterNameInputs(); // Generate initial input for 1 person
                     setupModal.classList.remove('hidden'); // Show the setup modal
                     mainContent.classList.add('hidden'); // Hide the main content
