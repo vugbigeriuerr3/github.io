@@ -46,14 +46,6 @@
             transform: translateY(-3px);
         }
 
-        /* Styles for the new lotto visual area with background image */
-        #lotto-visual-area {
-            background-image: url('https://placehold.co/600x200/4c7cbf/ffffff/png?text=YOUR+LOTTO+BALL+IMAGE'); /* Placeholder image */
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            min-height: 200px; /* Ensure space for the image */
-        }
     </style>
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
@@ -73,11 +65,9 @@
     <div id="app" class="relative w-full max-w-lg bg-white shadow-lg rounded-2xl p-8 text-center">
         <h1 class="text-4xl font-bold text-gray-800 mb-6">Lotto Number Generator</h1>
         
-        <!-- New container for lotto numbers and message with background image -->
-        <div id="lotto-visual-area" class="relative w-full rounded-lg flex flex-col justify-between items-center p-4 mb-8 shadow-inner">
-            <p class="text-lg text-white mb-2" id="generator-message">Click "Generate Numbers" to get your lucky draw!</p>
-            <div id="lotto-numbers-display" class="flex flex-wrap justify-center gap-4">
-            </div>
+        <!-- Original container for lotto numbers and message -->
+        <p class="text-lg text-gray-600 mb-8" id="generator-message">Click "Generate Numbers" to get your lucky draw!</p>
+        <div id="lotto-numbers-display" class="flex flex-wrap justify-center gap-4 mb-8 min-h-[80px] items-center">
         </div>
         
         <div class="space-y-4">
@@ -242,7 +232,7 @@
                 });
                 generatorMessage.textContent = `Here are your ${numToGenerate} lucky numbers!`;
                 generatorMessage.classList.remove('text-red-600');
-                generatorMessage.classList.add('text-white'); // Make message white for background contrast
+                generatorMessage.classList.add('text-gray-600'); // Reverted to gray for no background image
             };
 
             goHomeBtn.addEventListener('click', () => {
@@ -321,7 +311,6 @@
                     }
                 }
 
-                // Update only lottoSettings property
                 currentAppState.lottoSettings = {
                     minNumber: newMin,
                     maxNumber: newMax,
@@ -329,7 +318,6 @@
                     allowDuplicates: newAllowDuplicates
                 };
                 
-                // Update local appState's lottoSettings
                 appState.lottoSettings = currentAppState.lottoSettings;
 
                 setCookie('appState', JSON.stringify(currentAppState), 365);
@@ -348,7 +336,6 @@
                         if (parsedState.lottoSettings) {
                             appState.lottoSettings = { ...appState.lottoSettings, ...parsedState.lottoSettings };
                         }
-                        // Merge to preserve any other unknown properties from the cookie (e.g., from Counter app)
                         appState = { ...parsedState, ...appState };
                     } catch (e) {
                         console.error('Error parsing appState cookie on init:', e);
