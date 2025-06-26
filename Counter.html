@@ -147,7 +147,6 @@
                     class="flex-1 px-8 py-4 bg-green-600 text-white font-bold text-xl rounded-xl hover:bg-green-700 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-75">
                 Add New Counter
             </button>
-            <!-- Removed Counter App Settings Button -->
         </div>
     </div>
 
@@ -236,8 +235,6 @@
         </div>
     </div>
 
-    <!-- Removed Counter App Settings Modal -->
-
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const goHomeBtn = document.getElementById('go-home-btn');
@@ -252,7 +249,6 @@
             const prevPageBtn = document.getElementById('prev-page-btn');
             const nextPageBtn = document.getElementById('next-page-btn');
             const pageInfo = document.getElementById('page-info');
-            // Removed counterAppSettingsBtn as the button is removed from HTML
 
             const nameEditModal = document.getElementById('name-edit-modal');
             const nameEditUserInput = document.getElementById('name-edit-user-input');
@@ -272,13 +268,6 @@
             const customCardBgColorInput = document.getElementById('custom-card-bg-color');
             const textSizeSelect = document.getElementById('text-size-select');
             const saveDisplaySettingsBtn = document.getElementById('save-display-settings-btn');
-
-            // Removed counterAppSettingsModal elements as the modal is removed from HTML
-            // const counterAppSettingsModal = document.getElementById('counter-app-settings-modal');
-            // const websiteTitleInput = document.getElementById('website-title-input');
-            // const countersPerPageInput = document.getElementById('counters-per-page-input');
-            // const counterNameSettingsContainer = document.getElementById('counter-name-settings-container');
-            // const saveCounterAppSettingsBtn = document.getElementById('save-counter-app-settings-btn');
 
             let appState = {
                 userName: '',
@@ -448,19 +437,18 @@
                     return;
                 }
 
-                countersToRender.forEach((counter, index) => {
-                    const globalIndex = startIndex + index;
+                countersToRender.forEach((counter) => {
                     const counterCard = document.createElement('div');
                     counterCard.className = 'counter-card';
                     counterCard.innerHTML = `
                         <h3 class="text-xl font-semibold mb-2">${counter.name}</h3>
                         <div class="counter-value">${counter.value}</div>
                         <div class="counter-controls flex space-x-2">
-                            <button class="bg-red-500 text-white hover:bg-red-600 decrement-btn" data-index="${globalIndex}">-</button>
-                            <button class="bg-blue-500 text-white hover:bg-blue-600 edit-counter-btn" data-index="${globalIndex}">
+                            <button class="bg-red-500 text-white hover:bg-red-600 decrement-btn" data-id="${counter.id}">-</button>
+                            <button class="bg-blue-500 text-white hover:bg-blue-600 edit-counter-btn" data-id="${counter.id}">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button class="bg-green-500 text-white hover:bg-green-600 increment-btn" data-index="${globalIndex}">+</button>
+                            <button class="bg-green-500 text-white hover:bg-green-600 increment-btn" data-id="${counter.id}">+</button>
                         </div>
                     `;
                     countersGrid.appendChild(counterCard);
@@ -475,16 +463,22 @@
                 applyDisplaySettings();
             };
 
-            const incrementCounter = (index) => {
-                appState.counters[index].value++;
-                saveAppState();
-                renderCounters();
+            const incrementCounter = (id) => {
+                const index = appState.counters.findIndex(c => c.id === id);
+                if (index !== -1) {
+                    appState.counters[index].value++;
+                    saveAppState();
+                    renderCounters();
+                }
             };
 
-            const decrementCounter = (index) => {
-                appState.counters[index].value--;
-                saveAppState();
-                renderCounters();
+            const decrementCounter = (id) => {
+                const index = appState.counters.findIndex(c => c.id === id);
+                if (index !== -1) {
+                    appState.counters[index].value--;
+                    saveAppState();
+                    renderCounters();
+                }
             };
 
             const addOrUpdateCounter = () => {
@@ -632,9 +626,6 @@
                 displaySettingsModal.classList.add('hidden');
             });
 
-            // Removed counterAppSettingsBtn.addEventListener block
-            // Removed saveCounterAppSettingsBtn.addEventListener block
-
             addCounterBtn.addEventListener('click', () => {
                 counterNameInput.value = '';
                 counterValueInput.value = 0;
@@ -645,27 +636,28 @@
                 configureCounterModal.classList.remove('hidden');
             });
 
+            // Using event delegation for counter buttons to handle dynamically added elements
             countersGrid.addEventListener('click', (e) => {
                 let targetButton = e.target.closest('button');
                 if (!targetButton) return;
 
-                const globalIndex = parseInt(targetButton.dataset.index);
-                // Since `currentEditingCounterId` is used for editing, we need to map globalIndex to id for that.
-                // For increment/decrement, we can use globalIndex directly.
-
+                const id = parseInt(targetButton.dataset.id);
+                
                 if (targetButton.classList.contains('increment-btn')) {
-                    incrementCounter(globalIndex);
+                    incrementCounter(id);
                 } else if (targetButton.classList.contains('decrement-btn')) {
-                    decrementCounter(globalIndex);
+                    decrementCounter(id);
                 } else if (targetButton.classList.contains('edit-counter-btn')) {
-                    currentEditingCounterId = appState.counters[globalIndex].id; // Set ID for editing reference
-                    const counter = appState.counters[globalIndex];
-                    counterNameInput.value = counter.name;
-                    counterValueInput.value = counter.value;
-                    configureCounterModalTitle.textContent = 'Edit Counter';
-                    saveCounterBtn.textContent = 'Save Changes';
-                    deleteCounterBtn.classList.remove('hidden');
-                    configureCounterModal.classList.remove('hidden');
+                    const counter = appState.counters.find(c => c.id === id);
+                    if (counter) {
+                        currentEditingCounterId = id;
+                        counterNameInput.value = counter.name;
+                        counterValueInput.value = counter.value;
+                        configureCounterModalTitle.textContent = 'Edit Counter';
+                        saveCounterBtn.textContent = 'Save Changes';
+                        deleteCounterBtn.classList.remove('hidden');
+                        configureCounterModal.classList.remove('hidden');
+                    }
                 }
             });
 
@@ -711,8 +703,7 @@
                         }
 
                         appState.userName = parsedState.userName || '';
-                        // Revert websiteTitle to static default if it was saved dynamically
-                        appState.websiteTitle = 'Dynamic Counter'; 
+                        appState.websiteTitle = parsedState.websiteTitle || 'Dynamic Counter'; // Ensure default if not set
                         if (parsedState.displaySettings) {
                             appState.displaySettings.theme = parsedState.displaySettings.theme || 'light';
                             appState.displaySettings.customBodyBg = parsedState.displaySettings.customBodyBg || '#f3f4f6';
