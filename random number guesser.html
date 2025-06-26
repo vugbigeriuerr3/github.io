@@ -148,9 +148,9 @@
             const gameSettingsModal = document.getElementById('game-settings-modal');
             const minNumberInput = document.getElementById('min-number-input');
             const maxNumberInput = document.getElementById('max-number-input');
-            const secretNumberModeRadios = document.querySelectorAll('input[name="secret-number-mode"]'); // New
-            const manualSecretNumberInputGroup = document.getElementById('manual-secret-number-input-group'); // New
-            const manualSecretNumberInput = document.getElementById('manual-secret-number-input'); // New
+            const secretNumberModeRadios = document.querySelectorAll('input[name="secret-number-mode"]');
+            const manualSecretNumberInputGroup = document.getElementById('manual-secret-number-input-group');
+            const manualSecretNumberInput = document.getElementById('manual-secret-number-input');
             const veryCloseDiffInput = document.getElementById('very-close-diff-input');
             const closeDiffInput = document.getElementById('close-diff-input');
             const saveGameSettingsBtn = document.getElementById('save-game-settings-btn');
@@ -169,8 +169,8 @@
                 userName: '',
                 minNumber: 1,
                 maxNumber: 100,
-                guessMode: 'random', // 'random' or 'manual'
-                manualSecretNumber: null, // Stores the user-set number
+                guessMode: 'random',
+                manualSecretNumber: null,
                 veryCloseDiff: 5,  
                 closeDiff: 15     
             };
@@ -204,20 +204,21 @@
             // User Name & Settings Modal Management
             const renderUserName = () => {
                 userNameDisplay.textContent = appState.userName || 'Guest';
-                if (!appState.userName && !sessionStorage.getItem('nameEditModalShown')) {
+                // Only show name edit modal on first load if name is not set
+                if (!appState.userName && !sessionStorage.getItem('nameEditModalShownOnce')) {
+                    nameEditUserInput.value = appState.userName; // Pre-fill if any
                     nameEditModal.classList.remove('hidden');
-                    sessionStorage.setItem('nameEditModalShown', 'true');
+                    sessionStorage.setItem('nameEditModalShownOnce', 'true'); // Mark as shown
                 } else if (appState.userName) {
-                    nameEditModal.classList.add('hidden');
+                    nameEditModal.classList.add('hidden'); // Ensure hidden if name exists
                 }
             };
 
             // Game Logic Functions
             const startGame = () => {
-                // Determine secret number based on guess mode
                 if (appState.guessMode === 'random') {
                     secretNumber = Math.floor(Math.random() * (appState.maxNumber - appState.minNumber + 1)) + appState.minNumber;
-                } else { // manual mode
+                } else {
                     secretNumber = appState.manualSecretNumber;
                 }
 
@@ -294,8 +295,8 @@
                     appState.userName = newUserName; 
 
                     setCookie('appState', JSON.stringify(currentAppState), 365);
-                    renderUserName();
-                    nameEditModal.classList.add('hidden');
+                    renderUserName(); // Update display and hide modal
+                    nameEditModal.classList.add('hidden'); // Ensure modal is explicitly hidden
                 } else {
                     let messageElement = saveNameOnlyBtn.parentElement.querySelector('.temp-error-message');
                     if (!messageElement) {
@@ -311,7 +312,7 @@
             });
 
             editNameBtn.addEventListener('click', () => {
-                nameEditUserInput.value = appState.userName;
+                nameEditUserInput.value = appState.userName; // Pre-fill with current name
                 nameEditModal.classList.remove('hidden');
                 const existingMessage = saveNameOnlyBtn.parentElement.querySelector('.temp-error-message');
                 if (existingMessage) existingMessage.remove();
@@ -321,12 +322,10 @@
                 minNumberInput.value = appState.minNumber;
                 maxNumberInput.value = appState.maxNumber;
 
-                // Set radio button based on current guessMode
                 secretNumberModeRadios.forEach(radio => {
                     radio.checked = (radio.value === appState.guessMode);
                 });
 
-                // Show/hide manual input based on guessMode
                 if (appState.guessMode === 'manual') {
                     manualSecretNumberInputGroup.classList.remove('hidden');
                     manualSecretNumberInput.value = appState.manualSecretNumber;
@@ -339,7 +338,6 @@
                 gameSettingsModal.classList.remove('hidden');
             });
 
-            // Event listener for secret number mode radio buttons
             secretNumberModeRadios.forEach(radio => {
                 radio.addEventListener('change', () => {
                     if (radio.value === 'manual') {
@@ -356,9 +354,8 @@
                 const newGuessMode = document.querySelector('input[name="secret-number-mode"]:checked').value;
                 const newVeryCloseDiff = parseInt(veryCloseDiffInput.value);
                 const newCloseDiff = parseInt(closeDiffInput.value);
-                let newManualSecretNumber = appState.manualSecretNumber; // Default to existing
+                let newManualSecretNumber = appState.manualSecretNumber;
 
-                // Validation for numbers
                 if (isNaN(newMinNumber) || newMinNumber < 1) {
                     alert('Please enter a valid minimum number (at least 1).');
                     return;
@@ -405,7 +402,7 @@
 
                 setCookie('appState', JSON.stringify(appState), 365);
                 gameSettingsModal.classList.add('hidden');
-                startGame(); // Restart game with new settings
+                startGame();
             });
 
             guessInput.addEventListener('keypress', (e) => {
@@ -420,15 +417,18 @@
                 if (loadedCookieData) {
                     try {
                         const parsedState = JSON.parse(loadedCookieData);
+                        // Ensure all properties from parsedState are merged into appState
+                        appState = { ...appState, ...parsedState };
+                        
+                        // Set defaults if any new properties are missing in old cookies
                         appState.userName = parsedState.userName || '';
                         appState.minNumber = parsedState.minNumber !== undefined ? parsedState.minNumber : 1;
                         appState.maxNumber = parsedState.maxNumber !== undefined ? parsedState.maxNumber : 100;
-                        appState.guessMode = parsedState.guessMode || 'random'; // Default to random
+                        appState.guessMode = parsedState.guessMode || 'random';
                         appState.manualSecretNumber = parsedState.manualSecretNumber !== undefined ? parsedState.manualSecretNumber : null;
                         appState.veryCloseDiff = parsedState.veryCloseDiff !== undefined ? parsedState.veryCloseDiff : 5;
                         appState.closeDiff = parsedState.closeDiff !== undefined ? parsedState.closeDiff : 15;
-                        
-                        appState = { ...parsedState, ...appState };
+
                     } catch (e) {
                         console.error('Error parsing appState cookie on init:', e);
                         deleteCookie('appState');
