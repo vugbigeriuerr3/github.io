@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Projects Hub</title>
+    <title>My Projects Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -24,9 +24,44 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        header.site-header {
-            display: none;
+        /* --- Specific CSS to hide GitHub Pages default elements --- */
+        /* This hides the default GitHub Pages header that sometimes appears */
+        header.site-header, .site-header {
+            display: none !important;
+            visibility: hidden !important;
+            height: 0 !important;
+            overflow: hidden !important;
         }
+        /* This attempts to hide the github.io text or similar direct content injected at the body level */
+        body > *:first-child:not(#github-pages-overlay):not(.fixed):not(.w-full) {
+            display: none !important;
+            visibility: hidden !important;
+            height: 0 !important;
+            overflow: hidden !important;
+        }
+        /* If a bare <div> or <p> with "github.io" content is injected before your actual content */
+        body > div:first-of-type:not(.fixed),
+        body > p:first-of-type:not(.fixed),
+        body > span:first-of-type:not(.fixed) {
+            display: none !important;
+            visibility: hidden !important;
+            height: 0 !important;
+            overflow: hidden !important;
+        }
+
+        /* Full-screen overlay - use only if other hiding methods fail */
+        #github-pages-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: var(--overlay-bg-color, #f3f4f6); /* Use custom body bg color or default */
+            z-index: 9999; /* Ensure it's on top */
+            pointer-events: none; /* Allows clicks to pass through to elements beneath */
+            display: none; /* Hidden by default, enable via JS if needed */
+        }
+
         .modal {
             max-height: 90vh;
             overflow-y: auto;
@@ -35,6 +70,9 @@
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4">
+    <!-- Optional: Full-screen overlay to cover unexpected GitHub Pages elements -->
+    <div id="github-pages-overlay"></div>
+
     <div class="fixed top-4 right-4 z-50 flex items-center space-x-2 bg-white rounded-full py-2 px-4 shadow-md transition-colors duration-300">
         <span id="user-name-display" class="text-lg font-medium text-blue-600">Guest</span>
         <button id="edit-name-btn" class="text-gray-500 hover:text-gray-700 transition-colors duration-200 focus:outline-none">
@@ -49,7 +87,7 @@
     </div>
 
     <div id="main-content-card" class="w-full max-w-lg shadow-lg rounded-2xl p-8 text-center main-card">
-        <h1 class="text-4xl font-bold mb-6">Projects Hub</h1>
+        <h1 class="text-4xl font-bold mb-6">My Projects Hub</h1>
         <p class="text-lg mb-8">Explore my various applications.</p>
         
         <div class="space-y-4">
@@ -68,7 +106,6 @@
                 Dynamic Counter Application
             </a>
 
-            <!-- Updated link for Update Log with correct capitalization -->
             <a href="https://vugbigeriuerr3.github.io/github.io/Update_log.html" 
                class="inline-block w-full px-8 py-4 bg-blue-600 text-white font-bold text-xl rounded-xl hover:bg-blue-700 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75">
                 Website Update Log
@@ -135,6 +172,7 @@
             const editNameBtn = document.getElementById('edit-name-btn');
             const configureDisplayBtn = document.getElementById('configure-display-btn');
             const mainContentCard = document.getElementById('main-content-card');
+            const githubPagesOverlay = document.getElementById('github-pages-overlay'); // Get the overlay element
 
             const nameEditModal = document.getElementById('name-edit-modal');
             const nameEditUserInput = document.getElementById('name-edit-user-input');
@@ -199,10 +237,13 @@
                 userNameBox.querySelector('span').style.color = '';
                 userNameBox.querySelector('button').style.color = '';
 
+                // Set overlay color and display based on theme
+                githubPagesOverlay.style.display = 'block'; // Always try to display overlay
                 if (theme === 'dark') {
                     document.body.classList.add('dark-mode');
                     document.body.style.backgroundImage = 'url("https://placehold.co/1920x1080/2d3748/2d3748?text=")';
                     document.body.style.backgroundColor = '#1a202c';
+                    githubPagesOverlay.style.backgroundColor = '#1a202c'; // Overlay dark
                     
                     mainContentCard.classList.add('bg-gray-800');
                     mainContentCard.querySelector('h1').style.color = '#e2e8f0';
@@ -215,6 +256,7 @@
                 } else if (theme === 'custom') {
                     document.body.style.backgroundColor = customBodyBg;
                     document.body.style.backgroundImage = 'none';
+                    githubPagesOverlay.style.backgroundColor = customBodyBg; // Overlay custom
                     
                     mainContentCard.style.backgroundColor = customCardBg;
                     
@@ -251,6 +293,7 @@
                 } else { // 'light' theme
                     document.body.classList.add('bg-gray-100');
                     document.body.style.backgroundImage = 'url("https://placehold.co/1920x1080/e5e7eb/e5e7eb?text=")';
+                    githubPagesOverlay.style.backgroundColor = '#f3f4f6'; // Overlay light
                     mainContentCard.classList.add('bg-white');
                     userNameBox.classList.add('bg-white');
                 }
