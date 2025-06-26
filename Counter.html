@@ -247,14 +247,8 @@
             </div>
 
             <div class="mb-6">
-                <label for="website-title-input" class="block text-gray-700 text-sm font-semibold mb-2">Website Tab Title:</label>
-                <input type="text" id="website-title-input" placeholder="e.g. My Cool App"
-                       class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
-            </div>
-
-            <div class="mb-6">
-                <label for="website-main-title-input" class="block text-gray-700 text-sm font-semibold mb-2">Main Display Title:</label>
-                <input type="text" id="website-main-title-input" placeholder="e.g. My Counter Dashboard"
+                <label for="combined-title-input" class="block text-gray-700 text-sm font-semibold mb-2">Application Title:</label>
+                <input type="text" id="combined-title-input" placeholder="e.g. My Counter Dashboard"
                        class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
             </div>
 
@@ -271,7 +265,6 @@
             const configureDisplayBtn = document.getElementById('configure-display-btn');
             const mainContentCard = document.getElementById('main-content-card');
             const websiteMainTitle = document.getElementById('website-main-title');
-            // const pageTitle = document.getElementById('page-title'); // This element has been removed
             const countersGrid = document.getElementById('counters-grid');
             const addCounterBtn = document.getElementById('add-counter-btn');
             const prevPageBtn = document.getElementById('prev-page-btn');
@@ -300,16 +293,14 @@
 
             const counterAppSettingsModal = document.getElementById('counter-app-settings-modal');
             const countersPerPageInput = document.getElementById('counters-per-page-input');
-            const websiteTitleInput = document.getElementById('website-title-input');
-            const websiteMainTitleInput = document.getElementById('website-main-title-input');
+            const combinedTitleInput = document.getElementById('combined-title-input'); // Renamed from website-title-input
             const saveCounterAppSettingsBtn = document.getElementById('save-counter-app-settings-btn');
             const websiteTitleTag = document.getElementById('website-title-tag');
 
 
             let appState = {
                 userName: '',
-                websiteTitle: 'Dynamic Counter Application',
-                websiteMainTitleText: 'Dynamic Counter', // Initial value for the big title
+                websiteTitle: 'Dynamic Counter Application', // This now handles both tab and main title
                 displaySettings: {
                     theme: 'light',
                     customBodyBg: '#f3f4f6',
@@ -363,11 +354,10 @@
                         // Apply loaded settings immediately
                         userNameDisplay.textContent = appState.userName || 'Guest';
                         websiteTitleTag.textContent = appState.websiteTitle;
-                        websiteMainTitle.textContent = appState.websiteMainTitleText; // Load and apply main title
+                        websiteMainTitle.textContent = appState.websiteTitle; // Main title also uses websiteTitle
 
                         // Update input fields in settings modals
-                        websiteTitleInput.value = appState.websiteTitle;
-                        websiteMainTitleInput.value = appState.websiteMainTitleText;
+                        combinedTitleInput.value = appState.websiteTitle; // Use the single input
                         countersPerPageInput.value = appState.countersPerPage;
 
                     } catch (e) {
@@ -384,12 +374,9 @@
                 const textSizes = ['text-custom-sm', 'text-custom-base', 'text-custom-lg', 'text-custom-xl'];
                 textSizes.forEach(cls => {
                     mainContentCard.classList.remove(cls);
-                    countersGrid.classList.remove(cls); // Ensure counters grid also removes old text size classes
+                    countersGrid.classList.remove(cls);
                 });
                 mainContentCard.classList.add(textSize);
-                // Also apply text size to individual counter cards for consistency if needed,
-                // or ensure your CSS .counter-card h3 and .counter-value rules are scoped correctly
-                // or add it to the counters grid which contains them.
                 countersGrid.classList.add(textSize);
 
 
@@ -401,7 +388,6 @@
                 mainContentCard.style.backgroundColor = '';
 
                 websiteMainTitle.style.color = '';
-                // pageTitle.style.color = ''; // Removed as pageTitle element is gone
                 pageInfo.style.color = '';
 
                 document.querySelectorAll('.counter-card h3').forEach(el => el.style.color = '');
@@ -421,7 +407,6 @@
 
                     mainContentCard.classList.add('bg-gray-800');
                     websiteMainTitle.style.color = '#e2e8f0';
-                    // pageTitle.style.color = '#cbd5e0'; // Removed
                     pageInfo.style.color = '#e2e8f0';
 
                     document.querySelectorAll('.counter-card h3').forEach(el => el.style.color = '#e2e8f0');
@@ -451,7 +436,6 @@
                     // Determine text color based on background luminance
                     const bodyTextColor = isDark(customBodyBg) ? '#e2e8f0' : '#1a202c';
                     websiteMainTitle.style.color = bodyTextColor;
-                    // pageTitle.style.color = isDark(customBodyBg) ? '#cbd5e0' : '#4a5568'; // Removed
                     pageInfo.style.color = isDark(customBodyBg) ? '#e2e8f0' : '#4a5568';
 
                     // Update username box colors based on body background
@@ -721,8 +705,7 @@
 
             counterAppSettingsBtn.addEventListener('click', () => {
                 countersPerPageInput.value = appState.countersPerPage;
-                websiteTitleInput.value = appState.websiteTitle;
-                websiteMainTitleInput.value = appState.websiteMainTitleText; // Populate input with current main title
+                combinedTitleInput.value = appState.websiteTitle; // Populate the single input
                 counterAppSettingsModal.classList.remove('hidden');
             });
 
@@ -735,11 +718,11 @@
                     countersPerPageInput.value = appState.countersPerPage; // Reset to old value
                 }
 
-                appState.websiteTitle = websiteTitleInput.value.trim();
-                websiteTitleTag.textContent = appState.websiteTitle;
+                const newTitle = combinedTitleInput.value.trim();
+                appState.websiteTitle = newTitle; // Update the single source of truth
 
-                appState.websiteMainTitleText = websiteMainTitleInput.value.trim(); // Update appState
-                websiteMainTitle.textContent = appState.websiteMainTitleText; // Update the displayed H1
+                websiteTitleTag.textContent = appState.websiteTitle;       // Update tab title
+                websiteMainTitle.textContent = appState.websiteTitle;       // Update main display title
 
                 saveAppState();
                 renderCounters(); // Re-render counters to apply new items per page, and potentially new page layout
