@@ -34,7 +34,6 @@
     </style>
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
-    <!-- Fixed header for user name and edit button -->
     <div class="fixed top-4 right-4 z-50 flex items-center space-x-2 bg-white rounded-full py-2 px-4 shadow-md">
         <span id="user-name-display" class="text-lg font-medium text-blue-600">Guest</span>
         <button id="edit-user-name-btn" class="text-gray-500 hover:text-gray-700 transition-colors duration-200 focus:outline-none">
@@ -64,7 +63,6 @@
         </div>
     </div>
 
-    <!-- Name Setup Modal (hidden by default) -->
     <div id="name-setup-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md transform transition-all duration-300 scale-100 opacity-100">
             <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">What's your name?</h2>
@@ -85,7 +83,9 @@
             const saveNameBtn = document.getElementById('save-name-btn');
 
             let appState = {
-                userName: ''
+                userName: '',
+                websiteTitle: '',
+                counters: []
             };
 
             const setCookie = (name, value, days) => {
@@ -129,27 +129,38 @@
                     setCookie('appState', JSON.stringify(appState), 365);
                     renderUserName();
                 } else {
-                    alert('Please enter a name.');
+                    const existingMessage = saveNameBtn.parentElement.querySelector('.temp-error-message');
+                    if (existingMessage) existingMessage.remove();
+
+                    let messageElement = document.createElement('p');
+                    messageElement.textContent = 'Please enter a name.';
+                    messageElement.className = 'text-red-500 text-sm mt-2 text-center temp-error-message';
+                    saveNameBtn.parentElement.insertBefore(messageElement, saveNameBtn);
+                    setTimeout(() => {
+                        messageElement.remove();
+                    }, 2000);
                 }
             });
 
             editUserNameBtn.addEventListener('click', () => {
                 modalUserNameInput.value = appState.userName;
                 nameSetupModal.classList.remove('hidden');
+                const existingMessage = saveNameBtn.parentElement.querySelector('.temp-error-message');
+                if (existingMessage) existingMessage.remove();
             });
 
             const init = () => {
-                const loadedState = getCookie('appState');
-                if (loadedState) {
+                const loadedCookieData = getCookie('appState');
+                if (loadedCookieData) {
                     try {
-                        const parsedState = JSON.parse(loadedState);
-                        // Only update userName if it exists in the loaded state
-                        if (parsedState.userName) {
-                            appState.userName = parsedState.userName;
+                        const parsedState = JSON.parse(loadedCookieData);
+                        appState = { ...appState, ...parsedState };
+                        if (typeof appState.userName === 'undefined') {
+                            appState.userName = '';
                         }
                     } catch (e) {
                         console.error('Error parsing appState cookie on homepage:', e);
-                        deleteCookie('appState'); // Clear corrupted cookie
+                        deleteCookie('appState');
                     }
                 }
                 renderUserName();
