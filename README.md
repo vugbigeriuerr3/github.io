@@ -10,7 +10,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6; /* Default light body background */
+            /* Default body styling that will be overridden by JS */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -18,30 +18,15 @@
             margin: 0;
             padding: 20px;
             box-sizing: border-box;
-            background-image: url('https://placehold.co/1920x1080/e5e7eb/e5e7eb?text='); /* Placeholder for light background image */
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
             transition: background-color 0.3s ease; /* Smooth transition for background color changes */
         }
 
-        /* Dark mode specific styles */
-        body.dark-mode {
-            background-color: #1a202c; /* Dark body background */
-            background-image: url('https://placehold.co/1920x1080/2d3748/2d3748?text='); /* Placeholder for dark background image */
-        }
-        body.dark-mode .main-card {
-            background-color: #2d3748; /* Dark card background */
-            color: #e2e8f0; /* Light text for dark card */
-        }
-        body.dark-mode .main-card h1,
-        body.dark-mode .main-card p {
-            color: #e2e8f0; /* Light text for dark card */
-        }
-        body.dark-mode .bg-white {
-            background-color: #2d3748; /* Adjust for floating user name box */
+        /* Base styles for the main content card, colors will be set by JS */
+        .main-card {
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
+        /* Specific header hiding for GitHub Pages */
         header.site-header {
             display: none;
         }
@@ -52,9 +37,9 @@
         }
     </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+<body class="flex items-center justify-center min-h-screen p-4">
     <!-- Top-right user name and edit button -->
-    <div class="fixed top-4 right-4 z-50 flex items-center space-x-2 bg-white rounded-full py-2 px-4 shadow-md">
+    <div class="fixed top-4 right-4 z-50 flex items-center space-x-2 bg-white rounded-full py-2 px-4 shadow-md transition-colors duration-300">
         <span id="user-name-display" class="text-lg font-medium text-blue-600">Guest</span>
         <button id="edit-name-btn" class="text-gray-500 hover:text-gray-700 transition-colors duration-200 focus:outline-none">
             <i class="fas fa-pencil-alt text-base"></i>
@@ -68,9 +53,9 @@
         </button>
     </div>
 
-    <div id="main-content-card" class="w-full max-w-lg bg-white shadow-lg rounded-2xl p-8 text-center main-card">
-        <h1 class="text-4xl font-bold text-gray-800 mb-6">My Projects Hub</h1>
-        <p class="text-lg text-gray-600 mb-8">Explore my various applications.</p>
+    <div id="main-content-card" class="w-full max-w-lg shadow-lg rounded-2xl p-8 text-center main-card">
+        <h1 class="text-4xl font-bold mb-6">My Projects Hub</h1>
+        <p class="text-lg mb-8">Explore my various applications.</p>
         
         <div class="space-y-4">
             <a href="https://vugbigeriuerr3.github.io/github.io/random%20number%20guesser.html" 
@@ -147,20 +132,17 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // DOM Elements
             const userNameDisplay = document.getElementById('user-name-display');
             const editNameBtn = document.getElementById('edit-name-btn');
-            const configureDisplayBtn = document.getElementById('configure-display-btn'); // New config button
-            const mainContentCard = document.getElementById('main-content-card'); // Main content div
+            const configureDisplayBtn = document.getElementById('configure-display-btn');
+            const mainContentCard = document.getElementById('main-content-card');
 
-            // Name Edit Modal elements
             const nameEditModal = document.getElementById('name-edit-modal');
             const nameEditUserInput = document.getElementById('name-edit-user-input');
             const saveNameOnlyBtn = document.getElementById('save-name-only-btn');
 
-            // Display Settings Modal elements
-            const displaySettingsModal = document.getElementById('display-settings-modal'); // New modal
-            const themeRadios = document.querySelectorAll('input[name="theme"]'); // Radio buttons
+            const displaySettingsModal = document.getElementById('display-settings-modal');
+            const themeRadios = document.querySelectorAll('input[name="theme"]');
             const customColorInputsDiv = document.getElementById('custom-color-inputs');
             const customBodyBgColorInput = document.getElementById('custom-body-bg-color');
             const customCardBgColorInput = document.getElementById('custom-card-bg-color');
@@ -169,15 +151,12 @@
             let appState = {
                 userName: '',
                 displaySettings: {
-                    theme: 'light', // 'light', 'dark', 'custom'
+                    theme: 'light',
                     customBodyBg: '#f3f4f6',
                     customCardBg: '#ffffff'
                 },
-                // Other app-specific settings will be preserved in the cookie
-                // e.g., lottoSettings, numberGuesserSettings, counterSettings
             };
 
-            // Cookie Management Functions (consistent across all applications)
             const setCookie = (name, value, days) => {
                 let expires = '';
                 if (days) {
@@ -203,67 +182,86 @@
                 document.cookie = name + '=; Max-Age=-99999999; path=/; SameSite=Lax';
             };
 
-            // --- Display/Theme Logic ---
             const applyDisplaySettings = () => {
                 const { theme, customBodyBg, customCardBg } = appState.displaySettings;
 
-                // Reset body classes and inline styles
-                document.body.classList.remove('dark-mode');
+                // Reset all dynamic styling first
+                document.body.classList.remove('bg-gray-100', 'dark-mode');
                 document.body.style.backgroundColor = '';
-                document.body.style.backgroundImage = 'url("https://placehold.co/1920x1080/e5e7eb/e5e7eb?text=")'; // Default light image
+                document.body.style.backgroundImage = '';
                 
-                // Reset main card background color and text colors
+                mainContentCard.classList.remove('bg-white', 'bg-gray-800'); // Remove default light/dark card backgrounds
                 mainContentCard.style.backgroundColor = '';
-                mainContentCard.classList.remove('text-gray-100', 'text-gray-300'); // Remove dark text colors
-                mainContentCard.classList.add('bg-white'); // Default light card background
-                mainContentCard.querySelector('h1').style.color = ''; // Reset h1 color
-                mainContentCard.querySelector('p').style.color = ''; // Reset p color
 
-                // Reset floating user name box background
-                document.querySelector('.fixed.top-4.right-4').classList.remove('bg-gray-900'); // Remove dark background
-                document.querySelector('.fixed.top-4.right-4').classList.add('bg-white'); // Default light background
+                mainContentCard.querySelector('h1').style.color = '';
+                mainContentCard.querySelector('p').style.color = '';
+
+                const userNameBox = document.querySelector('.fixed.top-4.right-4');
+                userNameBox.classList.remove('bg-white', 'bg-gray-900');
+                userNameBox.querySelector('span').style.color = '';
+                userNameBox.querySelector('button').style.color = '';
 
                 // Apply theme-specific styles
                 if (theme === 'dark') {
                     document.body.classList.add('dark-mode');
-                    document.body.style.backgroundImage = 'url("https://placehold.co/1920x1080/2d3748/2d3748?text=")'; // Dark background image
+                    // Add the image directly for dark mode, or set a solid color
+                    document.body.style.backgroundImage = 'url("https://placehold.co/1920x1080/2d3748/2d3748?text=")';
+                    document.body.style.backgroundColor = '#1a202c'; // Fallback color
+                    
+                    mainContentCard.classList.add('bg-gray-800'); // Dark card background
+                    mainContentCard.querySelector('h1').style.color = '#e2e8f0';
+                    mainContentCard.querySelector('p').style.color = '#cbd5e0';
+
+                    userNameBox.classList.add('bg-gray-900');
+                    userNameBox.querySelector('span').style.color = '#90cdf4';
+                    userNameBox.querySelector('button').style.color = '#a0aec0';
+
                 } else if (theme === 'custom') {
                     document.body.style.backgroundColor = customBodyBg;
-                    document.body.style.backgroundImage = 'none'; // No background image for custom color
+                    document.body.style.backgroundImage = 'none'; // No image for custom solid color
+                    
                     mainContentCard.style.backgroundColor = customCardBg;
-
-                    // Adjust text colors for custom themes for readability
-                    // A very simple heuristic: if custom background is dark, use light text
-                    const isBodyBgDark = (color) => {
+                    
+                    // Simple heuristic for text color based on background luminance
+                    const isDark = (color) => {
                         if (!color) return false;
                         const rgb = parseInt(color.replace('#', ''), 16);
                         const r = (rgb >> 16) & 0xff;
                         const g = (rgb >> 8) & 0xff;
                         const b = (rgb >> 0) & 0xff;
-                        // Perceived luminosity (ITU-R BT.709)
                         return (0.2126 * r + 0.7152 * g + 0.0722 * b) < 128;
                     };
 
-                    if (isBodyBgDark(customBodyBg)) {
-                        mainContentCard.querySelector('h1').style.color = '#e2e8f0'; // Light text
-                        mainContentCard.querySelector('p').style.color = '#cbd5e0'; // Lighter grey text
-                        document.querySelector('.fixed.top-4.right-4 span').style.color = '#90cdf4'; // Light blue for user name
-                        document.querySelector('.fixed.top-4.right-4 button').style.color = '#a0aec0'; // Light gray for pencil
-                        document.querySelector('.fixed.top-4.right-4').classList.remove('bg-white');
-                        document.querySelector('.fixed.top-4.right-4').classList.add('bg-gray-900');
+                    if (isDark(customBodyBg)) {
+                        mainContentCard.querySelector('h1').style.color = '#e2e8f0';
+                        mainContentCard.querySelector('p').style.color = '#cbd5e0';
+                        userNameBox.classList.add('bg-gray-900');
+                        userNameBox.querySelector('span').style.color = '#90cdf4';
+                        userNameBox.querySelector('button').style.color = '#a0aec0';
                     } else {
-                         mainContentCard.querySelector('h1').style.color = '#1a202c'; // Dark text
-                         mainContentCard.querySelector('p').style.color = '#4a5568'; // Darker grey text
-                         document.querySelector('.fixed.top-4.right-4 span').style.color = '#3182ce'; // Default blue for user name
-                         document.querySelector('.fixed.top-4.right-4 button').style.color = '#a0aec0'; // Default gray for pencil
-                         document.querySelector('.fixed.top-4.right-4').classList.remove('bg-gray-900');
-                         document.querySelector('.fixed.top-4.right-4').classList.add('bg-white');
+                        mainContentCard.querySelector('h1').style.color = '#1a202c';
+                        mainContentCard.querySelector('p').style.color = '#4a5568';
+                        userNameBox.classList.add('bg-white');
+                        userNameBox.querySelector('span').style.color = '#3182ce';
+                        userNameBox.querySelector('button').style.color = '#a0aec0';
                     }
+                    if (isDark(customCardBg)) {
+                         mainContentCard.querySelector('h1').style.color = '#e2e8f0';
+                         mainContentCard.querySelector('p').style.color = '#cbd5e0';
+                    } else {
+                        mainContentCard.querySelector('h1').style.color = '#1a202c';
+                        mainContentCard.querySelector('p').style.color = '#4a5568';
+                    }
+
+                } else { // 'light' theme
+                    document.body.classList.add('bg-gray-100'); // Default light body background
+                    document.body.style.backgroundImage = 'url("https://placehold.co/1920x1080/e5e7eb/e5e7eb?text=")';
+                    mainContentCard.classList.add('bg-white'); // Default light card background
+                    userNameBox.classList.add('bg-white');
                 }
             };
 
 
-            // --- User Name Modal Logic ---
             const renderUserName = () => {
                 userNameDisplay.textContent = appState.userName || 'Guest';
                 if (!appState.userName && !sessionStorage.getItem('nameEditModalShown')) {
@@ -274,8 +272,6 @@
                 }
             };
 
-            // Event Listeners
-            // Save Name (from Name Edit Modal)
             saveNameOnlyBtn.addEventListener('click', () => {
                 const newUserName = nameEditUserInput.value.trim();
                 if (newUserName) {
@@ -308,7 +304,6 @@
                 }
             });
 
-            // Open Name Edit Modal (pencil icon)
             editNameBtn.addEventListener('click', () => {
                 nameEditUserInput.value = appState.userName;
                 nameEditModal.classList.remove('hidden');
@@ -316,14 +311,11 @@
                 if (existingMessage) existingMessage.remove();
             });
 
-            // Open Display Settings Modal
             configureDisplayBtn.addEventListener('click', () => {
-                // Pre-select theme radio button
                 themeRadios.forEach(radio => {
                     radio.checked = (radio.value === appState.displaySettings.theme);
                 });
 
-                // Show/hide custom color inputs based on selected theme
                 if (appState.displaySettings.theme === 'custom') {
                     customColorInputsDiv.classList.remove('hidden');
                     customBodyBgColorInput.value = appState.displaySettings.customBodyBg;
@@ -335,7 +327,6 @@
                 displaySettingsModal.classList.remove('hidden');
             });
 
-            // Toggle custom color inputs visibility when theme radio changes
             themeRadios.forEach(radio => {
                 radio.addEventListener('change', () => {
                     if (radio.value === 'custom') {
@@ -346,13 +337,11 @@
                 });
             });
 
-            // Save Display Settings
             saveDisplaySettingsBtn.addEventListener('click', () => {
                 const selectedTheme = document.querySelector('input[name="theme"]:checked').value;
                 const newCustomBodyBg = customBodyBgColorInput.value;
                 const newCustomCardBg = customCardBgColorInput.value;
 
-                // Load existing cookie data to preserve other app settings
                 const loadedCookieData = getCookie('appState');
                 let currentAppState = {};
                 if (loadedCookieData) {
@@ -363,44 +352,38 @@
                     }
                 }
 
-                // Update only displaySettings property
                 currentAppState.displaySettings = {
                     theme: selectedTheme,
                     customBodyBg: newCustomBodyBg,
                     customCardBg: newCustomCardBg
                 };
                 
-                // Update local appState's displaySettings
                 appState.displaySettings = currentAppState.displaySettings;
 
                 setCookie('appState', JSON.stringify(currentAppState), 365);
-                applyDisplaySettings(); // Apply new settings immediately
-                displaySettingsModal.classList.add('hidden'); // Hide modal
+                applyDisplaySettings();
+                displaySettingsModal.classList.add('hidden');
             });
 
-            // Initial load
             const init = () => {
                 const loadedCookieData = getCookie('appState');
                 if (loadedCookieData) {
                     try {
                         const parsedState = JSON.parse(loadedCookieData);
-                        // Initialize appState with loaded values, using defaults if properties are missing
                         appState.userName = parsedState.userName || '';
                         if (parsedState.displaySettings) {
                             appState.displaySettings.theme = parsedState.displaySettings.theme || 'light';
                             appState.displaySettings.customBodyBg = parsedState.displaySettings.customBodyBg || '#f3f4f6';
                             appState.displaySettings.customCardBg = parsedState.displaySettings.customCardBg || '#ffffff';
                         }
-                        // Merge to preserve any other unknown properties from the cookie (e.g., from other apps)
                         appState = { ...parsedState, ...appState };
                     } catch (e) {
                         console.error('Error parsing appState cookie on init:', e);
-                        deleteCookie('appState'); // Clear corrupted cookie
-                        // appState remains at its default values
+                        deleteCookie('appState');
                     }
                 }
-                renderUserName(); // Display user name or show name modal
-                applyDisplaySettings(); // Apply theme settings
+                renderUserName();
+                applyDisplaySettings();
             };
 
             init();
