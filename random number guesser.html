@@ -1,11 +1,10 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Random Number Guesser</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body {
@@ -104,17 +103,17 @@
         <div id="app" class="relative w-full bg-white shadow-lg rounded-2xl p-8 text-center">
             <h1 class="text-4xl font-bold text-gray-800 mb-6">Number Guesser</h1>
             <p class="text-lg text-gray-600 mb-8" id="game-message">Guess a number between 1 and 100!</p>
-            
+
             <div class="space-y-4">
-                <input type="number" id="guess-input" placeholder="Enter your guess" min="1" max="100" 
+                <input type="number" id="guess-input" placeholder="Enter your guess" min="1" max="100"
                        class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200 mb-2">
-                
-                <button id="redo-game-btn" 
+
+                <button id="redo-game-btn"
                         class="inline-block w-full px-8 py-4 bg-red-500 text-white font-bold text-xl rounded-xl hover:bg-red-600 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75 hidden">
                     Redo It
                 </button>
 
-                <button id="game-settings-btn" 
+                <button id="game-settings-btn"
                         class="inline-block w-full px-8 py-4 bg-gray-500 text-white font-bold text-xl rounded-xl hover:bg-gray-600 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75">
                     Game Settings
                 </button>
@@ -124,7 +123,7 @@
         <div class="stats-leaderboard-column">
             <div id="success-rate-display" class="w-full bg-white shadow-lg rounded-2xl p-4 text-center">
                 <p class="text-lg text-gray-700">Your Success Rate: <span id="success-percentage" class="font-bold text-blue-600">0%</span></p>
-                <p class="text-sm text-gray-500">Games Played: <span id="total-games-count">0</span> | Games Won: <span id="games-won-count">0</span></p>
+                <p class="text-sm text-gray-500">Games Played: <span id="total-games-count">0</span> | Games Won: <span id="games-won-count">0</span> | Games Lost: <span id="games-lost-count">0</span></p>
             </div>
 
             <div id="local-leaderboard-display" class="w-full bg-white shadow-lg rounded-2xl p-4">
@@ -141,10 +140,10 @@
             <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Change Your Name</h2>
             <div class="mb-6">
                 <label for="name-edit-user-input" class="block text-gray-700 text-sm font-semibold mb-2">Your Name:</label>
-                <input type="text" id="name-edit-user-input" placeholder="Enter your name" 
+                <input type="text" id="name-edit-user-input" placeholder="Enter your name"
                        class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
             </div>
-            <button id="save-name-only-btn" 
+            <button id="save-name-only-btn"
                     class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-all duration-300 shadow-lg">Save Name</button>
         </div>
     </div>
@@ -152,16 +151,16 @@
     <div id="game-settings-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md transform transition-all duration-300 scale-100 opacity-100">
             <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Game Settings</h2>
-            
+
             <div class="mb-4">
                 <label for="min-number-input" class="block text-gray-700 text-sm font-semibold mb-2">Minimum Number:</label>
-                <input type="number" id="min-number-input" value="1" 
+                <input type="number" id="min-number-input" value="1"
                        class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
             </div>
 
             <div class="mb-6">
                 <label for="max-number-input" class="block text-gray-700 text-sm font-semibold mb-2">Maximum Number:</label>
-                <input type="number" id="max-number-input" value="100" 
+                <input type="number" id="max-number-input" value="100"
                        class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
             </div>
 
@@ -181,7 +180,7 @@
 
             <div id="manual-secret-number-input-group" class="mb-6 hidden">
                 <label for="manual-secret-number-input" class="block text-gray-700 text-sm font-semibold mb-2">Set Secret Number:</label>
-                <input type="number" id="manual-secret-number-input" placeholder="Enter secret number" 
+                <input type="number" id="manual-secret-number-input" placeholder="Enter secret number"
                        class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
             </div>
 
@@ -198,7 +197,7 @@
                        class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
             </div>
 
-            <button id="save-game-settings-btn" 
+            <button id="save-game-settings-btn"
                     class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-all duration-300 shadow-lg">Save Game Settings</button>
         </div>
     </div>
@@ -209,7 +208,7 @@
             const goHomeBtn = document.getElementById('go-home-btn');
             const userNameDisplay = document.getElementById('user-name-display');
             const editNameBtn = document.getElementById('edit-name-btn');
-            const gameSettingsBtn = document.getElementById('game-settings-btn'); 
+            const gameSettingsBtn = document.getElementById('game-settings-btn');
 
             const nameEditModal = document.getElementById('name-edit-modal');
             const nameEditUserInput = document.getElementById('name-edit-user-input');
@@ -233,6 +232,7 @@
             const successPercentage = document.getElementById('success-percentage');
             const totalGamesCount = document.getElementById('total-games-count');
             const gamesWonCount = document.getElementById('games-won-count');
+            const gamesLostCount = document.getElementById('games-lost-count'); // New: Games Lost Count
 
             const leaderboardList = document.getElementById('leaderboard-list');
             const noLeaderboardMessage = document.getElementById('no-leaderboard-message');
@@ -250,10 +250,11 @@
                 maxNumber: 100,
                 guessMode: 'random',
                 manualSecretNumber: null,
-                veryCloseDiff: 5,  
+                veryCloseDiff: 5,
                 closeDiff: 15,
                 totalGames: 0,
                 gamesWon: 0,
+                gamesLost: 0, // New: Add gamesLost to appState
                 localLeaderboard: [] // Array to store local high scores
             };
 
@@ -298,6 +299,7 @@
                                 closeDiff: parsedState.closeDiff !== undefined ? parsedState.closeDiff : 15,
                                 totalGames: parsedState.totalGames !== undefined ? parsedState.totalGames : 0,
                                 gamesWon: parsedState.gamesWon !== undefined ? parsedState.gamesWon : 0,
+                                gamesLost: parsedState.gamesLost !== undefined ? parsedState.gamesLost : 0, // New: Load gamesLost
                                 localLeaderboard: parsedState.localLeaderboard || [] // Ensure leaderboard array exists
                             };
                         } catch (e) {
@@ -326,6 +328,7 @@
             const updateSuccessRateDisplay = () => {
                 const total = appState.totalGames;
                 const won = appState.gamesWon;
+                const lost = appState.gamesLost; // New: Get gamesLost
                 let percentage = 0;
                 if (total > 0) {
                     percentage = (won / total * 100).toFixed(1);
@@ -333,6 +336,7 @@
                 successPercentage.textContent = `${percentage}%`;
                 totalGamesCount.textContent = total;
                 gamesWonCount.textContent = won;
+                gamesLostCount.textContent = lost; // New: Update gamesLost display
                 successRateDisplay.classList.remove('hidden'); // Ensure it's visible
             };
 
@@ -445,6 +449,10 @@
                     } else {
                         gameMessage.textContent += ' Too high! Try again.';
                     }
+                    // If the user runs out of guesses (you'll need to define a max attempts limit)
+                    // or decides to "Redo It" without guessing correctly, it's a loss.
+                    // For now, each unsuccessful guess is just part of an ongoing game.
+                    // The loss is recorded when a new game starts without a win, or explicitly when 'Redo It' is clicked if the game wasn't won.
                 }
             };
 
@@ -456,7 +464,7 @@
             saveNameOnlyBtn.addEventListener('click', () => {
                 const newUserName = nameEditUserInput.value.trim();
                 if (newUserName) {
-                    appState.userName = newUserName; 
+                    appState.userName = newUserName;
                     saveAppState(); // Save updated name
                     renderUserName(); // Update display and hide modal
                     nameEditModal.classList.add('hidden'); // Ensure modal is explicitly hidden
@@ -543,14 +551,14 @@
                         return;
                     }
                 }
-                
+
                 appState.minNumber = newMinNumber;
                 appState.maxNumber = newMaxNumber;
                 appState.guessMode = newGuessMode;
                 appState.manualSecretNumber = newManualSecretNumber;
                 appState.veryCloseDiff = newVeryCloseDiff;
                 appState.closeDiff = newCloseDiff;
-                
+
                 saveAppState(); // Save updated settings
                 gameSettingsModal.classList.add('hidden');
                 startGame();
@@ -563,8 +571,9 @@
             });
 
             redoGameBtn.addEventListener('click', () => {
-                if (!gameOver) { 
-                    appState.totalGames++; // Increment totalGames if game was not won (i.e., user gave up or reset)
+                if (!gameOver) {
+                    appState.totalGames++; // Increment total games if game was not won
+                    appState.gamesLost++;   // Increment games lost if game was not won (i.e., user gave up or reset)
                 }
                 saveAppState(); // Save updated stats before starting new game
                 startGame();
