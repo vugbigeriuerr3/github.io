@@ -82,19 +82,24 @@
         <p class="text-lg mb-8">Explore my various applications.</p>
         
         <div class="space-y-4">
-            <a href="https://vugbigeriuerr3.github.io/github.io/random%20number%20guesser.html" 
+            <a href="https://vugbigeriuerr3.github.io/github.io/random%20number%20guesser" 
                class="inline-block w-full px-8 py-4 bg-blue-600 text-white font-bold text-xl rounded-xl hover:bg-blue-700 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75">
                 Random Number Guesser
             </a>
 
-            <a href="https://vugbigeriuerr3.github.io/github.io/lotto%20.html" 
+            <a href="https://vugbigeriuerr3.github.io/github.io/lotto%20" 
                class="inline-block w-full px-8 py-4 bg-blue-600 text-white font-bold text-xl rounded-xl hover:bg-blue-700 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75">
                 Lotto Number Generator
             </a>
 
-            <a href="https://vugbigeriuerr3.github.io/github.io/Update_log.html" 
+            <a href="https://vugbigeriuerr3.github.io/github.io/Update_log" 
                class="inline-block w-full px-8 py-4 bg-blue-600 text-white font-bold text-xl rounded-xl hover:bg-blue-700 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75">
                 Website Update Log
+            </a>
+
+            <a href="https://vugbigeriuerr3.github.io/github.io/about"
+               class="inline-block w-full px-8 py-4 bg-blue-600 text-white font-bold text-xl rounded-xl hover:bg-blue-700 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75">
+                About This Site
             </a>
         </div>
     </div>
@@ -269,8 +274,8 @@
                         userNameBox.querySelector('button').style.color = '#a0aec0';
                     }
                     if (isDark(customCardBg)) {
-                           mainContentCard.querySelector('h1').style.color = '#e2e8f0';
-                           mainContentCard.querySelector('p').style.color = '#cbd5e0';
+                            mainContentCard.querySelector('h1').style.color = '#e2e8f0';
+                            mainContentCard.querySelector('p').style.color = '#cbd5e0';
                     } else {
                         mainContentCard.querySelector('h1').style.color = '#1a202c';
                         mainContentCard.querySelector('p').style.color = '#4a5568';
