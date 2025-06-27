@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="website-title-tag">Dynamic Counter Application</title>
+    <title>Website Update Log</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap'); 
         body {
             font-family: 'Inter', sans-serif;
             display: flex;
@@ -27,80 +27,70 @@
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
         }
-        .counter-card {
-            background-color: #f9fafb;
-            border-radius: 0.75rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 1.5rem;
-            text-align: center;
+        /* Accordion specific styles */
+        .accordion-item {
+            background-color: #f9fafb; /* Light background for items */
+            border-radius: 0.5rem;
+            margin-bottom: 0.75rem;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .accordion-header {
             display: flex;
-            flex-direction: column;
             justify-content: space-between;
             align-items: center;
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1.125rem;
+            color: #374151; /* Dark gray text */
+            transition: background-color 0.2s ease, color 0.3s ease;
         }
-        .counter-value {
-            font-size: 3rem;
-            font-weight: bold;
-            color: #1f2937;
-            margin-bottom: 1rem;
+        .accordion-header:hover {
+            background-color: #e5e7eb; /* Lighter gray on hover */
         }
-        .counter-controls button {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            font-size: 1.5rem;
-            font-weight: bold;
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            transition: background-color 0.2s ease;
+        .accordion-icon {
+            transition: transform 0.2s ease-out;
         }
-        .counter-name-input {
-            width: 100%;
-            padding: 0.5rem;
-            border-radius: 0.5rem;
-            border: 1px solid #d1d5db;
-            margin-bottom: 0.75rem;
-            text-align: center;
+        .accordion-item.active .accordion-icon {
+            transform: rotate(90deg);
         }
-        body.dark-mode {
-            background-color: #1a202c;
+        .accordion-content {
+            padding: 0 1.5rem;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+            color: #4b5563; /* Medium gray text */
         }
-        body.dark-mode .main-card, body.dark-mode .modal > div {
-            background-color: #2d3748;
-            color: #e2e8f0;
+        .accordion-item.active .accordion-content {
+            max-height: 500px; /* Adjust as needed, ensure it's larger than max content */
+            padding-bottom: 1.5rem;
         }
-        body.dark-mode h1, body.dark-mode h2, body.dark-mode label {
-            color: #e2e8f0;
-        }
-        body.dark-mode .counter-card {
+        /* Dark mode overrides for accordion */
+        body.dark-mode .accordion-item {
             background-color: #4a5568;
+            box-shadow: 0 1px 3px rgba(255, 255, 255, 0.1);
         }
-        body.dark-mode .counter-value {
+        body.dark-mode .accordion-header {
             color: #e2e8f0;
         }
-        body.dark-mode .counter-name-input {
-            background-color: #2d3748;
-            border-color: #616e80;
-            color: #e2e8f0;
+        body.dark-mode .accordion-header:hover {
+            background-color: #616e80;
         }
-        body.dark-mode .text-gray-700 {
-            color: #e2e8f0;
-        }
-        body.dark-mode .text-gray-600 {
+        body.dark-mode .accordion-content {
             color: #cbd5e0;
         }
-        body.dark-mode .fixed.bg-white {
-            background-color: #2d3748;
-        }
-        .text-custom-sm .counter-card h3 { font-size: 1.125rem; }
-        .text-custom-sm .counter-value { font-size: 2.5rem; }
-        .text-custom-base .counter-card h3 { font-size: 1.25rem; }
-        .text-custom-base .counter-value { font-size: 3rem; }
-        .text-custom-lg .counter-card h3 { font-size: 1.5rem; }
-        .text-custom-lg .counter-value { font-size: 3.5rem; }
-        .text-custom-xl .counter-card h3 { font-size: 1.75rem; }
-        .text-custom-xl .counter-value { font-size: 4rem; }
+
+        /* Custom text sizes */
+        .text-custom-sm .accordion-header { font-size: 1rem; }
+        .text-custom-sm .accordion-content { font-size: 0.875rem; }
+        .text-custom-base .accordion-header { font-size: 1.125rem; }
+        .text-custom-base .accordion-content { font-size: 1rem; }
+        .text-custom-lg .accordion-header { font-size: 1.25rem; }
+        .text-custom-lg .accordion-content { font-size: 1.125rem; }
+        .text-custom-xl .accordion-header { font-size: 1.5rem; }
+        .text-custom-xl .accordion-content { font-size: 1.25rem; }
 
     </style>
 </head>
@@ -124,31 +114,12 @@
         </button>
     </div>
 
-    <div id="main-content-card" class="w-full max-w-4xl bg-white shadow-lg rounded-2xl p-8 text-center main-card">
-        <h1 class="text-4xl font-bold text-gray-800 mb-6" id="website-main-title">Dynamic Counter</h1>
-        <div id="counters-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        </div>
-
-        <div class="flex justify-between items-center mb-8">
-            <button id="prev-page-btn" class="px-6 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75">
-                <i class="fas fa-arrow-left mr-2"></i>Previous Page
-            </button>
-            <span id="page-info" class="text-xl font-semibold text-gray-700">Page 1 of 1</span>
-            <button id="next-page-btn" class="px-6 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75">
-                Next Page<i class="fas fa-arrow-right ml-2"></i>
-            </button>
-        </div>
-
-        <div class="flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-4">
-            <button id="add-counter-btn"
-                    class="flex-1 px-8 py-4 bg-green-600 text-white font-bold text-xl rounded-xl hover:bg-green-700 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-75">
-                Add New Counter
-            </button>
-            <button id="counter-app-settings-btn"
-                    class="flex-1 px-8 py-4 bg-purple-600 text-white font-bold text-xl rounded-xl hover:bg-purple-700 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-75">
-                Counter App Settings
-            </button>
-        </div>
+    <div id="main-content-card" class="w-full max-w-2xl shadow-lg rounded-2xl p-8 main-card">
+        <h1 class="text-4xl font-bold mb-6 text-center">Website Update Log</h1>
+        
+        <div id="updates-list" class="space-y-3">
+            <p id="loading-message" class="text-center text-gray-600">Loading updates from GitHub...</p>
+            </div>
     </div>
 
     <div id="name-edit-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
@@ -156,40 +127,18 @@
             <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Change Your Name</h2>
             <div class="mb-6">
                 <label for="name-edit-user-input" class="block text-gray-700 text-sm font-semibold mb-2">Your Name:</label>
-                <input type="text" id="name-edit-user-input" placeholder="Enter your name"
+                <input type="text" id="name-edit-user-input" placeholder="Enter your name" 
                        class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
             </div>
-            <button id="save-name-only-btn"
+            <button id="save-name-only-btn" 
                     class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-all duration-300 shadow-lg">Save Name</button>
-        </div>
-    </div>
-
-    <div id="configure-counter-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
-        <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md transform transition-all duration-300 scale-100 opacity-100">
-            <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center" id="configure-counter-modal-title">Configure Counter</h2>
-            <div class="mb-4">
-                <label for="counter-name-input" class="block text-gray-700 text-sm font-semibold mb-2">Counter Name:</label>
-                <input type="text" id="counter-name-input" placeholder="e.g. My Daily Steps"
-                       class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
-            </div>
-            <div class="mb-6">
-                <label for="counter-value-input" class="block text-gray-700 text-sm font-semibold mb-2">Initial Value:</label>
-                <input type="number" id="counter-value-input" value="0"
-                       class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
-            </div>
-            <div class="flex justify-between space-x-4">
-                <button id="save-counter-btn"
-                             class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-all duration-300 shadow-lg">Save Counter</button>
-                <button id="delete-counter-btn"
-                             class="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-75 transition-all duration-300 shadow-lg hidden">Delete Counter</button>
-            </div>
         </div>
     </div>
 
     <div id="display-settings-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md transform transition-all duration-300 scale-100 opacity-100">
             <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Display Settings</h2>
-
+            
             <div class="mb-6">
                 <label class="block text-gray-700 text-sm font-semibold mb-2">Theme:</label>
                 <div class="flex flex-col space-y-2">
@@ -231,29 +180,8 @@
                 </select>
             </div>
 
-            <button id="save-display-settings-btn"
+            <button id="save-display-settings-btn" 
                     class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-all duration-300 shadow-lg">Save Display Settings</button>
-        </div>
-    </div>
-
-    <div id="counter-app-settings-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
-        <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md transform transition-all duration-300 scale-100 opacity-100">
-            <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Counter App Settings</h2>
-
-            <div class="mb-6">
-                <label for="counters-per-page-input" class="block text-gray-700 text-sm font-semibold mb-2">Counters Per Page:</label>
-                <input type="number" id="counters-per-page-input" value="6" min="1"
-                       class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
-            </div>
-
-            <div class="mb-6">
-                <label for="combined-title-input" class="block text-gray-700 text-sm font-semibold mb-2">Application Title:</label>
-                <input type="text" id="combined-title-input" placeholder="e.g. My Counter Dashboard"
-                       class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
-            </div>
-
-            <button id="save-counter-app-settings-btn"
-                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-all duration-300 shadow-lg">Save Settings</button>
         </div>
     </div>
 
@@ -264,24 +192,12 @@
             const editNameBtn = document.getElementById('edit-name-btn');
             const configureDisplayBtn = document.getElementById('configure-display-btn');
             const mainContentCard = document.getElementById('main-content-card');
-            const websiteMainTitle = document.getElementById('website-main-title');
-            const countersGrid = document.getElementById('counters-grid');
-            const addCounterBtn = document.getElementById('add-counter-btn');
-            const prevPageBtn = document.getElementById('prev-page-btn');
-            const nextPageBtn = document.getElementById('next-page-btn');
-            const pageInfo = document.getElementById('page-info');
-            const counterAppSettingsBtn = document.getElementById('counter-app-settings-btn');
+            const updatesList = document.getElementById('updates-list');
+            const loadingMessage = document.getElementById('loading-message'); // New
 
             const nameEditModal = document.getElementById('name-edit-modal');
             const nameEditUserInput = document.getElementById('name-edit-user-input');
             const saveNameOnlyBtn = document.getElementById('save-name-only-btn');
-
-            const configureCounterModal = document.getElementById('configure-counter-modal');
-            const configureCounterModalTitle = document.getElementById('configure-counter-modal-title');
-            const counterNameInput = document.getElementById('counter-name-input');
-            const counterValueInput = document.getElementById('counter-value-input');
-            const saveCounterBtn = document.getElementById('save-counter-btn');
-            const deleteCounterBtn = document.getElementById('delete-counter-btn');
 
             const displaySettingsModal = document.getElementById('display-settings-modal');
             const themeRadios = document.querySelectorAll('input[name="theme"]');
@@ -291,28 +207,15 @@
             const textSizeSelect = document.getElementById('text-size-select');
             const saveDisplaySettingsBtn = document.getElementById('save-display-settings-btn');
 
-            const counterAppSettingsModal = document.getElementById('counter-app-settings-modal');
-            const countersPerPageInput = document.getElementById('counters-per-page-input');
-            const combinedTitleInput = document.getElementById('combined-title-input'); // Renamed from website-title-input
-            const saveCounterAppSettingsBtn = document.getElementById('save-counter-app-settings-btn');
-            const websiteTitleTag = document.getElementById('website-title-tag');
-
-
             let appState = {
                 userName: '',
-                websiteTitle: 'Dynamic Counter Application', // This now handles both tab and main title
                 displaySettings: {
                     theme: 'light',
                     customBodyBg: '#f3f4f6',
                     customCardBg: '#ffffff',
                     textSize: 'text-custom-base'
                 },
-                counters: [],
-                currentPage: 1,
-                countersPerPage: 6
             };
-
-            let currentEditingCounterId = null;
 
             const setCookie = (name, value, days) => {
                 let expires = '';
@@ -339,61 +242,24 @@
                 document.cookie = name + '=; Max-Age=-99999999; path=/; SameSite=Lax';
             };
 
-            const saveAppState = () => {
-                setCookie('appState', JSON.stringify(appState), 365);
-            };
-
-            const loadAppState = () => {
-                const storedState = getCookie('appState');
-                if (storedState) {
-                    try {
-                        const parsedState = JSON.parse(storedState);
-                        // Merge with default state to ensure new properties are included
-                        appState = { ...appState, ...parsedState };
-
-                        // Apply loaded settings immediately
-                        userNameDisplay.textContent = appState.userName || 'Guest';
-                        websiteTitleTag.textContent = appState.websiteTitle;
-                        websiteMainTitle.textContent = appState.websiteTitle; // Main title also uses websiteTitle
-
-                        // Update input fields in settings modals
-                        combinedTitleInput.value = appState.websiteTitle; // Use the single input
-                        countersPerPageInput.value = appState.countersPerPage;
-
-                    } catch (e) {
-                        console.error("Error parsing appState from cookie:", e);
-                        // Optionally reset cookie if it's corrupted
-                        deleteCookie('appState');
-                    }
-                }
-            };
-
             const applyDisplaySettings = () => {
                 const { theme, customBodyBg, customCardBg, textSize } = appState.displaySettings;
 
+                // Apply text size to the main content card
                 const textSizes = ['text-custom-sm', 'text-custom-base', 'text-custom-lg', 'text-custom-xl'];
-                textSizes.forEach(cls => {
-                    mainContentCard.classList.remove(cls);
-                    countersGrid.classList.remove(cls);
-                });
+                textSizes.forEach(cls => mainContentCard.classList.remove(cls));
                 mainContentCard.classList.add(textSize);
-                countersGrid.classList.add(textSize);
 
-
+                // Reset all dynamic styling for colors/background first
                 document.body.classList.remove('bg-gray-100', 'dark-mode');
                 document.body.style.backgroundColor = '';
                 document.body.style.backgroundImage = '';
-
+                
                 mainContentCard.classList.remove('bg-white', 'bg-gray-800');
                 mainContentCard.style.backgroundColor = '';
 
-                websiteMainTitle.style.color = '';
-                pageInfo.style.color = '';
-
-                document.querySelectorAll('.counter-card h3').forEach(el => el.style.color = '');
-                document.querySelectorAll('.counter-value').forEach(el => el.style.color = '');
-                document.querySelectorAll('.counter-card').forEach(card => card.style.backgroundColor = ''); // Reset card background
-
+                mainContentCard.querySelector('h1').style.color = '';
+                mainContentCard.querySelectorAll('.accordion-header, .accordion-content, p, li, h3, a:not(.bg-blue-600)').forEach(el => el.style.color = '');
 
                 const userNameBox = document.querySelector('.fixed.top-4.right-4');
                 userNameBox.classList.remove('bg-white', 'bg-gray-900');
@@ -404,15 +270,10 @@
                     document.body.classList.add('dark-mode');
                     document.body.style.backgroundImage = 'url("https://placehold.co/1920x1080/2d3748/2d3748?text=")';
                     document.body.style.backgroundColor = '#1a202c';
-
+                    
                     mainContentCard.classList.add('bg-gray-800');
-                    websiteMainTitle.style.color = '#e2e8f0';
-                    pageInfo.style.color = '#e2e8f0';
-
-                    document.querySelectorAll('.counter-card h3').forEach(el => el.style.color = '#e2e8f0');
-                    document.querySelectorAll('.counter-value').forEach(el => el.style.color = '#e2e8f0');
-                    document.querySelectorAll('.counter-card').forEach(card => card.style.backgroundColor = '#4a5568');
-
+                    mainContentCard.querySelector('h1').style.color = '#e2e8f0';
+                    mainContentCard.querySelectorAll('.accordion-header, .accordion-content, p, li, h3, a:not(.bg-blue-600)').forEach(el => el.style.color = '#cbd5e0');
 
                     userNameBox.classList.add('bg-gray-900');
                     userNameBox.querySelector('span').style.color = '#90cdf4';
@@ -421,9 +282,9 @@
                 } else if (theme === 'custom') {
                     document.body.style.backgroundColor = customBodyBg;
                     document.body.style.backgroundImage = 'none';
-
+                    
                     mainContentCard.style.backgroundColor = customCardBg;
-
+                    
                     const isDark = (color) => {
                         if (!color) return false;
                         const rgb = parseInt(color.replace('#', ''), 16);
@@ -433,31 +294,28 @@
                         return (0.2126 * r + 0.7152 * g + 0.0722 * b) < 128;
                     };
 
-                    // Determine text color based on background luminance
-                    const bodyTextColor = isDark(customBodyBg) ? '#e2e8f0' : '#1a202c';
-                    websiteMainTitle.style.color = bodyTextColor;
-                    pageInfo.style.color = isDark(customBodyBg) ? '#e2e8f0' : '#4a5568';
-
-                    // Update username box colors based on body background
                     if (isDark(customBodyBg)) {
+                        mainContentCard.querySelector('h1').style.color = '#e2e8f0';
+                        mainContentCard.querySelectorAll('.accordion-header, .accordion-content, p, li, h3, a:not(.bg-blue-600)').forEach(el => el.style.color = '#cbd5e0');
                         userNameBox.classList.add('bg-gray-900');
                         userNameBox.querySelector('span').style.color = '#90cdf4';
                         userNameBox.querySelector('button').style.color = '#a0aec0';
                     } else {
+                        mainContentCard.querySelector('h1').style.color = '#1a202c';
+                        mainContentCard.querySelectorAll('.accordion-header, .accordion-content, p, li, h3, a:not(.bg-blue-600)').forEach(el => el.style.color = '#4a5568');
                         userNameBox.classList.add('bg-white');
                         userNameBox.querySelector('span').style.color = '#3182ce';
                         userNameBox.querySelector('button').style.color = '#a0aec0';
                     }
+                    if (isDark(customCardBg)) {
+                         mainContentCard.querySelector('h1').style.color = '#e2e8f0';
+                         mainContentCard.querySelectorAll('.accordion-header, .accordion-content, p, li, h3, a:not(.bg-blue-600)').forEach(el => el.style.color = '#cbd5e0');
+                    } else {
+                        mainContentCard.querySelector('h1').style.color = '#1a202c';
+                        mainContentCard.querySelectorAll('.accordion-header, .accordion-content, p, li, h3, a:not(.bg-blue-600)').forEach(el => el.style.color = '#4a5568');
+                    }
 
-                    // Update counter card text and background colors based on customCardBg
-                    const cardTextColor = isDark(customCardBg) ? '#e2e8f0' : '#1f2937';
-                    const cardBgColor = customCardBg;
-
-                    document.querySelectorAll('.counter-card h3').forEach(el => el.style.color = cardTextColor);
-                    document.querySelectorAll('.counter-value').forEach(el => el.style.color = cardTextColor);
-                    document.querySelectorAll('.counter-card').forEach(card => card.style.backgroundColor = cardBgColor);
-
-                } else {
+                } else { // 'light' theme
                     document.body.classList.add('bg-gray-100');
                     document.body.style.backgroundImage = 'url("https://placehold.co/1920x1080/e5e7eb/e5e7eb?text=")';
                     mainContentCard.classList.add('bg-white');
@@ -468,7 +326,6 @@
             const renderUserName = () => {
                 userNameDisplay.textContent = appState.userName || 'Guest';
                 if (!appState.userName && !sessionStorage.getItem('nameEditModalShown')) {
-                    nameEditUserInput.value = appState.userName;
                     nameEditModal.classList.remove('hidden');
                     sessionStorage.setItem('nameEditModalShown', 'true');
                 } else if (appState.userName) {
@@ -476,105 +333,87 @@
                 }
             };
 
-            const renderCounters = () => {
-                countersGrid.innerHTML = '';
-                const startIndex = (appState.currentPage - 1) * appState.countersPerPage;
-                const endIndex = Math.min(startIndex + appState.countersPerPage, appState.counters.length);
+            // Function to fetch commits from GitHub API
+            const fetchGithubCommits = async () => {
+                const owner = 'vugbigeriuerr3';
+                const repo = 'github.io';
+                const apiUrl = `https://api.github.com/repos/${owner}/${repo}/commits`;
 
-                const countersToRender = appState.counters.slice(startIndex, endIndex);
+                try {
+                    const response = await fetch(apiUrl);
+                    if (!response.ok) {
+                        throw new Error(`GitHub API error: ${response.status} ${response.statusText}`);
+                    }
+                    const commits = await response.json();
+                    return commits;
+                } catch (error) {
+                    console.error('Failed to fetch GitHub commits:', error);
+                    return []; // Return empty array on error
+                }
+            };
 
-                if (countersToRender.length === 0 && appState.currentPage > 1) {
-                    appState.currentPage--;
-                    saveAppState();
-                    renderCounters();
+            // Function to render updates from commit data
+            const renderUpdates = async () => {
+                loadingMessage.classList.remove('hidden'); // Show loading message
+                updatesList.innerHTML = ''; // Clear previous updates
+
+                const commits = await fetchGithubCommits();
+
+                if (commits.length === 0) {
+                    updatesList.innerHTML = '<p class="text-center text-gray-500">No updates found or failed to load commits.</p>';
+                    loadingMessage.classList.add('hidden');
                     return;
                 }
 
-                countersToRender.forEach((counter) => {
-                    const counterCard = document.createElement('div');
-                    counterCard.className = 'counter-card';
-                    counterCard.innerHTML = `
-                        <h3 class="text-xl font-semibold mb-2">${counter.name}</h3>
-                        <div class="counter-value">${counter.value}</div>
-                        <div class="counter-controls flex space-x-2">
-                            <button class="bg-red-500 text-white hover:bg-red-600 decrement-btn" data-id="${counter.id}">-</button>
-                            <button class="bg-blue-500 text-white hover:bg-blue-600 edit-counter-btn" data-id="${counter.id}">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="bg-green-500 text-white hover:bg-green-600 increment-btn" data-id="${counter.id}">+</button>
-                        </div>
-                    `;
-                    countersGrid.appendChild(counterCard);
+                loadingMessage.classList.add('hidden'); // Hide loading message once data is fetched
+
+                // Process commits into the desired format
+                const updates = commits.map(commit => {
+                    const commitDate = new Date(commit.commit.author.date);
+                    const formattedDate = commitDate.toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' });
+                    
+                    // Split commit message into title and description
+                    const fullMessage = commit.commit.message;
+                    const lines = fullMessage.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+                    
+                    const title = lines[0] || 'No commit message title';
+                    const description = lines.slice(1).join('<br>') || 'No detailed description provided.';
+
+                    return {
+                        date: formattedDate,
+                        title: title,
+                        description: description
+                    };
                 });
+                
+                // Sort by most recent first (GitHub API usually returns chronologically, but good to be explicit)
+                updates.sort((a, b) => new Date(b.date) - new Date(a.date)); 
 
-                const totalPages = Math.max(1, Math.ceil(appState.counters.length / appState.countersPerPage));
-                pageInfo.textContent = `Page ${appState.currentPage} of ${totalPages}`;
+                updates.forEach((update, index) => {
+                    const accordionItem = document.createElement('div');
+                    accordionItem.className = 'accordion-item';
 
-                prevPageBtn.disabled = appState.currentPage === 1;
-                nextPageBtn.disabled = appState.currentPage === totalPages;
+                    const accordionHeader = document.createElement('div');
+                    accordionHeader.className = 'accordion-header';
+                    accordionHeader.innerHTML = `
+                        <div>
+                            <h3 class="font-semibold text-lg">${update.title}</h3>
+                            <p class="text-sm text-gray-500">${update.date}</p>
+                        </div>
+                        <i class="fas fa-chevron-right accordion-icon ml-4"></i>
+                    `;
+                    accordionHeader.addEventListener('click', () => {
+                        accordionItem.classList.toggle('active');
+                    });
 
-                applyDisplaySettings(); // Re-apply settings after rendering counters to ensure colors are correct
-            };
+                    const accordionContent = document.createElement('div');
+                    accordionContent.className = 'accordion-content';
+                    accordionContent.innerHTML = `<p>${update.description}</p>`;
 
-            const incrementCounter = (id) => {
-                const index = appState.counters.findIndex(c => c.id === id);
-                if (index !== -1) {
-                    appState.counters[index].value++;
-                    saveAppState();
-                    renderCounters();
-                }
-            };
-
-            const decrementCounter = (id) => {
-                const index = appState.counters.findIndex(c => c.id === id);
-                if (index !== -1) {
-                    appState.counters[index].value--;
-                    saveAppState();
-                    renderCounters();
-                }
-            };
-
-            const addOrUpdateCounter = () => {
-                const name = counterNameInput.value.trim();
-                const value = parseInt(counterValueInput.value);
-
-                if (!name) {
-                    alert('Counter name cannot be empty.');
-                    return;
-                }
-                if (isNaN(value)) {
-                    alert('Please enter a valid number for the initial value.');
-                    return;
-                }
-
-                if (currentEditingCounterId === null) {
-                    const totalCountersOnCurrentPage = appState.counters.slice((appState.currentPage - 1) * appState.countersPerPage, appState.currentPage * appState.countersPerPage).length;
-                    if (totalCountersOnCurrentPage >= appState.countersPerPage) {
-                        appState.currentPage++;
-                    }
-                    appState.counters.push({ id: Date.now(), name, value });
-                } else {
-                    const index = appState.counters.findIndex(c => c.id === currentEditingCounterId);
-                    if (index !== -1) {
-                        appState.counters[index].name = name;
-                        appState.counters[index].value = value;
-                    }
-                }
-                saveAppState();
-                configureCounterModal.classList.add('hidden');
-                renderCounters();
-            };
-
-            const deleteCounter = () => {
-                if (currentEditingCounterId !== null && confirm('Are you sure you want to delete this counter?')) {
-                    const index = appState.counters.findIndex(c => c.id === currentEditingCounterId);
-                    if (index !== -1) {
-                        appState.counters.splice(index, 1);
-                        saveAppState();
-                        configureCounterModal.classList.add('hidden');
-                        renderCounters();
-                    }
-                }
+                    accordionItem.appendChild(accordionHeader);
+                    accordionItem.appendChild(accordionContent);
+                    updatesList.appendChild(accordionItem);
+                });
             };
 
             goHomeBtn.addEventListener('click', () => {
@@ -584,162 +423,126 @@
             saveNameOnlyBtn.addEventListener('click', () => {
                 const newUserName = nameEditUserInput.value.trim();
                 if (newUserName) {
-                    appState.userName = newUserName;
-                    saveAppState();
+                    const loadedCookieData = getCookie('appState');
+                    let currentAppState = {};
+                    if (loadedCookieData) {
+                        try {
+                            currentAppState = JSON.parse(loadedCookieData);
+                        } catch (e) {
+                            console.error('Error parsing existing appState cookie:', e);
+                        }
+                    }
+                    currentAppState.userName = newUserName; 
+                    appState.userName = newUserName; 
+
+                    setCookie('appState', JSON.stringify(currentAppState), 365);
                     renderUserName();
                     nameEditModal.classList.add('hidden');
                 } else {
-                    alert('Please enter a name.');
+                    let messageElement = saveNameOnlyBtn.parentElement.querySelector('.temp-error-message');
+                    if (!messageElement) {
+                        messageElement = document.createElement('p');
+                        messageElement.className = 'text-red-500 text-sm mt-2 text-center temp-error-message';
+                        saveNameOnlyBtn.parentElement.insertBefore(messageElement, saveNameOnlyBtn);
+                    }
+                    messageElement.textContent = 'Please enter a name.';
+                    setTimeout(() => {
+                        messageElement.remove();
+                    }, 2000);
                 }
             });
 
             editNameBtn.addEventListener('click', () => {
                 nameEditUserInput.value = appState.userName;
                 nameEditModal.classList.remove('hidden');
-                sessionStorage.removeItem('nameEditModalShown'); // Allow modal to show again if name is cleared
-            });
-
-            nameEditModal.addEventListener('click', (e) => {
-                if (e.target === nameEditModal) {
-                    nameEditModal.classList.add('hidden');
-                }
-            });
-
-
-            addCounterBtn.addEventListener('click', () => {
-                currentEditingCounterId = null;
-                configureCounterModalTitle.textContent = 'Add New Counter';
-                counterNameInput.value = '';
-                counterValueInput.value = 0;
-                deleteCounterBtn.classList.add('hidden');
-                configureCounterModal.classList.remove('hidden');
-            });
-
-            saveCounterBtn.addEventListener('click', addOrUpdateCounter);
-            deleteCounterBtn.addEventListener('click', deleteCounter);
-
-            configureCounterModal.addEventListener('click', (e) => {
-                if (e.target === configureCounterModal) {
-                    configureCounterModal.classList.add('hidden');
-                }
-            });
-
-            countersGrid.addEventListener('click', (e) => {
-                if (e.target.classList.contains('increment-btn')) {
-                    const id = parseInt(e.target.dataset.id);
-                    incrementCounter(id);
-                } else if (e.target.classList.contains('decrement-btn')) {
-                    const id = parseInt(e.target.dataset.id);
-                    decrementCounter(id);
-                } else if (e.target.classList.contains('edit-counter-btn') || e.target.closest('.edit-counter-btn')) {
-                    const btn = e.target.classList.contains('edit-counter-btn') ? e.target : e.target.closest('.edit-counter-btn');
-                    const id = parseInt(btn.dataset.id);
-                    currentEditingCounterId = id;
-                    const counter = appState.counters.find(c => c.id === id);
-                    if (counter) {
-                        configureCounterModalTitle.textContent = `Edit Counter: ${counter.name}`;
-                        counterNameInput.value = counter.name;
-                        counterValueInput.value = counter.value;
-                        deleteCounterBtn.classList.remove('hidden');
-                        configureCounterModal.classList.remove('hidden');
-                    }
-                }
-            });
-
-            prevPageBtn.addEventListener('click', () => {
-                if (appState.currentPage > 1) {
-                    appState.currentPage--;
-                    saveAppState();
-                    renderCounters();
-                }
-            });
-
-            nextPageBtn.addEventListener('click', () => {
-                const totalPages = Math.max(1, Math.ceil(appState.counters.length / appState.countersPerPage));
-                if (appState.currentPage < totalPages) {
-                    appState.currentPage++;
-                    saveAppState();
-                    renderCounters();
-                }
+                const existingMessage = saveNameOnlyBtn.parentElement.querySelector('.temp-error-message');
+                if (existingMessage) existingMessage.remove();
             });
 
             configureDisplayBtn.addEventListener('click', () => {
-                // Set radio buttons based on current theme
                 themeRadios.forEach(radio => {
-                    radio.checked = radio.value === appState.displaySettings.theme;
+                    radio.checked = (radio.value === appState.displaySettings.theme);
                 });
 
-                // Show/hide custom color inputs
-                customColorInputsDiv.classList.toggle('hidden', appState.displaySettings.theme !== 'custom');
-                customBodyBgColorInput.value = appState.displaySettings.customBodyBg;
-                customCardBgColorInput.value = appState.displaySettings.customCardBg;
-
-                // Set text size select
+                if (appState.displaySettings.theme === 'custom') {
+                    customColorInputsDiv.classList.remove('hidden');
+                    customBodyBgColorInput.value = appState.displaySettings.customBodyBg;
+                    customCardBgColorInput.value = appState.displaySettings.customCardBg;
+                } else {
+                    customColorInputsDiv.classList.add('hidden');
+                }
                 textSizeSelect.value = appState.displaySettings.textSize;
 
                 displaySettingsModal.classList.remove('hidden');
             });
 
             themeRadios.forEach(radio => {
-                radio.addEventListener('change', (e) => {
-                    customColorInputsDiv.classList.toggle('hidden', e.target.value !== 'custom');
+                radio.addEventListener('change', () => {
+                    if (radio.value === 'custom') {
+                        customColorInputsDiv.classList.remove('hidden');
+                    } else {
+                        customColorInputsDiv.classList.add('hidden');
+                    }
                 });
             });
 
             saveDisplaySettingsBtn.addEventListener('click', () => {
-                appState.displaySettings.theme = document.querySelector('input[name="theme"]:checked').value;
-                appState.displaySettings.customBodyBg = customBodyBgColorInput.value;
-                appState.displaySettings.customCardBg = customCardBgColorInput.value;
-                appState.displaySettings.textSize = textSizeSelect.value;
-                saveAppState();
+                const selectedTheme = document.querySelector('input[name="theme"]:checked').value;
+                const newCustomBodyBg = customBodyBgColorInput.value;
+                const newCustomCardBg = customCardBgColorInput.value;
+                const newTextSize = textSizeSelect.value;
+
+                const loadedCookieData = getCookie('appState');
+                let currentAppState = {};
+                if (loadedCookieData) {
+                    try {
+                        currentAppState = JSON.parse(loadedCookieData);
+                        // Ensure displaySettings exists before trying to assign properties
+                        if (!currentAppState.displaySettings) {
+                            currentAppState.displaySettings = {};
+                        }
+                    } catch (e) {
+                        console.error('Error parsing existing appState cookie:', e);
+                    }
+                }
+
+                currentAppState.displaySettings.theme = selectedTheme;
+                currentAppState.displaySettings.customBodyBg = newCustomBodyBg;
+                currentAppState.displaySettings.customCardBg = newCustomCardBg;
+                currentAppState.displaySettings.textSize = newTextSize;
+                
+                appState.displaySettings = currentAppState.displaySettings; // Update local appState with new display settings
+
+                setCookie('appState', JSON.stringify(currentAppState), 365);
                 applyDisplaySettings();
                 displaySettingsModal.classList.add('hidden');
             });
 
-            displaySettingsModal.addEventListener('click', (e) => {
-                if (e.target === displaySettingsModal) {
-                    displaySettingsModal.classList.add('hidden');
+            const init = () => {
+                const loadedCookieData = getCookie('appState');
+                if (loadedCookieData) {
+                    try {
+                        const parsedState = JSON.parse(loadedCookieData);
+                        appState.userName = parsedState.userName || '';
+                        if (parsedState.displaySettings) {
+                            appState.displaySettings.theme = parsedState.displaySettings.theme || 'light';
+                            appState.displaySettings.customBodyBg = parsedState.displaySettings.customBodyBg || '#f3f4f6';
+                            appState.displaySettings.customCardBg = parsedState.displaySettings.customCardBg || '#ffffff';
+                            appState.displaySettings.textSize = parsedState.displaySettings.textSize || 'text-custom-base';
+                        }
+                        // Merge to preserve any other unknown properties from the cookie (e.g., from other apps)
+                        appState = { ...parsedState, ...appState };
+                    } catch (e) {
+                        console.error('Error parsing appState cookie on init:', e);
+                        deleteCookie('appState');
+                    }
                 }
-            });
+                renderUserName();
+                applyDisplaySettings();
+                renderUpdates(); // Call renderUpdates here to fetch and display commits
+            };
 
-
-            counterAppSettingsBtn.addEventListener('click', () => {
-                countersPerPageInput.value = appState.countersPerPage;
-                combinedTitleInput.value = appState.websiteTitle; // Populate the single input
-                counterAppSettingsModal.classList.remove('hidden');
-            });
-
-            saveCounterAppSettingsBtn.addEventListener('click', () => {
-                const newCountersPerPage = parseInt(countersPerPageInput.value);
-                if (!isNaN(newCountersPerPage) && newCountersPerPage > 0) {
-                    appState.countersPerPage = newCountersPerPage;
-                } else {
-                    alert('Please enter a valid number for counters per page (must be greater than 0).');
-                    countersPerPageInput.value = appState.countersPerPage; // Reset to old value
-                }
-
-                const newTitle = combinedTitleInput.value.trim();
-                appState.websiteTitle = newTitle; // Update the single source of truth
-
-                websiteTitleTag.textContent = appState.websiteTitle;       // Update tab title
-                websiteMainTitle.textContent = appState.websiteTitle;       // Update main display title
-
-                saveAppState();
-                renderCounters(); // Re-render counters to apply new items per page, and potentially new page layout
-                counterAppSettingsModal.classList.add('hidden');
-            });
-
-            counterAppSettingsModal.addEventListener('click', (e) => {
-                if (e.target === counterAppSettingsModal) {
-                    counterAppSettingsModal.classList.add('hidden');
-                }
-            });
-
-
-            // Initial load and render
-            loadAppState();
-            renderUserName();
-            renderCounters();
+            init();
         });
     </script>
 </body>
