@@ -13,7 +13,7 @@
             background-color: #f3f4f6;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start; /* Align items to the top of the flex container */
             min-height: 100vh;
             margin: 0;
             padding: 20px;
@@ -27,6 +27,62 @@
             max-height: 90vh;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
+        }
+        /* Custom styles for layout */
+        .main-content-wrapper {
+            display: flex;
+            flex-direction: column; /* Stack vertically on small screens */
+            gap: 1.5rem; /* Space between main game and stats/leaderboard */
+            width: 100%;
+            max-width: 900px; /* Overall max width for content */
+            align-items: center; /* Center items horizontally */
+        }
+        @media (min-width: 768px) {
+            .main-content-wrapper {
+                flex-direction: row; /* Arrange side-by-side on larger screens */
+                align-items: flex-start; /* Align to the top of the row */
+                justify-content: center; /* Center the two main columns */
+            }
+            #app {
+                flex: 1; /* Main game takes available space */
+                max-width: 450px; /* Limit main game width */
+            }
+            .stats-leaderboard-column {
+                display: flex;
+                flex-direction: column; /* Stack stats and leaderboard */
+                gap: 1.5rem;
+                flex: 1; /* Stats/leaderboard column takes available space */
+                max-width: 400px; /* Limit stats/leaderboard width */
+            }
+        }
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e5e7eb; /* Light gray border */
+        }
+        .leaderboard-item:last-child {
+            border-bottom: none; /* No border for the last item */
+        }
+        .leaderboard-rank {
+            font-weight: 600;
+            margin-right: 0.5rem;
+            width: 25px; /* Fixed width for rank */
+            text-align: right;
+        }
+        .leaderboard-name {
+            flex-grow: 1; /* Name takes remaining space */
+            text-align: left;
+        }
+        .leaderboard-score {
+            font-weight: 600;
+            color: #2563eb; /* Blue color for score */
+        }
+        .leaderboard-date {
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-left: 0.5rem;
         }
     </style>
 </head>
@@ -44,29 +100,40 @@
         </button>
     </div>
 
-    <div id="app" class="relative w-full max-w-lg bg-white shadow-lg rounded-2xl p-8 text-center">
-        <h1 class="text-4xl font-bold text-gray-800 mb-6">Number Guesser</h1>
-        <p class="text-lg text-gray-600 mb-8" id="game-message">Guess a number between 1 and 100!</p>
-        
-        <div class="space-y-4">
-            <input type="number" id="guess-input" placeholder="Enter your guess" min="1" max="100" 
-                   class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200 mb-2">
+    <div class="main-content-wrapper">
+        <div id="app" class="relative w-full bg-white shadow-lg rounded-2xl p-8 text-center">
+            <h1 class="text-4xl font-bold text-gray-800 mb-6">Number Guesser</h1>
+            <p class="text-lg text-gray-600 mb-8" id="game-message">Guess a number between 1 and 100!</p>
             
-            <button id="redo-game-btn" 
-                    class="inline-block w-full px-8 py-4 bg-red-500 text-white font-bold text-xl rounded-xl hover:bg-red-600 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75 hidden">
-                Redo It
-            </button>
+            <div class="space-y-4">
+                <input type="number" id="guess-input" placeholder="Enter your guess" min="1" max="100" 
+                       class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200 mb-2">
+                
+                <button id="redo-game-btn" 
+                        class="inline-block w-full px-8 py-4 bg-red-500 text-white font-bold text-xl rounded-xl hover:bg-red-600 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75 hidden">
+                    Redo It
+                </button>
 
-            <button id="game-settings-btn" 
-                    class="inline-block w-full px-8 py-4 bg-gray-500 text-white font-bold text-xl rounded-xl hover:bg-gray-600 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75">
-                Game Settings
-            </button>
+                <button id="game-settings-btn" 
+                        class="inline-block w-full px-8 py-4 bg-gray-500 text-white font-bold text-xl rounded-xl hover:bg-gray-600 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-75">
+                    Game Settings
+                </button>
+            </div>
         </div>
-    </div>
 
-    <div id="success-rate-display" class="w-full max-w-lg bg-white shadow-lg rounded-2xl p-4 text-center mt-4 hidden">
-        <p class="text-lg text-gray-700">Your Success Rate: <span id="success-percentage" class="font-bold text-blue-600">0%</span></p>
-        <p class="text-sm text-gray-500">Games Played: <span id="total-games-count">0</span> | Games Won: <span id="games-won-count">0</span></p>
+        <div class="stats-leaderboard-column">
+            <div id="success-rate-display" class="w-full bg-white shadow-lg rounded-2xl p-4 text-center">
+                <p class="text-lg text-gray-700">Your Success Rate: <span id="success-percentage" class="font-bold text-blue-600">0%</span></p>
+                <p class="text-sm text-gray-500">Games Played: <span id="total-games-count">0</span> | Games Won: <span id="games-won-count">0</span></p>
+            </div>
+
+            <div id="local-leaderboard-display" class="w-full bg-white shadow-lg rounded-2xl p-4">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">Local Leaderboard</h2>
+                <div id="leaderboard-list" class="text-left text-gray-700">
+                    <p class="text-center text-gray-500" id="no-leaderboard-message">No scores yet. Win a game to get on the board!</p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div id="name-edit-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
@@ -167,6 +234,10 @@
             const totalGamesCount = document.getElementById('total-games-count');
             const gamesWonCount = document.getElementById('games-won-count');
 
+            const leaderboardList = document.getElementById('leaderboard-list');
+            const noLeaderboardMessage = document.getElementById('no-leaderboard-message');
+
+
             // Game State Variables
             let secretNumber;
             let attempts = 0;
@@ -182,7 +253,8 @@
                 veryCloseDiff: 5,  
                 closeDiff: 15,
                 totalGames: 0,
-                gamesWon: 0
+                gamesWon: 0,
+                localLeaderboard: [] // Array to store local high scores
             };
 
             // LocalStorage Management Functions with basic obfuscation
@@ -226,6 +298,7 @@
                                 closeDiff: parsedState.closeDiff !== undefined ? parsedState.closeDiff : 15,
                                 totalGames: parsedState.totalGames !== undefined ? parsedState.totalGames : 0,
                                 gamesWon: parsedState.gamesWon !== undefined ? parsedState.gamesWon : 0,
+                                localLeaderboard: parsedState.localLeaderboard || [] // Ensure leaderboard array exists
                             };
                         } catch (e) {
                             console.error('Error parsing appState from localStorage:', e);
@@ -263,6 +336,49 @@
                 successRateDisplay.classList.remove('hidden'); // Ensure it's visible
             };
 
+            // Local Leaderboard Functions
+            const addScoreToLeaderboard = (name, score) => {
+                const newEntry = {
+                    name: name || 'Guest', // Use "Guest" if no name is set
+                    score: score,
+                    date: new Date().toLocaleDateString('en-GB') // Format as DD/MM/YYYY
+                };
+
+                appState.localLeaderboard.push(newEntry);
+                // Sort by score (attempts), lowest first. If attempts are same, sort by date (newest first).
+                appState.localLeaderboard.sort((a, b) => {
+                    if (a.score === b.score) {
+                        return new Date(b.date.split('/').reverse().join('-')) - new Date(a.date.split('/').reverse().join('-'));
+                    }
+                    return a.score - b.score;
+                });
+                // Keep only the top N scores (e.g., top 10)
+                appState.localLeaderboard = appState.localLeaderboard.slice(0, 10);
+                saveAppState();
+                renderLeaderboard();
+            };
+
+            const renderLeaderboard = () => {
+                if (appState.localLeaderboard.length === 0) {
+                    leaderboardList.innerHTML = '<p class="text-center text-gray-500" id="no-leaderboard-message">No scores yet. Win a game to get on the board!</p>';
+                    return;
+                }
+
+                leaderboardList.innerHTML = ''; // Clear previous entries
+                appState.localLeaderboard.forEach((entry, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'leaderboard-item';
+                    div.innerHTML = `
+                        <span class="leaderboard-rank">${index + 1}.</span>
+                        <span class="leaderboard-name">${entry.name}</span>
+                        <span class="leaderboard-score">${entry.score} attempts</span>
+                        <span class="leaderboard-date">(${entry.date})</span>
+                    `;
+                    leaderboardList.appendChild(div);
+                });
+            };
+
+
             // Game Logic Functions
             const startGame = () => {
                 if (appState.guessMode === 'random') {
@@ -281,6 +397,7 @@
                 guessInput.disabled = false;
                 redoGameBtn.classList.add('hidden');
                 updateSuccessRateDisplay(); // Update display at the start of a new game
+                renderLeaderboard(); // Also render leaderboard
             };
 
             const checkGuess = () => {
@@ -309,6 +426,7 @@
                     redoGameBtn.classList.remove('hidden');
                     appState.gamesWon++; // Increment games won on success
                     appState.totalGames++; // Increment total games on success
+                    addScoreToLeaderboard(appState.userName, attempts); // Add score to local leaderboard
                     saveAppState(); // Save updated stats
                     updateSuccessRateDisplay();
                 } else {
@@ -455,7 +573,7 @@
             const init = () => {
                 loadAppState(); // Load state from localStorage
                 renderUserName();
-                startGame();
+                startGame(); // Initializes game and renders success rate & leaderboard
             };
 
             init();
