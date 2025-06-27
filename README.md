@@ -62,8 +62,6 @@
     </style>
 </head>
 <body class="flex items-center justify-center min-h-screen p-4">
-    <!-- Full-screen overlay to cover unexpected GitHub Pages elements -->
-    <!-- Its background color will be dynamically set by JavaScript -->
     <div id="github-pages-overlay"></div>
 
     <div class="fixed top-4 right-4 z-50 flex items-center space-x-2 bg-white rounded-full py-2 px-4 shadow-md transition-colors duration-300">
@@ -94,11 +92,6 @@
                 Lotto Number Generator
             </a>
 
-            <a href="https://vugbigeriuerr3.github.io/github.io/Counter" 
-               class="inline-block w-full px-8 py-4 bg-blue-600 text-white font-bold text-xl rounded-xl hover:bg-blue-700 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75">
-                Dynamic Counter Application
-            </a>
-
             <a href="https://vugbigeriuerr3.github.io/github.io/Update_log.html" 
                class="inline-block w-full px-8 py-4 bg-blue-600 text-white font-bold text-xl rounded-xl hover:bg-blue-700 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75">
                 Website Update Log
@@ -112,7 +105,7 @@
             <div class="mb-6">
                 <label for="name-edit-user-input" class="block text-gray-700 text-sm font-semibold mb-2">Your Name:</label>
                 <input type="text" id="name-edit-user-input" placeholder="Enter your name" 
-                       class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
+                        class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
             </div>
             <button id="save-name-only-btn" 
                     class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-all duration-300 shadow-lg">Save Name</button>
@@ -145,12 +138,12 @@
                 <div>
                     <label for="custom-body-bg-color" class="block text-gray-700 text-sm font-semibold mb-2">Body Background Color:</label>
                     <input type="color" id="custom-body-bg-color" value="#f3f4f6"
-                           class="w-full h-10 border rounded-lg p-1">
+                            class="w-full h-10 border rounded-lg p-1">
                 </div>
                 <div>
                     <label for="custom-card-bg-color" class="block text-gray-700 text-sm font-semibold mb-2">Card Background Color:</label>
                     <input type="color" id="custom-card-bg-color" value="#ffffff"
-                           class="w-full h-10 border rounded-lg p-1">
+                            class="w-full h-10 border rounded-lg p-1">
                 </div>
             </div>
 
@@ -276,8 +269,8 @@
                         userNameBox.querySelector('button').style.color = '#a0aec0';
                     }
                     if (isDark(customCardBg)) {
-                         mainContentCard.querySelector('h1').style.color = '#e2e8f0';
-                         mainContentCard.querySelector('p').style.color = '#cbd5e0';
+                           mainContentCard.querySelector('h1').style.color = '#e2e8f0';
+                           mainContentCard.querySelector('p').style.color = '#cbd5e0';
                     } else {
                         mainContentCard.querySelector('h1').style.color = '#1a202c';
                         mainContentCard.querySelector('p').style.color = '#4a5568';
