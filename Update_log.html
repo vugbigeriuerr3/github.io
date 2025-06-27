@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap'); 
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body {
             font-family: 'Inter', sans-serif;
             display: flex;
@@ -119,7 +119,7 @@
         
         <div id="updates-list" class="space-y-3">
             <p id="loading-message" class="text-center text-gray-600">Loading updates from GitHub...</p>
-            </div>
+        </div>
     </div>
 
     <div id="name-edit-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
@@ -127,10 +127,10 @@
             <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Change Your Name</h2>
             <div class="mb-6">
                 <label for="name-edit-user-input" class="block text-gray-700 text-sm font-semibold mb-2">Your Name:</label>
-                <input type="text" id="name-edit-user-input" placeholder="Enter your name" 
-                       class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
+                <input type="text" id="name-edit-user-input" placeholder="Enter your name"
+                        class="shadow-sm appearance-none border rounded-xl w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-200">
             </div>
-            <button id="save-name-only-btn" 
+            <button id="save-name-only-btn"
                     class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-all duration-300 shadow-lg">Save Name</button>
         </div>
     </div>
@@ -161,12 +161,12 @@
                 <div>
                     <label for="custom-body-bg-color" class="block text-gray-700 text-sm font-semibold mb-2">Body Background Color:</label>
                     <input type="color" id="custom-body-bg-color" value="#f3f4f6"
-                           class="w-full h-10 border rounded-lg p-1">
+                            class="w-full h-10 border rounded-lg p-1">
                 </div>
                 <div>
                     <label for="custom-card-bg-color" class="block text-gray-700 text-sm font-semibold mb-2">Card Background Color:</label>
                     <input type="color" id="custom-card-bg-color" value="#ffffff"
-                           class="w-full h-10 border rounded-lg p-1">
+                            class="w-full h-10 border rounded-lg p-1">
                 </div>
             </div>
 
@@ -180,7 +180,7 @@
                 </select>
             </div>
 
-            <button id="save-display-settings-btn" 
+            <button id="save-display-settings-btn"
                     class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-all duration-300 shadow-lg">Save Display Settings</button>
         </div>
     </div>
@@ -359,6 +359,10 @@
 
                 const commits = await fetchGithubCommits();
 
+                // Define the cutoff date and time in BST (British Summer Time)
+                // June 27, 2025, 09:37:00 AM BST is UTC+1
+                const cutoffDateTime = new Date('2025-06-27T09:37:00+01:00'); // Explicitly define timezone offset for BST
+
                 if (commits.length === 0) {
                     updatesList.innerHTML = '<p class="text-center text-gray-500">No updates found or failed to load commits.</p>';
                     loadingMessage.classList.add('hidden');
@@ -367,10 +371,13 @@
 
                 loadingMessage.classList.add('hidden'); // Hide loading message once data is fetched
 
-                // Process commits into the desired format
+                // Process commits into the desired format and filter
                 const updates = commits.map(commit => {
-                    const commitDate = new Date(commit.commit.author.date);
+                    const commitDate = new Date(commit.commit.author.date); // This date is usually in ISO 8601 UTC
+                    
+                    // Format date and time
                     const formattedDate = commitDate.toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' });
+                    const formattedTime = commitDate.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false });
                     
                     // Split commit message into title and description
                     const fullMessage = commit.commit.message;
@@ -380,14 +387,21 @@
                     const description = lines.slice(1).join('<br>') || 'No detailed description provided.';
 
                     return {
+                        dateTime: commitDate, // Keep original Date object for comparison
                         date: formattedDate,
+                        time: formattedTime,
                         title: title,
                         description: description
                     };
-                });
+                }).filter(update => update.dateTime >= cutoffDateTime); // Filter out older updates
                 
-                // Sort by most recent first (GitHub API usually returns chronologically, but good to be explicit)
-                updates.sort((a, b) => new Date(b.date) - new Date(a.date)); 
+                // Sort by most recent first
+                updates.sort((a, b) => b.dateTime.getTime() - a.dateTime.getTime());
+
+                if (updates.length === 0) {
+                    updatesList.innerHTML = '<p class="text-center text-gray-500">No updates found after the specified date and time.</p>';
+                    return;
+                }
 
                 updates.forEach((update, index) => {
                     const accordionItem = document.createElement('div');
@@ -398,7 +412,7 @@
                     accordionHeader.innerHTML = `
                         <div>
                             <h3 class="font-semibold text-lg">${update.title}</h3>
-                            <p class="text-sm text-gray-500">${update.date}</p>
+                            <p class="text-sm text-gray-500">${update.date} ${update.time}</p>
                         </div>
                         <i class="fas fa-chevron-right accordion-icon ml-4"></i>
                     `;
@@ -432,8 +446,8 @@
                             console.error('Error parsing existing appState cookie:', e);
                         }
                     }
-                    currentAppState.userName = newUserName; 
-                    appState.userName = newUserName; 
+                    currentAppState.userName = newUserName;
+                    appState.userName = newUserName;
 
                     setCookie('appState', JSON.stringify(currentAppState), 365);
                     renderUserName();
