@@ -118,11 +118,10 @@
         <h1 class="text-4xl font-bold mb-6 text-center">Website Update Log</h1>
         
         <div id="updates-list" class="space-y-3">
-            <!-- Updates will be dynamically inserted here -->
-        </div>
+            <p id="loading-message" class="text-center text-gray-600">Loading updates from GitHub...</p>
+            </div>
     </div>
 
-    <!-- Name Edit Modal -->
     <div id="name-edit-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md transform transition-all duration-300 scale-100 opacity-100">
             <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Change Your Name</h2>
@@ -136,7 +135,6 @@
         </div>
     </div>
 
-    <!-- Display Settings Modal -->
     <div id="display-settings-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md transform transition-all duration-300 scale-100 opacity-100">
             <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Display Settings</h2>
@@ -195,6 +193,7 @@
             const configureDisplayBtn = document.getElementById('configure-display-btn');
             const mainContentCard = document.getElementById('main-content-card');
             const updatesList = document.getElementById('updates-list');
+            const loadingMessage = document.getElementById('loading-message'); // New
 
             const nameEditModal = document.getElementById('name-edit-modal');
             const nameEditUserInput = document.getElementById('name-edit-user-input');
@@ -334,69 +333,62 @@
                 }
             };
 
-            // Updates content data
-            const updates = [
-                {
-                    date: 'June 26, 2025',
-                    title: 'updated Dynamic counting aplication with some quality of life features',
-                    description: 'we fixed the seatings for the dynamic counting aplication so that it doesnt overlap in one page and made it so that you select how many show on each page and gave it a few extra quality of life features like being able to delete them there and not needing everything to be managed in settings.  '
-                },
-                {
-                    date: 'June 26, 2025',
-                    title: 'Added a option in Random Number Guesser to set value',
-                    description: 'we have added a option in Random Number guesser that allows you to set the exact value of the number you are guessing or have it random recomended if you have friends who are playing with you.'
-                },
-                {
-                    date: 'June 26, 2025',
-                    title: 'Fixed error on main website',
-                    description: 'Removed issues with the main page having the words github.io as a watermark it was quite distracting.'
-                },
-                
-                {
-                    date: 'June 26, 2025',
-                    title: 'Initial Website Setup & Basic Counter',
-                    description: 'The very first version of the website with a simple counter application was created.'
-                },
-                {
-                    date: 'June 26, 2025',
-                    title: 'Counter App Enhancements (Pagination & Max 5)',
-                    description: 'Introduced pagination for the counter application, limiting counters to 5 per page with individual page titles. Enabled navigation with arrow buttons. (This update was later reverted for a different approach).'
-                },
-                {
-                    date: 'June 26, 2025',
-                    title: 'Counter App Refinement: No Warning Threshold, Strict Max 5',
-                    description: 'Removed the "Warning Threshold" feature from the Counter app and strictly enforced a maximum of 5 counters per page with visual feedback for invalid input. This was a revised approach after initial pagination ideas.'
-                },
-                {
-                    date: 'June 26, 2025',
-                    title: 'Homepage Revamp & Navigation',
-                    description: 'Completely redesigned the homepage with a modern, consistent look. Added a prominent "Go to Dynamic Counter Application" button and ensured the default GitHub Pages text was hidden.'
-                },
-                {
-                    date: 'June 26, 2025',
-                    title: 'Random Number Guesser: Revamped & Cookie Integration',
-                    description: 'Overhauled the Random Number Guesser app with a new design, user name persistence via cookies, automatic guess submission on Enter, and message color changes based on guess closeness. The "Change User" button was also removed and replaced by the top-right edit icon.'
-                },
-                {
-                    date: 'June 26, 2025',
-                    title: 'Random Number Guesser: Configurable Settings',
-                    description: 'Added comprehensive configurable settings for the Number Guesser: min/max range, and closeness thresholds for the feedback message colors. These settings are stored in cookies and don\'t interfere with other app data.'
-                },
-                {
-                    date: 'June 26, 2025',
-                    title: 'Lotto Number Generator: Initial Revamp',
-                    description: 'Revamped the Lotto Number Generator app to align with the website\'s new design, introduced configurable settings (min/max numbers, count, duplicates), and integrated cookie-based user name persistence. Initial version included a background image for numbers, which was later removed.'
-                },
-                 {
-                    date: 'June 26, 2025',
-                    title: 'Homepage & Update Log: Display Theme Customization',
-                    description: 'Implemented comprehensive display settings across the homepage and new Update Log page. Users can now choose between Light Mode, Dark Mode, and Custom Colors for body and card backgrounds, as well as adjusting general text size (Small, Normal, Large, XL).'
-                },
-            ];
+            // Function to fetch commits from GitHub API
+            const fetchGithubCommits = async () => {
+                const owner = 'vugbigeriuerr3';
+                const repo = 'github.io';
+                const apiUrl = `https://api.github.com/repos/${owner}/${repo}/commits`;
 
-            const renderUpdates = () => {
-                updatesList.innerHTML = '';
-                updates.sort((a, b) => new Date(b.date) - new Date(a.date)); // Sort by most recent first
+                try {
+                    const response = await fetch(apiUrl);
+                    if (!response.ok) {
+                        throw new Error(`GitHub API error: ${response.status} ${response.statusText}`);
+                    }
+                    const commits = await response.json();
+                    return commits;
+                } catch (error) {
+                    console.error('Failed to fetch GitHub commits:', error);
+                    return []; // Return empty array on error
+                }
+            };
+
+            // Function to render updates from commit data
+            const renderUpdates = async () => {
+                loadingMessage.classList.remove('hidden'); // Show loading message
+                updatesList.innerHTML = ''; // Clear previous updates
+
+                const commits = await fetchGithubCommits();
+
+                if (commits.length === 0) {
+                    updatesList.innerHTML = '<p class="text-center text-gray-500">No updates found or failed to load commits.</p>';
+                    loadingMessage.classList.add('hidden');
+                    return;
+                }
+
+                loadingMessage.classList.add('hidden'); // Hide loading message once data is fetched
+
+                // Process commits into the desired format
+                const updates = commits.map(commit => {
+                    const commitDate = new Date(commit.commit.author.date);
+                    const formattedDate = commitDate.toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' });
+                    
+                    // Split commit message into title and description
+                    const fullMessage = commit.commit.message;
+                    const lines = fullMessage.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+                    
+                    const title = lines[0] || 'No commit message title';
+                    const description = lines.slice(1).join('<br>') || 'No detailed description provided.';
+
+                    return {
+                        date: formattedDate,
+                        title: title,
+                        description: description
+                    };
+                });
+                
+                // Sort by most recent first (GitHub API usually returns chronologically, but good to be explicit)
+                updates.sort((a, b) => new Date(b.date) - new Date(a.date)); 
+
                 updates.forEach((update, index) => {
                     const accordionItem = document.createElement('div');
                     accordionItem.className = 'accordion-item';
@@ -547,7 +539,7 @@
                 }
                 renderUserName();
                 applyDisplaySettings();
-                renderUpdates();
+                renderUpdates(); // Call renderUpdates here to fetch and display commits
             };
 
             init();
