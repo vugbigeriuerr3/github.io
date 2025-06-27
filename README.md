@@ -15,7 +15,8 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            padding: 20px;
+            /* Removed padding from body to fix scrollbar issue */
+            /* padding: 20px; */ 
             box-sizing: border-box;
             transition: background-color 0.3s ease;
         }
@@ -50,7 +51,6 @@
             max-height: 90vh;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
-            /* New: Ensure modals are on top of other content */
             z-index: 60; /* Set a higher z-index for modals */
         }
 
@@ -61,8 +61,7 @@
         }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen p-4">
-    <div id="github-pages-overlay"></div>
+<body class="flex items-center justify-center min-h-screen"> <div id="github-pages-overlay"></div>
 
     <div class="fixed top-4 right-4 z-50 flex items-center space-x-2 bg-white rounded-full py-2 px-4 shadow-md transition-colors duration-300">
         <span id="user-name-display" class="text-lg font-medium text-blue-600">Guest</span>
@@ -77,30 +76,32 @@
         </button>
     </div>
 
-    <div id="main-content-card" class="w-full max-w-lg shadow-lg rounded-2xl p-8 text-center main-card">
-        <h1 class="text-4xl font-bold mb-6">The Projects Hub</h1>
-        <p class="text-lg mb-8">Explore my various applications.</p>
-        
-        <div class="space-y-4">
-            <a href="https://vugbigeriuerr3.github.io/github.io/random%20number%20guesser" 
-               class="inline-block w-full px-8 py-4 bg-blue-600 text-white font-bold text-xl rounded-xl hover:bg-blue-700 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75">
-                Number Guesser
-            </a>
+    <div class="w-full h-full flex items-center justify-center p-4"> 
+        <div id="main-content-card" class="w-full max-w-lg shadow-lg rounded-2xl p-8 text-center main-card">
+            <h1 class="text-4xl font-bold mb-6">The Projects Hub</h1>
+            <p class="text-lg mb-8">Explore my various applications.</p>
+            
+            <div class="space-y-4">
+                <a href="https://vugbigeriuerr3.github.io/github.io/random%20number%20guesser" 
+                   class="inline-block w-full px-8 py-4 bg-blue-600 text-white font-bold text-xl rounded-xl hover:bg-blue-700 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75">
+                    Number Guesser
+                </a>
 
-            <a href="https://vugbigeriuerr3.github.io/github.io/lotto" 
-               class="inline-block w-full px-8 py-4 bg-blue-600 text-white font-bold text-xl rounded-xl hover:bg-blue-700 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75">
-                Lotto
-            </a>
+                <a href="https://vugbigeriuerr3.github.io/github.io/lotto" 
+                   class="inline-block w-full px-8 py-4 bg-blue-600 text-white font-bold text-xl rounded-xl hover:bg-blue-700 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75">
+                    Lotto
+                </a>
 
-            <a href="https://vugbigeriuerr3.github.io/github.io/Update_log" 
-               class="inline-block w-full px-8 py-4 bg-blue-600 text-white font-bold text-xl rounded-xl hover:bg-blue-700 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75">
-                Update Log
-            </a>
+                <a href="https://vugbigeriuerr3.github.io/github.io/Update_log" 
+                   class="inline-block w-full px-8 py-4 bg-blue-600 text-white font-bold text-xl rounded-xl hover:bg-blue-700 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75">
+                    Update Log
+                </a>
 
-            <a href="https://vugbigeriuerr3.github.io/github.io/About.html"
-               class="inline-block w-full px-8 py-4 bg-blue-600 text-white font-bold text-xl rounded-xl hover:bg-blue-700 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75">
-                About.
-            </a>
+                <a href="https://vugbigeriuerr3.github.io/github.io/About.html"
+                   class="inline-block w-full px-8 py-4 bg-blue-600 text-white font-bold text-xl rounded-xl hover:bg-blue-700 transition-all duration-300 shadow-lg transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75">
+                    About.
+                </a>
+            </div>
         </div>
     </div>
 
