@@ -64,7 +64,11 @@
         </div>
     </div>
 
-    <!-- Name Edit Modal -->
+    <div id="success-rate-display" class="w-full max-w-lg bg-white shadow-lg rounded-2xl p-4 text-center mt-4 hidden">
+        <p class="text-lg text-gray-700">Your Success Rate: <span id="success-percentage" class="font-bold text-blue-600">0%</span></p>
+        <p class="text-sm text-gray-500">Games Played: <span id="total-games-count">0</span> | Games Won: <span id="games-won-count">0</span></p>
+    </div>
+
     <div id="name-edit-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md transform transition-all duration-300 scale-100 opacity-100">
             <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Change Your Name</h2>
@@ -78,7 +82,6 @@
         </div>
     </div>
 
-    <!-- Game Settings Modal -->
     <div id="game-settings-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
         <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md transform transition-all duration-300 scale-100 opacity-100">
             <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">Game Settings</h2>
@@ -159,12 +162,17 @@
             const redoGameBtn = document.getElementById('redo-game-btn');
             const gameMessage = document.getElementById('game-message');
 
+            const successRateDisplay = document.getElementById('success-rate-display');
+            const successPercentage = document.getElementById('success-percentage');
+            const totalGamesCount = document.getElementById('total-games-count');
+            const gamesWonCount = document.getElementById('games-won-count');
+
             // Game State Variables
             let secretNumber;
             let attempts = 0;
             let gameOver = false;
 
-            // Shared App State (for cookies)
+            // Shared App State (for localStorage)
             let appState = {
                 userName: '',
                 minNumber: 1,
@@ -172,34 +180,61 @@
                 guessMode: 'random',
                 manualSecretNumber: null,
                 veryCloseDiff: 5,  
-                closeDiff: 15     
+                closeDiff: 15,
+                totalGames: 0,
+                gamesWon: 0
             };
 
-            // Cookie Management Functions (consistent across apps)
-            const setCookie = (name, value, days) => {
-                let expires = '';
-                if (days) {
-                    const date = new Date();
-                    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-                    expires = '; expires=' + date.toUTCString();
+            // LocalStorage Management Functions with basic obfuscation
+            const LOCAL_STORAGE_KEY = 'numberGuesserAppState';
+
+            // Base64 encode/decode utility (for very basic obfuscation)
+            const encodeBase64 = (str) => btoa(str);
+            const decodeBase64 = (str) => {
+                try {
+                    return atob(str);
+                } catch (e) {
+                    console.error("Failed to decode Base64 string:", e);
+                    return null; // Return null on error
                 }
-                document.cookie = name + '=' + (value || '') + expires + '; path=/; SameSite=Lax';
             };
 
-            const getCookie = (name) => {
-                const nameEQ = name + '=';
-                const ca = document.cookie.split(';');
-                for (let i = 0; i < ca.length; i++) {
-                    let c = ca[i];
-                    while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-                    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+            const saveAppState = () => {
+                const jsonString = JSON.stringify(appState);
+                const obfuscatedString = encodeBase64(jsonString); // Apply basic obfuscation
+                localStorage.setItem(LOCAL_STORAGE_KEY, obfuscatedString);
+            };
+
+            const loadAppState = () => {
+                const obfuscatedString = localStorage.getItem(LOCAL_STORAGE_KEY);
+                if (obfuscatedString) {
+                    const jsonString = decodeBase64(obfuscatedString); // Remove basic obfuscation
+                    if (jsonString) {
+                        try {
+                            const parsedState = JSON.parse(jsonString);
+                            // Merge loaded state with default, ensuring new properties have defaults
+                            appState = {
+                                ...appState, // Start with current default appState
+                                ...parsedState, // Override with loaded values
+                                // Explicitly ensure defaults for any potentially missing values from old storage
+                                userName: parsedState.userName || '',
+                                minNumber: parsedState.minNumber !== undefined ? parsedState.minNumber : 1,
+                                maxNumber: parsedState.maxNumber !== undefined ? parsedState.maxNumber : 100,
+                                guessMode: parsedState.guessMode || 'random',
+                                manualSecretNumber: parsedState.manualSecretNumber !== undefined ? parsedState.manualSecretNumber : null,
+                                veryCloseDiff: parsedState.veryCloseDiff !== undefined ? parsedState.veryCloseDiff : 5,
+                                closeDiff: parsedState.closeDiff !== undefined ? parsedState.closeDiff : 15,
+                                totalGames: parsedState.totalGames !== undefined ? parsedState.totalGames : 0,
+                                gamesWon: parsedState.gamesWon !== undefined ? parsedState.gamesWon : 0,
+                            };
+                        } catch (e) {
+                            console.error('Error parsing appState from localStorage:', e);
+                            localStorage.removeItem(LOCAL_STORAGE_KEY); // Clear corrupt data
+                        }
+                    }
                 }
-                return null;
             };
 
-            const deleteCookie = (name) => {
-                document.cookie = name + '=; Max-Age=-99999999; path=/; SameSite=Lax';
-            };
 
             // User Name & Settings Modal Management
             const renderUserName = () => {
@@ -212,6 +247,20 @@
                 } else if (appState.userName) {
                     nameEditModal.classList.add('hidden'); // Ensure hidden if name exists
                 }
+            };
+
+            // Success Rate Display Function
+            const updateSuccessRateDisplay = () => {
+                const total = appState.totalGames;
+                const won = appState.gamesWon;
+                let percentage = 0;
+                if (total > 0) {
+                    percentage = (won / total * 100).toFixed(1);
+                }
+                successPercentage.textContent = `${percentage}%`;
+                totalGamesCount.textContent = total;
+                gamesWonCount.textContent = won;
+                successRateDisplay.classList.remove('hidden'); // Ensure it's visible
             };
 
             // Game Logic Functions
@@ -231,9 +280,12 @@
                 guessInput.max = appState.maxNumber;
                 guessInput.disabled = false;
                 redoGameBtn.classList.add('hidden');
+                updateSuccessRateDisplay(); // Update display at the start of a new game
             };
 
             const checkGuess = () => {
+                if (gameOver) return; // Prevent guessing if game is over
+
                 const guess = parseInt(guessInput.value);
 
                 if (isNaN(guess) || guess < appState.minNumber || guess > appState.maxNumber) {
@@ -255,6 +307,10 @@
                     gameOver = true;
                     guessInput.disabled = true;
                     redoGameBtn.classList.remove('hidden');
+                    appState.gamesWon++; // Increment games won on success
+                    appState.totalGames++; // Increment total games on success
+                    saveAppState(); // Save updated stats
+                    updateSuccessRateDisplay();
                 } else {
                     if (difference <= appState.veryCloseDiff) {
                         gameMessage.textContent = 'You\'re very close!';
@@ -282,19 +338,8 @@
             saveNameOnlyBtn.addEventListener('click', () => {
                 const newUserName = nameEditUserInput.value.trim();
                 if (newUserName) {
-                    const loadedCookieData = getCookie('appState');
-                    let currentAppState = {};
-                    if (loadedCookieData) {
-                        try {
-                            currentAppState = JSON.parse(loadedCookieData);
-                        } catch (e) {
-                            console.error('Error parsing existing appState cookie:', e);
-                        }
-                    }
-                    currentAppState.userName = newUserName; 
                     appState.userName = newUserName; 
-
-                    setCookie('appState', JSON.stringify(currentAppState), 365);
+                    saveAppState(); // Save updated name
                     renderUserName(); // Update display and hide modal
                     nameEditModal.classList.add('hidden'); // Ensure modal is explicitly hidden
                 } else {
@@ -381,26 +426,14 @@
                     }
                 }
                 
-                const loadedCookieData = getCookie('appState');
-                let currentAppState = {};
-                if (loadedCookieData) {
-                    try {
-                        currentAppState = JSON.parse(loadedCookieData);
-                    } catch (e) {
-                        console.error('Error parsing existing appState cookie:', e);
-                    }
-                }
-
-                currentAppState.minNumber = newMinNumber;
-                currentAppState.maxNumber = newMaxNumber;
-                currentAppState.guessMode = newGuessMode;
-                currentAppState.manualSecretNumber = newManualSecretNumber;
-                currentAppState.veryCloseDiff = newVeryCloseDiff;
-                currentAppState.closeDiff = newCloseDiff;
+                appState.minNumber = newMinNumber;
+                appState.maxNumber = newMaxNumber;
+                appState.guessMode = newGuessMode;
+                appState.manualSecretNumber = newManualSecretNumber;
+                appState.veryCloseDiff = newVeryCloseDiff;
+                appState.closeDiff = newCloseDiff;
                 
-                appState = { ...appState, ...currentAppState };
-
-                setCookie('appState', JSON.stringify(appState), 365);
+                saveAppState(); // Save updated settings
                 gameSettingsModal.classList.add('hidden');
                 startGame();
             });
@@ -410,31 +443,17 @@
                     checkGuess();
                 }
             });
-            redoGameBtn.addEventListener('click', startGame);
+
+            redoGameBtn.addEventListener('click', () => {
+                if (!gameOver) { 
+                    appState.totalGames++; // Increment totalGames if game was not won (i.e., user gave up or reset)
+                }
+                saveAppState(); // Save updated stats before starting new game
+                startGame();
+            });
 
             const init = () => {
-                const loadedCookieData = getCookie('appState');
-                if (loadedCookieData) {
-                    try {
-                        const parsedState = JSON.parse(loadedCookieData);
-                        // Ensure all properties from parsedState are merged into appState
-                        appState = { ...appState, ...parsedState };
-                        
-                        // Set defaults if any new properties are missing in old cookies
-                        appState.userName = parsedState.userName || '';
-                        appState.minNumber = parsedState.minNumber !== undefined ? parsedState.minNumber : 1;
-                        appState.maxNumber = parsedState.maxNumber !== undefined ? parsedState.maxNumber : 100;
-                        appState.guessMode = parsedState.guessMode || 'random';
-                        appState.manualSecretNumber = parsedState.manualSecretNumber !== undefined ? parsedState.manualSecretNumber : null;
-                        appState.veryCloseDiff = parsedState.veryCloseDiff !== undefined ? parsedState.veryCloseDiff : 5;
-                        appState.closeDiff = parsedState.closeDiff !== undefined ? parsedState.closeDiff : 15;
-
-                    } catch (e) {
-                        console.error('Error parsing appState cookie on init:', e);
-                        deleteCookie('appState');
-                        appState.userName = '';
-                    }
-                }
+                loadAppState(); // Load state from localStorage
                 renderUserName();
                 startGame();
             };
